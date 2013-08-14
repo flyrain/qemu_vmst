@@ -1,0 +1,82 @@
+./target-i386/cpu.h:1067://zlin.begin
+./target-i386/cpu.h:1082://zlin.end
+./target-i386/helper.c:459://zlin
+./target-i386/helper.c:479://zlin
+./target-i386/helper.c:519://zlin.begin
+./target-i386/helper.c:567://zlin.end
+./target-i386/helper.c:573://zlin.begin
+./target-i386/helper.c:594://zlin.end
+./target-i386/helper.c:665://zlin
+./target-i386/helper.c:1377://zlin.begin
+./target-i386/helper.c:1546://zlin.end
+./target-i386/op_helper.c:5028://zlin.begin
+./target-i386/op_helper.c:5058://zlin.end
+./monitor.c:1635://zlin.begin
+./monitor.c:1642://zlin.end
+./monitor.c:1670://zlin.begin
+./monitor.c:1739://zlin.end
+./softmmu_template.h:53://zlin.begin
+./softmmu_template.h:109://zlin.end
+./softmmu_template.h:156:	//zlin.begin
+./softmmu_template.h:192:	//zlin.end
+./softmmu_template.h:253://zlin.begin
+./softmmu_template.h:299://zlin.end
+./softmmu_template.h:388://zlin.begin
+./softmmu_template.h:415://zlin.end
+./softmmu_template.h:476://zlin.begin
+./softmmu_template.h:511://zlin.end
+./bin/start.sh:2:#./qemu -hda /home/zlin/fc6/FC6dump.qcow2 -m 256  -monitor stdio --snapshot -gdb tcp::1234 -s
+Binary file ./bin/snapshot matches
+Binary file ./bin/.ld.function.swp matches
+./softmmu_header.h:88://zlin.begin
+./softmmu_header.h:109://zlin.end
+./softmmu_header.h:133://zlin.begin
+./softmmu_header.h:155://zlin.end
+./softmmu_header.h:182://zlin.begin
+./softmmu_header.h:197://zlin.end
+./exec.c:2005://zlin
+./exec.c:2020:            //zlin.begin
+./exec.c:2022:            //zlin.end
+./exec.c:2049://zlin
+./exec.c:2066://zlin
+./exec.c:2272://zlin.begin
+./exec.c:2345:	//zlin
+./exec.c:4289:		//zlin.begin
+./exec.c:4295:		//zlin.end
+./diff:1:./target-i386/cpu.h:1067://zlin.begin
+./diff:2:./target-i386/cpu.h:1082://zlin.end
+./diff:3:./target-i386/helper.c:459://zlin
+./diff:4:./target-i386/helper.c:479://zlin
+./diff:5:./target-i386/helper.c:519://zlin.begin
+./diff:6:./target-i386/helper.c:567://zlin.end
+./diff:7:./target-i386/helper.c:573://zlin.begin
+./diff:8:./target-i386/helper.c:594://zlin.end
+./diff:9:./target-i386/helper.c:665://zlin
+./diff:10:./target-i386/helper.c:1377://zlin.begin
+./diff:11:./target-i386/helper.c:1546://zlin.end
+./diff:12:./target-i386/op_helper.c:5028://zlin.begin
+./diff:13:./target-i386/op_helper.c:5058://zlin.end
+./diff:14:./monitor.c:1635://zlin.begin
+./diff:15:./monitor.c:1642://zlin.end
+./diff:16:./monitor.c:1670://zlin.begin
+./diff:17:./monitor.c:1739://zlin.end
+./diff:18:./softmmu_template.h:53://zlin.begin
+./diff:19:./softmmu_template.h:109://zlin.end
+./diff:20:./softmmu_template.h:156:	//zlin.begin
+./diff:21:./softmmu_template.h:192:	//zlin.end
+./diff:22:./softmmu_template.h:253://zlin.begin
+./diff:23:./softmmu_template.h:299://zlin.end
+./diff:24:./softmmu_template.h:388://zlin.begin
+./diff:25:./softmmu_template.h:415://zlin.end
+./diff:26:./softmmu_template.h:476://zlin.begin
+./diff:27:./softmmu_template.h:511://zlin.end
+./diff:28:./bin/start.sh:2:#./qemu -hda /home/zlin/fc6/FC6dump.qcow2 -m 256  -monitor stdio --snapshot -gdb tcp::1234 -s
+./diff:31:./softmmu_header.h:88://zlin.begin
+./diff:32:./softmmu_header.h:109://zlin.end
+./diff:33:./softmmu_header.h:133://zlin.begin
+./diff:34:./softmmu_header.h:155://zlin.end
+./diff:35:./softmmu_header.h:182://zlin.begin
+./diff:36:./softmmu_header.h:197://zlin.end
+Binary file ./.exec-all.h.swp matches
+./cpu-defs.h:120://zlin.begin
+./cpu-defs.h:127://zlin.end

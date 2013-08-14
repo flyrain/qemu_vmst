@@ -1,0 +1,23 @@
+Read the documentation in qemu-doc.html.
+
+Fabrice Bellard.
+
+
+** Compilation
+#+BEGIN_SRC
+./configure --target-list=i386-softmmu --prefix=`pwd` --disable-vnc --disable-werror --disable-strip
+make install
+cd bin
+./start.sh
+#+END_SRC
+
+** Usage
+./start.sh
+(EXTERIOR) exterior_start de2 cr3 0
+cr3 = c245000
+Snapshot is successfully loaded
+268435456 bytes read 0x8e5ec000
+(EXTERIOR) monps ls
+moniter process ls
+(EXTERIOR) log op
+(EXTERIOR) process name is ls

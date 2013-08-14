@@ -1,0 +1,182 @@
+In file included from /home/cs3612/fs_traverse/qemu_vmst/exec-all.h:293:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1027,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h: In function ‘ldub_code’:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:126:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:127:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/exec-all.h:296:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1027,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:77:24: warning: redundant redeclaration of ‘is_monitored_vmmi_kernel_data_read’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:77:24: note: previous declaration of ‘is_monitored_vmmi_kernel_data_read’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:78:24: warning: redundant redeclaration of ‘is_monitored_vmmi_kernel_data_write’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:78:24: note: previous declaration of ‘is_monitored_vmmi_kernel_data_write’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:81:21: warning: redundant redeclaration of ‘vmmi_process_cr3’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:81:21: note: previous declaration of ‘vmmi_process_cr3’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:82:14: warning: redundant redeclaration of ‘vmmi_mem_shadow’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:82:14: note: previous declaration of ‘vmmi_mem_shadow’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:83:10: warning: redundant redeclaration of ‘vmmi_vtop’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:83:10: note: previous declaration of ‘vmmi_vtop’ was here
+In file included from /home/cs3612/fs_traverse/qemu_vmst/exec-all.h:296:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1027,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h: In function ‘lduw_code’:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:126:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:127:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/exec-all.h:299:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1027,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:77:24: warning: redundant redeclaration of ‘is_monitored_vmmi_kernel_data_read’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:77:24: note: previous declaration of ‘is_monitored_vmmi_kernel_data_read’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:78:24: warning: redundant redeclaration of ‘is_monitored_vmmi_kernel_data_write’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:78:24: note: previous declaration of ‘is_monitored_vmmi_kernel_data_write’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:81:21: warning: redundant redeclaration of ‘vmmi_process_cr3’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:81:21: note: previous declaration of ‘vmmi_process_cr3’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:82:14: warning: redundant redeclaration of ‘vmmi_mem_shadow’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:82:14: note: previous declaration of ‘vmmi_mem_shadow’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:83:10: warning: redundant redeclaration of ‘vmmi_vtop’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:83:10: note: previous declaration of ‘vmmi_vtop’ was here
+In file included from /home/cs3612/fs_traverse/qemu_vmst/exec-all.h:299:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1027,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h: In function ‘ldl_code’:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:126:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:127:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/exec-all.h:302:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1027,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:77:24: warning: redundant redeclaration of ‘is_monitored_vmmi_kernel_data_read’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:77:24: note: previous declaration of ‘is_monitored_vmmi_kernel_data_read’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:78:24: warning: redundant redeclaration of ‘is_monitored_vmmi_kernel_data_write’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:78:24: note: previous declaration of ‘is_monitored_vmmi_kernel_data_write’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:81:21: warning: redundant redeclaration of ‘vmmi_process_cr3’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:81:21: note: previous declaration of ‘vmmi_process_cr3’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:82:14: warning: redundant redeclaration of ‘vmmi_mem_shadow’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:82:14: note: previous declaration of ‘vmmi_mem_shadow’ was here
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:83:10: warning: redundant redeclaration of ‘vmmi_vtop’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:83:10: note: previous declaration of ‘vmmi_vtop’ was here
+In file included from /home/cs3612/fs_traverse/qemu_vmst/exec-all.h:302:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1027,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h: In function ‘ldq_code’:
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:126:24: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:127:4: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:25:0:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1082:24: warning: redundant redeclaration of ‘is_monitored_vmmi_kernel_data_write’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:78:24: note: previous declaration of ‘is_monitored_vmmi_kernel_data_write’ was here
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1094:14: warning: redundant redeclaration of ‘vmmi_mem_shadow’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/softmmu_header.h:82:14: note: previous declaration of ‘vmmi_mem_shadow’ was here
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1105:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-interface.h:49:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/taint.h:21,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:553:
+/home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-init.h:44:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-init.h:48:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-init.h:52:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-decoded-inst.h:42:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-decode.h:39,
+                 from /home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-interface.h:50,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/taint.h:21,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:553:
+/home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-inst.h:309:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-interface.h:65:0,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/taint.h:21,
+                 from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:553:
+/home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-version.h:38:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/xed2/xed2-ia32/include/xed-version.h:41:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:553:0:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/taint.h:42:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/taint.h:50:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+In file included from /home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:554:0:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/sys_hook.h:1:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/sys_hook.h:6:17: warning: redundant redeclaration of ‘is_interrupt’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1096:17: note: previous declaration of ‘is_interrupt’ was here
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/sys_hook.h:15:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:560:17: warning: redundant redeclaration of ‘vmmi_profile’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1077:17: note: previous declaration of ‘vmmi_profile’ was here
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘is_monitored_vmmi_kernel_data_read’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:572:63: warning: backslash and newline separated by space [enabled by default]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘is_monitored_vmmi_kernel_data_write’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:602:63: warning: backslash and newline separated by space [enabled by default]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:627:17: warning: redundant redeclaration of ‘vmmi_mode’ [-Wredundant-decls]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/cpu.h:1068:17: note: previous declaration of ‘vmmi_mode’ was here
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘is_global_data’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:630:2: warning: comparison is always true due to limited range of data type [-Wtype-limits]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:635:10: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘is_ins_log’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:635:10: warning: old-style function definition [-Wold-style-definition]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘get_shadow_page’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:661:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:666:46: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:668:2: warning: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘char *’ [-Wformat]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:668:2: warning: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘uint64_t’ [-Wformat]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘do_copy_page_if_necessary’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:690:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:691:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:700:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:700:28: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:711:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:713:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:716:8: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:716:32: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:682:11: warning: variable ‘page_size’ set but not used [-Wunused-but-set-variable]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:680:24: warning: unused variable ‘paddr’ [-Wunused-variable]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:737:1: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘cpu_x86_update_cr3’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:848:5: warning: passing argument 3 of ‘cpu_memory_rw_debug’ from incompatible pointer type [enabled by default]
+/home/cs3612/fs_traverse/qemu_vmst/cpu-all.h:586:5: note: expected ‘uint8_t *’ but argument is of type ‘uint32_t *’
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:853:4: warning: pointer targets in passing argument 3 of ‘cpu_memory_rw_debug’ differ in signedness [-Wpointer-sign]
+/home/cs3612/fs_traverse/qemu_vmst/cpu-all.h:586:5: note: expected ‘uint8_t *’ but argument is of type ‘char *’
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:855:4: warning: passing argument 3 of ‘cpu_memory_rw_debug’ from incompatible pointer type [enabled by default]
+/home/cs3612/fs_traverse/qemu_vmst/cpu-all.h:586:5: note: expected ‘uint8_t *’ but argument is of type ‘uint32_t *’
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:856:4: warning: passing argument 3 of ‘cpu_memory_rw_debug’ from incompatible pointer type [enabled by default]
+/home/cs3612/fs_traverse/qemu_vmst/cpu-all.h:586:5: note: expected ‘uint8_t *’ but argument is of type ‘uint32_t *’
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:859:5: warning: passing argument 3 of ‘cpu_memory_rw_debug’ from incompatible pointer type [enabled by default]
+/home/cs3612/fs_traverse/qemu_vmst/cpu-all.h:586:5: note: expected ‘uint8_t *’ but argument is of type ‘uint32_t *’
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:862:4: warning: passing argument 3 of ‘cpu_memory_rw_debug’ from incompatible pointer type [enabled by default]
+/home/cs3612/fs_traverse/qemu_vmst/cpu-all.h:586:5: note: expected ‘uint8_t *’ but argument is of type ‘uint32_t *’
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘vmmi_cpu_x86_handle_mmu_fault’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1788:28: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1788:16: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1813:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1813:11: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1867:5: error: too many arguments to function ‘vmmi_tlb_set_page’
+/home/cs3612/fs_traverse/qemu_vmst/exec-all.h:106:6: note: declared here
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1872:2: warning: label ‘do_fault’ defined but not used [-Wunused-label]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1870:2: warning: label ‘do_fault_protect’ defined but not used [-Wunused-label]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1858:2: warning: label ‘do_mapping’ defined but not used [-Wunused-label]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1765:21: warning: unused variable ‘is_dirty’ [-Wunused-variable]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘vmmi_vtop’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1899:33: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1899:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1921:28: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1921:16: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1940:10: warning: no previous prototype for ‘vmmi_vtop2’ [-Wmissing-prototypes]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: In function ‘vmmi_vtop2’:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1950:33: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1950:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1972:28: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1972:16: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1991:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1993:7: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1994:3: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1994:3: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1998:7: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:1999:3: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:2002:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:2004:14: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:2006:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:2008:12: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c: At top level:
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:529:13: warning: ‘add_cr3_node’ defined but not used [-Wunused-function]
+/home/cs3612/fs_traverse/qemu_vmst/target-i386/helper.c:539:26: warning: ‘find_cr3’ defined but not used [-Wunused-function]
+make[1]: *** [helper.o] Error 1
+make: *** [subdir-i386-softmmu] Error 2
