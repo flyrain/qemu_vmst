@@ -50,6 +50,8 @@
 
 //#define DEBUG_VMMI
 
+extern target_ulong module_revise(target_ulong snapshot_addr);//yufei
+
 //zlin.begin
 
 static inline uint32_t glue(glue(is_io_read,SUFFIX), MMUSUFFIX)(target_ulong addr, int mmu_idx)
@@ -161,6 +163,9 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
     target_phys_addr_t ioaddr;
     unsigned long addend;
     void *retaddr;
+    
+    addr = module_revise(addr);//yufei
+
 //////////////////////////////////////////////////////////////////////////////////////
 	//zlin.begin
 //	vmmi_test(addr);
@@ -277,6 +282,8 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
     target_phys_addr_t ioaddr;
     unsigned long addend;
     target_ulong tlb_addr, addr1, addr2;
+
+    addr = module_revise(addr); //yufei
 
 //////////////////////////////////////////////////////////////////
 //zlin.begin
@@ -424,6 +431,8 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
     void *retaddr;
     int index;
 
+    addr = module_revise(addr);//yufei
+
     index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
 //////////////////////////////////////////////////////////////////////////////////
 //zlin.begin
@@ -542,6 +551,8 @@ static void glue(glue(slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
     unsigned long addend;
     target_ulong tlb_addr;
     int index, i;
+
+    addr = module_revise(addr);//yufei
 
     index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
 

@@ -82,6 +82,8 @@ extern target_ulong vmmi_process_cr3;
 extern char* vmmi_mem_shadow;
 uint32_t vmmi_vtop(uint32_t);
 
+extern target_ulong module_revise(target_ulong snapshot_addr);//yufei
+
 static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
 {
     int page_index;
@@ -89,7 +91,8 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
     target_ulong addr;
     unsigned long physaddr;
     int mmu_idx;
-
+    
+    ptr = module_revise(ptr); //yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;
@@ -98,7 +101,7 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
 //	if(is_ins_log())
 //     	qemu_log("LD 0x%08x", ptr);
 	#if ACCESS_TYPE == (NB_MMU_MODES)
-if(is_monitored_vmmi_kernel_data_read(ptr))
+    if(is_monitored_vmmi_kernel_data_read(ptr))
 	{
 		if (unlikely(env->vmmi_tlb_table[mmu_idx][page_index].ADDR_READ !=
                  (addr & (TARGET_PAGE_MASK | (DATA_SIZE - 1))))) {
@@ -138,7 +141,8 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
     target_ulong addr;
     unsigned long physaddr;
     int mmu_idx;
-
+    
+    ptr = module_revise(ptr); //yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;
@@ -189,6 +193,7 @@ static inline void glue(glue(st, SUFFIX), MEMSUFFIX)(target_ulong ptr, RES_TYPE 
     unsigned long physaddr;
     int mmu_idx;
 
+    ptr = module_revise(ptr);
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;

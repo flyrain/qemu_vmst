@@ -241,9 +241,10 @@ void syscall_hook(uint32_t syscall_op)
 #endif
         buf[1023]='\0';
 
-        //filename is the name of target file the same to the file
-        //name in my program.
-        if(strcmp(buf, "lab/test") ==0)
+        //filename is the name of target file       
+        //char * target_file = "lab/test";
+        char * target_file = "test/log";
+        if(strcmp(buf, target_file) ==0)
         {
             file_flag = 1;
             set_sys_need_red(1);

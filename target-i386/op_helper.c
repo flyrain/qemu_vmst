@@ -6012,7 +6012,7 @@ void helper_store(target_ulong value, target_ulong addr, int size)
 	}
 	if(size ==3) size++;
 
-    if(is_ins_log()){
+        if(is_ins_log()){
 		qemu_log(" ST:0x%08x: (0x%08x)", addr, value);
 	}
 }
@@ -6146,6 +6146,7 @@ target_ulong prev_pc;
 int ret_addr; //yufei
 
 
+
 int vmac_memory_read(target_ulong addr, uint8_t *buf, int len)
 {
 
@@ -6233,13 +6234,16 @@ void helper_inst_hook(int a)
     }
     */
 
-    //when going to function schedule(), start from
-    //address 0xc147b621, no redirect data
+    //start from function schedule(), no redirect data
+    //int schedule_start_addr = 0xc147b621;  // 2.6.32-rc8
+    int schedule_start_addr = 0xc125dcff;  //2.6.32.8
     if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
-       && sys_need_red ==1 && a == 0xc147b621 ) {
+       && sys_need_red ==1 && a == schedule_start_addr ) {
         set_sys_need_red(0);
+        //get ret address for future redirect again.
         cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
     }
+
     //if schedule() ret, need redirect again
     if (vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
         && a == ret_addr && sys_need_red == 0 ){

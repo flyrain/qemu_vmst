@@ -1622,6 +1622,43 @@ exit:
     return ret;
 }
 
+//yufei.begin
+static int mem_save(uint32_t size, const char *filename )
+{
+    FILE *f;
+    uint32_t l;
+    uint8_t buf[1024];
+    target_phys_addr_t addr = 0;
+    int ret = -1;
+
+    f = fopen(filename, "wb");
+    if (!f) {
+        qerror_report(QERR_OPEN_FILE_FAILED, filename);
+        return -1;
+    }
+    while (size != 0) {
+        l = sizeof(buf);
+        if (l > size)
+            l = size;
+        cpu_physical_memory_read(addr, buf, l);
+        if (fwrite(buf, 1, l, f) != l) {
+            //monitor_printf(mon, "fwrite() error in do_physical_memory_save\n");
+            goto exit;
+        }
+        fflush(f);
+        addr += l;
+        size -= l;
+    }
+
+    ret = 0;
+
+exit:
+    fclose(f);
+    return ret;
+}
+//yufei.end
+
+
 static int do_physical_memory_save(Monitor *mon, const QDict *qdict,
                                     QObject **ret_data)
 {
@@ -1696,26 +1733,173 @@ extern int vmmi_init();
 void	globalTaintInit(target_ulong start, target_ulong end);
 char sname[128];
 
+//yufei.start
+static int gen_module_offset(Monitor *mon, const char * snapshot_local, const char * snapshot_target){
+    char cmd[200];
+    sprintf(cmd, "../../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_local, snapshot_local);
+    monitor_printf(mon, "%s\n", cmd);
+    system(cmd);
+
+    sprintf(cmd, "../../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_target, snapshot_target);
+    monitor_printf(mon, "%s\n", cmd);
+    system(cmd);
+
+    sprintf(cmd, "python ../../sig-gen/src/match-module.py ../../sig-gen/src/sig-md5 %s_md5 %s_md5 > module_offset",snapshot_local, snapshot_target);
+    monitor_printf(mon, "%s\n", cmd);
+    system(cmd);
+}
+
+
+struct module_info{
+  target_ulong start_addr;
+  int size;
+  int offset;
+  char * name;
+};
+
+int module_info_idx =0;
+struct module_info module_infos[100];
+target_ulong module_min;
+target_ulong module_max;
+
+target_ulong module_revise(target_ulong snapshot_addr)
+{
+    if (module_info_idx == 0 ) 
+        return snapshot_addr;
+    if ( snapshot_addr < module_min || snapshot_addr > module_max)
+        return snapshot_addr;
+    int i;
+    for (i =0 ; i < module_info_idx; i ++){
+        if (snapshot_addr > module_infos[i].start_addr && 
+            snapshot_addr <= module_infos[i].start_addr + module_infos[i].size){
+            return snapshot_addr + module_infos[i].offset;
+        }
+    }
+    return snapshot_addr;
+}
+
+
+static int read_module_offset(Monitor *mon, const char * filename)
+{
+    //check if the file exists
+    struct stat fstat;
+    if (stat(filename, &fstat) != 0) {
+        monitor_printf(mon, "No file: %s\n", filename);
+        return -1;
+    }
+
+    FILE *file = fopen(filename, "r");
+    if ( file == NULL){
+        return -1;
+    }
+    
+    char line[100];
+    int cluster_len =0;
+    while (fgets(line, sizeof line, file) != NULL) {  
+        int k;
+        int space_count = 0;
+        int start_addr_idx = 0;
+        int size_idx = 0;
+        int offset_idx = 0;
+        line[strlen(line)-1] = '\0'; //get rid of '\n'
+
+        for (k = 0; k < 100; k++){
+            if(line[k]== ' '){
+                space_count ++;
+                line[k] = '\0';
+            }
+            
+            switch (space_count){
+            case 1:
+                if(start_addr_idx == 0)
+                    start_addr_idx = k + 1;
+                break;
+            case 2:
+                if(size_idx == 0)
+                    size_idx = k +1;
+                break;
+            case 3:
+                if(offset_idx == 0)
+                    offset_idx = k +1;
+                break;
+            }
+        }
+
+        char * name = malloc(start_addr_idx);
+        memcpy(name, line, start_addr_idx);
+        module_infos[module_info_idx].name = name;
+
+        target_ulong start_addr;
+        sscanf(line + start_addr_idx, "%x", &start_addr);
+        module_infos[module_info_idx].start_addr = start_addr;
+        
+        int module_size = 0;
+        sscanf(line + size_idx, "%x", &module_size);
+        module_infos[module_info_idx].size = module_size;
+      
+        int offset = 0;
+        if (*(line + offset_idx) == '-'){
+            sscanf(line + offset_idx + 1, "%x", &offset);
+            module_infos[module_info_idx].offset = -offset;
+        }else{
+            sscanf(line + offset_idx, "%x", &offset);
+            module_infos[module_info_idx].offset = offset;
+        }
+
+        monitor_printf(mon, "%s, %x, %x, %d\n", module_infos[module_info_idx].name, module_infos[module_info_idx].start_addr, module_infos[module_info_idx].size, module_infos[module_info_idx].offset);
+
+        module_info_idx ++;
+    }
+    
+    fclose(file);
+}
+
+static void get_min_max_addr()
+{
+    if (module_info_idx == 0) 
+        return;
+    
+    module_min = module_infos[0].start_addr;
+    module_max = module_infos[0].start_addr + module_infos[0].size;
+
+    int i;
+    for (i =1 ; i < module_info_idx; i ++){
+        if (module_infos[i].start_addr < module_min)
+            module_min = module_infos[i].start_addr;
+        
+        if ( module_infos[i].start_addr + module_infos[i].size > module_max)
+            module_max = module_infos[i].start_addr + module_infos[i].size;
+    }
+}
+//yufei.end
+
+
 static void do_vmmi_start(Monitor *mon, const QDict *qdict)
 {
     const char *snapshot_fname = qdict_get_str(qdict, "snapshot_fname");
-	sprintf(sname, "%s_update", snapshot_fname);
+    sprintf(sname, "%s_update", snapshot_fname);
     const char *cr3_fname = qdict_get_str(qdict, "cr3_fname");
-	vmmi_profile = qdict_get_int(qdict, "profile");
-//	vmmi_profile=1;
+    vmmi_profile = qdict_get_int(qdict, "profile");
 
+    //yufei.begin
+    const char * snapshot_local = "snapshot_local";
+    mem_save(256 * 1024 * 1024, snapshot_local);
+    gen_module_offset(mon, snapshot_local, snapshot_fname);
+    read_module_offset(mon, "module_offset");
+    get_min_max_addr();
+    monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
+    //yufei.end
 
     FILE *f;
 
-//inst_dis_log = fopen("inst.log", "w");
-  	vmmi_log = fopen("debug_log","a+");
-
+    //inst_dis_log = fopen("inst.log", "w");
+    vmmi_log = fopen("debug_log","a+");
 
     f = fopen(cr3_fname,"r");
-	if(f==NULL){
-		monitor_printf(mon, "file %s not exist %x\n", cr3_fname);
-		return;
-	}
+    if(f==NULL){
+        monitor_printf(mon, "file %s not exist %x\n", cr3_fname);
+        return;
+    }
     fscanf(f,"%x", &vmmi_cr3);
     monitor_printf(mon, "cr3 = %x\n", vmmi_cr3);
     fclose(f);
