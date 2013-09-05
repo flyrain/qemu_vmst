@@ -1762,19 +1762,38 @@ struct module_info module_infos[100];
 target_ulong module_min;
 target_ulong module_max;
 
+extern uint32_t sys_need_red;
+extern uint32_t vmmi_start;
+extern uint32_t vmmi_main_start;
+extern target_ulong vmmi_process_cr3;
+extern int is_module_need_red;
+
 target_ulong module_revise(target_ulong snapshot_addr)
 {
+    if (!(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
+          && sys_need_red ==1))
+        return snapshot_addr;
+    
+    if (is_module_need_red == 0)
+        return snapshot_addr;
+
+    is_module_need_red = 0;//reset
+
     if (module_info_idx == 0 ) 
         return snapshot_addr;
+
     if ( snapshot_addr < module_min || snapshot_addr > module_max)
         return snapshot_addr;
+
     int i;
     for (i =0 ; i < module_info_idx; i ++){
         if (snapshot_addr > module_infos[i].start_addr && 
             snapshot_addr <= module_infos[i].start_addr + module_infos[i].size){
+            qemu_log("%x %x",snapshot_addr, snapshot_addr + module_infos[i].offset);
             return snapshot_addr + module_infos[i].offset;
         }
     }
+    
     return snapshot_addr;
 }
 

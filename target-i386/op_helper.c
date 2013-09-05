@@ -6121,16 +6121,14 @@ xed_decoded_inst_t xedd;
 /* XED2 initialization */
 void xed2_init()
 {
-	    xed_tables_init();
-	    xed_state_zero(&dstate);
+    xed_tables_init();
+    xed_state_zero(&dstate);
 
-  	    xed_state_init(&dstate,
-        XED_MACHINE_MODE_LEGACY_32,
-        XED_ADDRESS_WIDTH_32b, XED_ADDRESS_WIDTH_32b);
-		
-
-
+    xed_state_init(&dstate,
+                   XED_MACHINE_MODE_LEGACY_32,
+                   XED_ADDRESS_WIDTH_32b, XED_ADDRESS_WIDTH_32b);
 }
+
 typedef void (*fun)();
 fun iret_handle=NULL;
 
@@ -6200,9 +6198,19 @@ int vmac_memory_write(target_ulong addr, uint8_t *buf, int len)
 }
 
 
+extern int reg_name_modified ; //yufei
+extern int is_reg_module_modified; //yufei
+extern uint32_t pre_reg_value;//yufei
+
+//every pc
 void helper_inst_hook(int a)
 {
     current_pc=a;
+
+    //yufei.begin
+    if (is_reg_module_modified == 1)
+      cpu_single_env->regs[reg_name_modified] = pre_reg_value;
+    //yufei.end
 
     //yufei.begin
     /*

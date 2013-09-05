@@ -92,7 +92,7 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
     unsigned long physaddr;
     int mmu_idx;
     
-    ptr = module_revise(ptr); //yufei
+    //ptr = module_revise(ptr); //yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;
@@ -109,7 +109,7 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
 	    } else {
 			physaddr = addr + env->vmmi_tlb_table[mmu_idx][page_index].addend;
 			res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)physaddr);
-
+                        res = module_revise(res);//yufei
 			#ifdef DEBUG_VMMI
 			fprintf(vmmi_log,"in LD_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
 			#endif
@@ -142,7 +142,7 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
     unsigned long physaddr;
     int mmu_idx;
     
-    ptr = module_revise(ptr); //yufei
+    //ptr = module_revise(ptr); //yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;
@@ -151,25 +151,26 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
 //	if(is_ins_log())
 //     	qemu_log("LD 0x%08x", ptr);
 	
-	#if ACCESS_TYPE == (NB_MMU_MODES)
-	if(is_monitored_vmmi_kernel_data_read(ptr))
-	{
-		vmmi_vtop(addr);
+#if ACCESS_TYPE == (NB_MMU_MODES)
+    if(is_monitored_vmmi_kernel_data_read(ptr))
+      {
+        vmmi_vtop(addr);
 
-		if (unlikely(env->vmmi_tlb_table[mmu_idx][page_index].ADDR_READ !=
-                 (addr & (TARGET_PAGE_MASK | (DATA_SIZE - 1))))) {
-			res = (DATA_STYPE)glue(glue(__ld, SUFFIX), MMUSUFFIX)(addr, mmu_idx);
-	    } else {
-			physaddr = addr + env->vmmi_tlb_table[mmu_idx][page_index].addend;
-	        res = glue(glue(lds, SUFFIX), _raw)((uint8_t *)physaddr);
+        if (unlikely(env->vmmi_tlb_table[mmu_idx][page_index].ADDR_READ !=
+                     (addr & (TARGET_PAGE_MASK | (DATA_SIZE - 1))))) {
+          res = (DATA_STYPE)glue(glue(__ld, SUFFIX), MMUSUFFIX)(addr, mmu_idx);
+        } else {
+          physaddr = addr + env->vmmi_tlb_table[mmu_idx][page_index].addend;
+          res = glue(glue(lds, SUFFIX), _raw)((uint8_t *)physaddr);
+          res = module_revise(res);//yufei
 
-			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in LDs_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
-			#endif
-		}
-	    return res;
-	}
-	#endif
+#ifdef DEBUG_VMMI
+          fprintf(vmmi_log,"in LDs_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
+#endif
+        }
+        return res;
+      }
+#endif
 //zlin.end
     if (unlikely(env->tlb_table[mmu_idx][page_index].ADDR_READ !=
                  (addr & (TARGET_PAGE_MASK | (DATA_SIZE - 1))))) {

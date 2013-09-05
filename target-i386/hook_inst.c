@@ -761,6 +761,14 @@ static void Instrument_ADD(INS xi) {
 static void Instrument_BSWAP(INS ins) {
 }
 
+//yufei.begin
+int is_module_need_red = 0; 
+
+int reg_name_modified ; 
+int is_reg_module_modified = 0; 
+uint32_t pre_reg_value = 0; 
+//yufei.end
+
 static void Instrument_CALL_NEAR(INS ins) {
 	if(get_reg_taint(XED_REG_ESP))
 	set_kernel_stack_address(cpu_single_env->regs[R_ESP]-4);
@@ -780,11 +788,24 @@ static void Instrument_CALL_NEAR(INS ins) {
 		char buf[4];
 		cpu_memory_rw_debug(cpu_single_env, mem_addr, buf,4, 0);
 		pc = *( uint32_t *)buf;
+
+                //yufei.begin
+                if(is_monitored_vmmi_kernel_data_read(mem_addr) )
+                    is_module_need_red = 1;
+                //yufei.end
 			
 	}else if (operand_is_reg(op_name, &reg_id)){
 		int reg  = xed_regmapping[reg_id][0];
 		pc = cpu_single_env->regs[reg];
-			
+
+                //yufei.begin, save value and reg name, when next ins
+                //execute, recover the value.
+                is_module_need_red = 1;
+                pre_reg_value = pc;
+                cpu_single_env->regs[reg] = module_revise(pc);
+                is_reg_module_modified = 1;
+                reg_name_modified = reg;
+                //yufei.end
 
 	}else {
 		pc = xed_decoded_inst_get_branch_displacement(&xedd_g)+current_pc+5;
@@ -928,19 +949,45 @@ static void Instrument_Jcc(INS ins) {
 }
 
 static void Instrument_JMP(INS ins) {
-
-	is_call = 1;
-	return;
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name  = xed_operand_name(op);
-	uint32_t mem_addr;
-	UChar taint;
-
-
+    const xed_operand_t *op = xed_inst_operand(ins, 0);
+    xed_operand_enum_t op_name  = xed_operand_name(op);
+    uint32_t mem_addr;
+    UChar taint;
+    unsigned int pc;
+    xed_reg_enum_t reg_id;
+/*
 	if(operand_is_mem(op_name, &mem_addr, 0, &taint)){
 		taint = taint | get_mem_taint(mem_addr);
 		set_mem_taint(mem_addr, taint);
-	}
+	}*/
+    if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
+        char buf[4];
+        cpu_memory_rw_debug(cpu_single_env, mem_addr, buf,4, 0);
+        pc = *( uint32_t *)buf;
+
+        //yufei.begin
+        if(is_monitored_vmmi_kernel_data_read(mem_addr) )
+          is_module_need_red = 1;
+        //yufei.end
+			
+    }else if (operand_is_reg(op_name, &reg_id)){
+        int reg  = xed_regmapping[reg_id][0];
+        pc = cpu_single_env->regs[reg];
+
+        //yufei.begin, save value and reg name, when next ins
+        //execute, recover the value.
+        is_module_need_red = 1;
+        pre_reg_value = pc;
+        cpu_single_env->regs[reg] = module_revise(pc);
+        is_reg_module_modified = 1;
+        reg_name_modified = reg;
+        //yufei.end
+        
+    }else {
+        pc = xed_decoded_inst_get_branch_displacement(&xedd_g)+current_pc+5;
+    }
+	
+
 }
 
 static void Instrument_LEA(INS xi) {
