@@ -1789,7 +1789,7 @@ target_ulong module_revise(target_ulong snapshot_addr)
     for (i =0 ; i < module_info_idx; i ++){
         if (snapshot_addr > module_infos[i].start_addr && 
             snapshot_addr <= module_infos[i].start_addr + module_infos[i].size){
-            qemu_log("%x %x",snapshot_addr, snapshot_addr + module_infos[i].offset);
+            qemu_log("(module revise:%x %x)",snapshot_addr, snapshot_addr + module_infos[i].offset);
             return snapshot_addr + module_infos[i].offset;
         }
     }
@@ -1797,6 +1797,102 @@ target_ulong module_revise(target_ulong snapshot_addr)
     return snapshot_addr;
 }
 
+
+static int get_patch_addrs(char * module_name, target_ulong * addrs, int * addrs_idx)
+{
+    int ret = 0;
+    char * suffix = ".rel";
+    char * filename = malloc(strlen(module_name) + strlen(suffix));
+    memcpy(filename, module_name, strlen(module_name));
+    memcpy(filename + strlen(module_name), suffix, strlen(suffix));
+    
+    struct stat fstat;
+    if (stat(filename, &fstat) != 0) {
+        ret = -1;
+        goto final;
+    }
+
+    FILE *file = fopen(filename, "r");
+    if ( file == NULL){
+        ret = -1;
+        goto final;
+    }
+
+    char line[100];
+    while (fgets(line, sizeof line, file) != NULL) {  
+        if (strcmp(line, "RELOCATION RECORDS FOR [.exit.text]:\n") == 0)
+            break;
+
+        char * keyword = "R_386_32";
+        if(memcmp(line + 9, keyword, strlen(keyword)) == 0){
+           line[8] == '\0';
+           sscanf(line, "%x", addrs + (*addrs_idx));
+           (*addrs_idx) ++;
+        }
+    }
+
+
+ final:
+    free(filename);
+    return ret;
+}
+
+// patch/unpatch module, if is_patch is 1, then patch it, else unpatch it.
+static int patch_module(char * module_name, int is_patch)
+{
+    target_ulong addrs[1000];
+    int i ;
+    for (i =0; i < 1000; i++ ) 
+        addrs[i] = 0;
+    int addrs_idx = 0;
+    get_patch_addrs(module_name, addrs,  &addrs_idx);
+
+    struct module_info *module_item = 0;
+    
+    for (i =0 ; i < module_info_idx; i ++){
+        if (memcmp(module_infos[i].name, module_name, strlen(module_name)) == 0){
+            module_item = &module_infos[i];
+        }
+    }
+    
+    if( module_item == 0 ) 
+        return -1;
+    
+    for (i =0; i< addrs_idx; i++){
+        //R_386_32 and value in some modules
+        target_ulong addr =  module_item -> start_addr + addrs[i];
+        //read value of memory 
+        uint32_t value = 0;
+        cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 0);
+        if (value >= module_item -> start_addr && value < module_item -> start_addr + module_item -> size){
+            //apply offset
+            if (is_patch)
+                value = value - module_item -> offset;
+            else 
+                value = value + module_item -> offset;
+            //write into memory
+            cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 1);
+        }
+    }
+    return 0;
+}
+
+//patch all modules
+int patch_modules(int is_patch)
+{
+    return;
+    qemu_log("Patch module");
+
+    int ret = -1;
+    ret = patch_module("ext3", is_patch);
+    if (ret != 0 )
+        qemu_log("Patch module %s %d failed.","ext3", is_patch);
+
+    ret = patch_module("dm_mod", is_patch);
+    if (ret != 0 )
+        qemu_log("Patch module %s %d failed.", "dm_mod", is_patch);
+
+}
 
 static int read_module_offset(Monitor *mon, const char * filename)
 {

@@ -194,7 +194,7 @@ static inline void glue(glue(st, SUFFIX), MEMSUFFIX)(target_ulong ptr, RES_TYPE 
     unsigned long physaddr;
     int mmu_idx;
 
-    ptr = module_revise(ptr);
+    // ptr = module_revise(ptr);//yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;

@@ -664,43 +664,43 @@ void helper_check_iol(uint32_t t0)
 
 void helper_outb(uint32_t port, uint32_t data)
 {
-	if(qemu_log_enabled())
-          qemu_log("outb write %x to %x\n", data & 0xff, port);
+  //if(qemu_log_enabled())
+  //      qemu_log("outb write %x to %x\n", data & 0xff, port);
     cpu_outb(port, data & 0xff);
 }
 
 target_ulong helper_inb(uint32_t port)
 {
-	if(qemu_log_enabled())
-		qemu_log("inb read %x\n", port);
+  //	if(qemu_log_enabled())
+  //		qemu_log("inb read %x\n", port);
     return cpu_inb(port);
 }
 
 void helper_outw(uint32_t port, uint32_t data)
 {
-	if(qemu_log_enabled())
-          qemu_log("outw write %x to %x\n", data & 0xffff, port);
+  //if(qemu_log_enabled())
+  //      qemu_log("outw write %x to %x\n", data & 0xffff, port);
     cpu_outw(port, data & 0xffff);
 }
 
 target_ulong helper_inw(uint32_t port)
 {
-	if(qemu_log_enabled())
-		qemu_log("inw read %x\n", port);
+  //	if(qemu_log_enabled())
+  //qemu_log("inw read %x\n", port);
     return cpu_inw(port);
 }
 
 void helper_outl(uint32_t port, uint32_t data)
 {
-  if(qemu_log_enabled())
-    qemu_log("outl write %x to %x\n", data, port);
+  //if(qemu_log_enabled())
+  //qemu_log("outl write %x to %x\n", data, port);
     cpu_outl(port, data);
 }
 
 target_ulong helper_inl(uint32_t port)
 {
-	if(qemu_log_enabled())
-		qemu_log("inl read %x\n", port);
+  //	if(qemu_log_enabled())
+  //		qemu_log("inl read %x\n", port);
     return cpu_inl(port);
 }
 

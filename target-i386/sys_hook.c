@@ -175,6 +175,8 @@ void pit_send();
 extern char inst_buff[];
 char inst_buff2[16];
 char inst_buff3[16];
+extern int patch_modules(int is_patch); //yufei
+
 void syscall_hook(uint32_t syscall_op)
 {
 
@@ -196,6 +198,11 @@ void syscall_hook(uint32_t syscall_op)
         if(qemu_log_enabled())
             qemu_log(" monitor exit");
 #endif
+        //yufei.begin
+        if (sys_need_red ==1)  
+           patch_modules(0); 
+        //yufei.end
+
         set_sys_need_red(0);
         vmmi_start = 0;
         vmmi_main_start = 0;
@@ -248,6 +255,7 @@ void syscall_hook(uint32_t syscall_op)
         {
             file_flag = 1;
             set_sys_need_red(1);
+            patch_modules(1); //yufei
         }
 
     }
