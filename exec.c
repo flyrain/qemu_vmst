@@ -4250,25 +4250,7 @@ void cpu_physical_memory_rw2(target_phys_addr_t addr, uint8_t *buf,
     ram_addr_t pd;
     PhysPageDesc *p;
 
-    //yang
-    extern char * vmmi_mem_shadow;
-    extern uint32_t vmmi_profile;
-    extern uint32_t snapshot_size; 
-    if(sys_need_red && vmmi_profile)
-      {
-        if(addr>=snapshot_size)
-          {
-            printf("Error physical address %x \n", addr);
-            return;
-          }
-        if(is_write)
-          memcpy(vmmi_mem_shadow+addr, buf, len);
-        else
-          memcpy(buf, vmmi_mem_shadow+addr, len);
-        return;
-      }
-    //yang.end
-
+  
     while (len > 0) {
         page = addr & TARGET_PAGE_MASK;
         l = (page + TARGET_PAGE_SIZE) - addr;
@@ -5041,7 +5023,7 @@ int cpu_memory_rw_debug(CPUState *env, target_ulong addr,
         if (is_write)
             cpu_physical_memory_write_rom(phys_addr, buf, l);
         else
-            cpu_physical_memory_rw(phys_addr, buf, l, is_write);
+            cpu_physical_memory_rw2(phys_addr, buf, l, is_write);
         len -= l;
         buf += l;
         addr += l;

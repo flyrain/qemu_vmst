@@ -6292,6 +6292,7 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
             gen_movtl_T0_im(next_eip);
             gen_push_T0(s);
             gen_jmp(s, tval);
+            //  qemu_log("next_eip %x, tval %x\n", next_eip, tval); //yufei
         }
         break;
     case 0x9a: /* lcall im */

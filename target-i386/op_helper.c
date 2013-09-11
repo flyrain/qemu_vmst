@@ -6398,7 +6398,9 @@ void helper_inst_hook(int a)
 				&& qemu_log_enabled()
 			  )
 			{
-				my_monitor_disas(a);
+                          //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
+                          //qemu_log("%s",str); //yufei
+                          my_monitor_disas(a); 
 			}
 
 			if(
