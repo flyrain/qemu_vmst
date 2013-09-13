@@ -900,14 +900,11 @@ void ide_ioport_write(void *opaque, uint32_t addr, uint32_t val)
         //yufei.begin
         extern uint32_t sys_need_red;
         extern uint32_t vmmi_profile;
-        if(sys_need_red)
-        {
-          if(vmmi_profile){
+        if(sys_need_red && vmmi_profile){
             bus->unit=1;
             extern FILE *logfile;
             if(logfile!=NULL)
               fprintf(logfile, "set up bus number 1\n");
-          }
         }
         //yufei.end
 

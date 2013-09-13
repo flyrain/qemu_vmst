@@ -1736,15 +1736,15 @@ char sname[128];
 //yufei.start
 static int gen_module_offset(Monitor *mon, const char * snapshot_local, const char * snapshot_target){
     char cmd[200];
-    sprintf(cmd, "../../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_local, snapshot_local);
+    sprintf(cmd, "../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_local, snapshot_local);
     monitor_printf(mon, "%s\n", cmd);
     system(cmd);
 
-    sprintf(cmd, "../../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_target, snapshot_target);
+    sprintf(cmd, "../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_target, snapshot_target);
     monitor_printf(mon, "%s\n", cmd);
     system(cmd);
 
-    sprintf(cmd, "python ../../sig-gen/src/match-module.py ../../sig-gen/src/sig-md5 %s_md5 %s_md5 > module_offset",snapshot_local, snapshot_target);
+    sprintf(cmd, "python ../sig-gen/src/match-module.py ../sig-gen/src/sig-md5 %s_md5 %s_md5 > module_offset",snapshot_local, snapshot_target);
     monitor_printf(mon, "%s\n", cmd);
     system(cmd);
 }
@@ -1774,6 +1774,9 @@ target_ulong module_revise(target_ulong snapshot_addr)
           && sys_need_red ==1))
         return snapshot_addr;
     
+    if(vmmi_profile != 1)
+        return snapshot_addr;
+
     if (is_module_need_red == 0)
         return snapshot_addr;
 
@@ -1878,19 +1881,34 @@ static int patch_module(char * module_name, int is_patch)
 }
 
 //patch all modules
-int patch_modules(int is_patch)
+int patch_modules()
 {
-    return;
-    qemu_log("Patch module");
+    static int is_patched = 0;
+
+    if(vmmi_profile != 1)
+        return;
+    if (!(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3]))
+        return;
+
+    if(is_patched == 0 )
+        is_patched = 1;
+    else 
+        is_patched = 0;
+
+    qemu_log("Patch modules");
 
     int ret = -1;
-    ret = patch_module("ext3", is_patch);
+    ret = patch_module("ext3", is_patched);
     if (ret != 0 )
-        qemu_log("Patch module %s %d failed.","ext3", is_patch);
+        qemu_log("Patch module %s %d failed.","ext3", is_patched);
+    else
+        qemu_log("Patch module %s %d.","ext3", is_patched);
 
-    ret = patch_module("dm_mod", is_patch);
+    ret = patch_module("dm_mod", is_patched);
     if (ret != 0 )
-        qemu_log("Patch module %s %d failed.", "dm_mod", is_patch);
+        qemu_log("Patch module %s %d failed.", "dm_mod", is_patched);
+    else
+        qemu_log("Patch module %s %d.","dm_mod", is_patched);
 
 }
 
@@ -1997,12 +2015,14 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
     vmmi_profile = qdict_get_int(qdict, "profile");
 
     //yufei.begin
-    const char * snapshot_local = "snapshot_local";
-    mem_save(256 * 1024 * 1024, snapshot_local);
-    gen_module_offset(mon, snapshot_local, snapshot_fname);
-    read_module_offset(mon, "module_offset");
-    get_min_max_addr();
-    monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
+    if (vmmi_profile == 1){
+        const char * snapshot_local = "snapshot_local";
+        mem_save(256 * 1024 * 1024, snapshot_local);
+        gen_module_offset(mon, snapshot_local, snapshot_fname);
+        read_module_offset(mon, "module_offset");
+        get_min_max_addr();
+        monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
+    }
     //yufei.end
 
     FILE *f;
