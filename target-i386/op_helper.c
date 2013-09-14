@@ -5091,7 +5091,7 @@ void tlb_fill(target_ulong addr, int is_write, int mmu_idx, void *retaddr)
     ret = cpu_x86_handle_mmu_fault(env, addr, is_write, mmu_idx);
     if (ret) {
 		if(qemu_log_enabled())
-			qemu_log("ERROR:real page fault %x\n", addr);
+                  qemu_log("ERROR:real page fault %x, %d\n", addr, env->error_code);
 		
         if (retaddr) {
 
@@ -6208,8 +6208,10 @@ void helper_inst_hook(int a)
     current_pc=a;
 
     //yufei.begin
-    if (is_reg_module_modified == 1)
+    if (is_reg_module_modified == 1){
       cpu_single_env->regs[reg_name_modified] = pre_reg_value;
+      is_reg_module_modified = 0;
+    }
     //yufei.end
 
     //yufei.begin
@@ -6400,7 +6402,8 @@ void helper_inst_hook(int a)
 			{
                           //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
                           //qemu_log("%s",str); //yufei
-                          my_monitor_disas(a); 
+                          
+                          my_monitor_disas(a); qemu_log(" Recx %x, ebx %x, edx %x", ECX, EBX, EDX);
 			}
 
 			if(

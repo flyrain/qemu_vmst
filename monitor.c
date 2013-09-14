@@ -1883,6 +1883,7 @@ static int patch_module(char * module_name, int is_patch)
 //patch all modules
 int patch_modules()
 {
+    //    return;
     static int is_patched = 0;
 
     if(vmmi_profile != 1)
