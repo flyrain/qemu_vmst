@@ -6237,15 +6237,18 @@ static target_ulong getKthread()
 }
 //yufei.end
 
-extern int reg_name_modified ; //yufei
-extern int is_reg_module_modified; //yufei
-extern uint32_t pre_reg_value;//yufei
-extern uint32_t file_flag ; //yufei
-target_ulong current_task;
+//yufei.begin
+extern int reg_name_modified ; 
+extern int is_reg_module_modified; 
+extern uint32_t pre_reg_value;
+extern uint32_t file_flag ; 
+target_ulong current_task;  
+//yufei.end
+
 //every pc
 void helper_inst_hook(int a)
 {
-    current_pc=a;
+    current_pc = a;
 
     //yufei.begin
     if (is_reg_module_modified == 1){
@@ -6254,9 +6257,12 @@ void helper_inst_hook(int a)
     }
     //yufei.end
 
-
-    if(current_pc == c125e1e4){
-      EAX = current_task;
+    static int schedule_count = 0;
+    //second times, recover it.
+    if(current_pc == 0xc125e1e4){
+        schedule_count ++;
+        if( schedule_count == 2)
+            EAX = current_task;
     }
       
 
