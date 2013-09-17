@@ -176,6 +176,7 @@ extern char inst_buff[];
 char inst_buff2[16];
 char inst_buff3[16];
 extern int patch_modules(); //yufei
+extern target_ulong current_task; //yufei
 
 void syscall_hook(uint32_t syscall_op)
 {
@@ -256,6 +257,8 @@ void syscall_hook(uint32_t syscall_op)
             file_flag = 1;
             set_sys_need_red(1);
             patch_modules(); //yufei
+            
+            vmac_memory_read(0xc1801454, &current_task, 4);//yufei
         }
 
     }

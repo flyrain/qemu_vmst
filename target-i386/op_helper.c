@@ -6013,7 +6013,7 @@ void helper_store(target_ulong value, target_ulong addr, int size)
 	if(size ==3) size++;
 
         if(is_ins_log()){
-		qemu_log(" ST:0x%08x: (0x%08x)", addr, value);
+          qemu_log(" ST:0x%08x: (0x%08x) pc: %x", addr, value, current_pc);
 	}
 }
 
@@ -6198,10 +6198,50 @@ int vmac_memory_write(target_ulong addr, uint8_t *buf, int len)
 }
 
 
+//yufei.begin
+//traverse the whole threads.
+static target_ulong getKthread()
+{
+    int i=0;
+    uint32_t stack= env->regs[R_ESP]&0xffffe000;
+    uint32_t task;
+    uint32_t pid;
+    uint32_t mm;
+    uint32_t pgd;
+    uint32_t next;
+    uint32_t list;
+    char comm[16] = {};
+
+    cpu_memory_rw_debug(env, stack, &task, 4,0);
+    next=task;
+
+    //printf("process is 0x%08x, 0x%08x, 0x%08x\n", vmmi_process_cr3, new_cr3, cpu_single_env->cr[3] );
+    do{
+      cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
+      comm[15]='\0';
+      cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
+      cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
+      //print the task
+      if(strcmp(comm, "kcryptd") == 0){
+          cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
+          qemu_log("find process %x %s %x\n", next, comm, pgd+0x40000000);
+      }
+
+      cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
+      next=list-0xe4;
+      i++;
+      if(i>100)
+        break;
+    }while(next!=task);
+
+}
+//yufei.end
+
 extern int reg_name_modified ; //yufei
 extern int is_reg_module_modified; //yufei
 extern uint32_t pre_reg_value;//yufei
-
+extern uint32_t file_flag ; //yufei
+target_ulong current_task;
 //every pc
 void helper_inst_hook(int a)
 {
@@ -6213,6 +6253,12 @@ void helper_inst_hook(int a)
       is_reg_module_modified = 0;
     }
     //yufei.end
+
+
+    if(current_pc == c125e1e4){
+      EAX = current_task;
+    }
+      
 
     //yufei.begin
     /*
@@ -6243,23 +6289,47 @@ void helper_inst_hook(int a)
       vmac_memory_write(flag_address, &value , 4);
     }
     */
+    
+    /*
+    //get name of kthread
+    if (vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] &&  current_pc == 0xc1041256){
+        char kthread_name[16] = {};
+        cpu_memory_rw_debug(cpu_single_env, EAX + 536 , kthread_name, 16, 0);
+        qemu_log(" kthread name: %s ", kthread_name);
+    }
+    */  
 
-    //start from function schedule(), no redirect data
-    //int schedule_start_addr = 0xc147b621;  // 2.6.32-rc8
-    int schedule_start_addr = 0xc125dcff;  //2.6.32.8
-    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
-       && sys_need_red ==1 && a == schedule_start_addr ) {
+    /*  
+    //schedule no redx
+    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag){
+            
+      //start from function schedule(), no redirect data
+      //int schedule_start_addr = 0xc147b621;  // 2.6.32-rc8
+      target_ulong schedule_start_addr = 0xc125dcff;  //2.6.32.8
+      if( sys_need_red == 1 && a == schedule_start_addr) {
+
         set_sys_need_red(0);
         //get ret address for future redirect again.
-        cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
-    }
+        if(ret_addr == 0)
+          cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
+      }
 
-    //if schedule() ret, need redirect again
-    if (vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
-        && a == ret_addr && sys_need_red == 0 ){
-      set_sys_need_red(1);
-      ret_addr = 0;
+
+      //worker_thread, need red, switch to kthread.
+      target_ulong worker_thread_addr = 0xc103e870; //2.6.32.8
+      if (sys_need_red == 0 && ( current_pc == worker_thread_addr || current_pc == 0xc103e850 ) ){
+        getKthread();
+        //TODO 
+        set_sys_need_red(1);
+      }
+    
+      //if schedule() ret, need redirect again
+      if (current_pc == ret_addr && sys_need_red == 0){
+        set_sys_need_red(1);
+        ret_addr = 0;
+      }
     }
+    */
     //yufei.end
 
 #ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
@@ -6307,17 +6377,30 @@ void helper_inst_hook(int a)
 		&&vmmi_process_cr3 ==cpu_single_env->cr[3]
 	   )
 	 {
-	 	cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
-		xed_decoded_inst_zero_set_mode(&xedd_g, &dstate);
+             cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
+             xed_decoded_inst_zero_set_mode(&xedd_g, &dstate);
 
-     	xed_error_enum_t xed_error = xed_decode(&xedd_g,
-                         STATIC_CAST(const xed_uint8_t *,  buf), 15); 
+             xed_error_enum_t xed_error = xed_decode(&xedd_g,
+                                                     STATIC_CAST(const xed_uint8_t *,  buf), 15); 
 
-     	if (xed_error == XED_ERROR_NONE) {
-				xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
+             if(
+                !is_interrupt
+                && sys_need_red
+                && qemu_log_enabled()
+                //                && file_flag
+                )
+               {
+                 //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
+                 //qemu_log("%s",str); //yufei
+                 my_monitor_disas(a); 
+                 //qemu_log(" Recx %x, ebx %x, edx %x", ECX, EBX, EDX);//yufei
+               }
+
+             if (xed_error == XED_ERROR_NONE) {
+               xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
 
 #ifdef DEBUG_VMMI	
-			if(
+                 if(
 				0&&
 				qemu_log_enabled()
 				&&vmmi_start
@@ -6394,17 +6477,7 @@ void helper_inst_hook(int a)
 					qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
 			}
 #endif
-			if(
-				!is_interrupt
-	         		&& sys_need_red
-				&& qemu_log_enabled()
-			  )
-			{
-                          //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
-                          //qemu_log("%s",str); //yufei
-                          
-                          my_monitor_disas(a); qemu_log(" Recx %x, ebx %x, edx %x", ECX, EBX, EDX);
-			}
+
 
 			if(
 	//			start_trace&&

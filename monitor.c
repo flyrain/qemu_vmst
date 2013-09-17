@@ -1911,6 +1911,12 @@ int patch_modules()
     else
         qemu_log("Patch module %s %d.","dm_mod", is_patched);
 
+    ret = patch_module("ide_core", is_patched);
+    if (ret != 0 )
+        qemu_log("Patch module %s %d failed.", "ide_core", is_patched);
+    else
+        qemu_log("Patch module %s %d.","ide_core", is_patched);
+
 }
 
 static int read_module_offset(Monitor *mon, const char * filename)
