@@ -92,7 +92,6 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
     unsigned long physaddr;
     int mmu_idx;
     
-    //ptr = module_revise(ptr); //yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;
@@ -109,7 +108,7 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
 	    } else {
 			physaddr = addr + env->vmmi_tlb_table[mmu_idx][page_index].addend;
 			res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)physaddr);
-                        res = module_revise(res);//yufei
+            res = module_revise(res);//yufei
 			#ifdef DEBUG_VMMI
 			fprintf(vmmi_log,"in LD_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
 			#endif
@@ -142,7 +141,6 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
     unsigned long physaddr;
     int mmu_idx;
     
-    //ptr = module_revise(ptr); //yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;
@@ -194,7 +192,6 @@ static inline void glue(glue(st, SUFFIX), MEMSUFFIX)(target_ulong ptr, RES_TYPE 
     unsigned long physaddr;
     int mmu_idx;
 
-    // ptr = module_revise(ptr);//yufei
     addr = ptr;
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = CPU_MMU_INDEX;

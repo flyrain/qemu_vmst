@@ -789,23 +789,23 @@ static void Instrument_CALL_NEAR(INS ins) {
 		cpu_memory_rw_debug(cpu_single_env, mem_addr, buf,4, 0);
 		pc = *( uint32_t *)buf;
 
-                //yufei.begin
-                if(is_monitored_vmmi_kernel_data_read(mem_addr) )
-                    is_module_need_red = 1;
-                //yufei.end
+        //yufei.begin
+        if(is_monitored_vmmi_kernel_data_read(mem_addr) )
+            is_module_need_red = 1;
+        //yufei.end
 			
 	}else if (operand_is_reg(op_name, &reg_id)){
 		int reg  = xed_regmapping[reg_id][0];
 		pc = cpu_single_env->regs[reg];
 
-                //yufei.begin, save value and reg name, when next ins
-                //execute, recover the value.
-                is_module_need_red = 1;
-                pre_reg_value = pc;
-                cpu_single_env->regs[reg] = module_revise(pc);
-                is_reg_module_modified = 1;
-                reg_name_modified = reg;
-                //yufei.end
+        //yufei.begin, save value and reg name, when next ins
+        //execute, recover the value.
+        is_module_need_red = 1;
+        pre_reg_value = pc;
+        cpu_single_env->regs[reg] = module_revise(pc);
+        is_reg_module_modified = 1;
+        reg_name_modified = reg;
+        //yufei.end
 
 	}else {
 		pc = xed_decoded_inst_get_branch_displacement(&xedd_g)+current_pc+5;

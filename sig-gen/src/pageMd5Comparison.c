@@ -66,12 +66,12 @@ void genMd5WithOffset(void *startAdress, int pageSize, unsigned vaddr,
     printf("\n");
 
     /*
-       int i;
-       for (i = 0; i < 16; i++)
-       fprintf(kernel_code_sig, "%02x", md5digest[i]);
-       fprintf(kernel_code_sig, " %x %u", vaddr, offset / 4096);
-       fprintf(kernel_code_sig, "\n");
-     */
+      int i;
+      for (i = 0; i < 16; i++)
+      fprintf(kernel_code_sig, "%02x", md5digest[i]);
+      fprintf(kernel_code_sig, " %x %u", vaddr, offset / 4096);
+      fprintf(kernel_code_sig, "\n");
+    */
 }
 
 extern unsigned out_pc;
@@ -95,7 +95,7 @@ int containKernelAddres(cluster range, unsigned cr3address[])
         i++;
     }
     if (cr3No > 0)
-          return cr3No;
+        return cr3No;
     return ret;
 }
 
@@ -345,14 +345,14 @@ int getClusters(unsigned startVirtualAddr, Mem * mem, int pageSize,
 //construct range from cluster
 range gen_range(cluster c)
 {
-  range r;
-  r.start = c.start;
-  r.end = c.end;
-  r.len = r.end - r.start;
-  if(r.len < 0 )
-    r.len = 0;
-  r.disasBytes = 0;
-  return r;
+    range r;
+    r.start = c.start;
+    r.end = c.end;
+    r.len = r.end - r.start;
+    if(r.len < 0 )
+        r.len = 0;
+    r.disasBytes = 0;
+    return r;
 }
 
 //read modules information from file /proc/modules, return length of
@@ -377,45 +377,45 @@ int read_modules_info(char *filename)
     while (fgets(line, sizeof line, file) != NULL) {        /* read a
                                                                line */
 //      printf("%s", line);
-      int k;
-      int space_count = 0;
-      unsigned start_addr;
-      int module_size = 0;
-      int size_start_idx = -1;
-      line[strlen(line)-1] = '\0'; //get rid of '\n'
+        int k;
+        int space_count = 0;
+        unsigned start_addr;
+        int module_size = 0;
+        int size_start_idx = -1;
+        line[strlen(line)-1] = '\0'; //get rid of '\n'
 
-      for (k = 0; k < 100; k++){
-        if(line[k]== ' ')
-          space_count ++;
+        for (k = 0; k < 100; k++){
+            if(line[k]== ' ')
+                space_count ++;
 
-        //printf("%d---\n", space_count);
+            //printf("%d---\n", space_count);
 
-        if(space_count == 1 && size_start_idx == -1)
-          size_start_idx = k +1;
+            if(space_count == 1 && size_start_idx == -1)
+                size_start_idx = k +1;
 
-        if(space_count == 2){
-          line[k] = '\0';
-        }
+            if(space_count == 2){
+                line[k] = '\0';
+            }
           
-        if(space_count == 5){
-          sscanf(line+k+1, "%x", &start_addr);
-          break;
+            if(space_count == 5){
+                sscanf(line+k+1, "%x", &start_addr);
+                break;
+            }
         }
-      }
 
-      module_size = atoi(line + size_start_idx);
+        module_size = atoi(line + size_start_idx);
 
-      char * name = malloc(size_start_idx + 1);
-      name[size_start_idx] = '\0';
-      memcpy(name, line, size_start_idx);
+        char * name = malloc(size_start_idx + 1);
+        name[size_start_idx] = '\0';
+        memcpy(name, line, size_start_idx);
 
-      clusters[cluster_len].name = name;
-      clusters[cluster_len].start = start_addr;
-      clusters[cluster_len].end = start_addr + module_size;
-      clusters[cluster_len].pageSize = 4096;
+        clusters[cluster_len].name = name;
+        clusters[cluster_len].start = start_addr;
+        clusters[cluster_len].end = start_addr + module_size;
+        clusters[cluster_len].pageSize = 4096;
 
 //      printf("cluster start:%x, end:%x\n",  clusters[cluster_len].start, clusters[cluster_len].end);
-      cluster_len ++;
+        cluster_len ++;
     }
 
     fclose(file);
@@ -428,92 +428,93 @@ int read_modules_info(char *filename)
  *****************************************************************/
 void gen_md5_signature(Mem * mem)
 {
-  int i;
-  int pageSize = 4 * 1024;    //4k
-  int totalPageNumber = mem->mem_size / (4 * 1024);  //assume page size is 4k
-  unsigned startVirtualAddr = 0x80000000;
+    int i;
+    int pageSize = 4 * 1024;    //4k
+    int totalPageNumber = mem->mem_size / (4 * 1024);  //assume page size is 4k
+    unsigned startVirtualAddr = 0x80000000;
 
-  int calledPages[totalPageNumber];
-  int dsmPages[totalPageNumber];
-  //record virtual address
-  unsigned virtualAddrs[totalPageNumber];
-  for (i = 0; i < totalPageNumber; i++) {
-    calledPages[i] = 0;
-    dsmPages[i] = 0;
-    virtualAddrs[i] = 0;
-  }
+    int calledPages[totalPageNumber];
+    int dsmPages[totalPageNumber];
+    //record virtual address
+    unsigned virtualAddrs[totalPageNumber];
+    for (i = 0; i < totalPageNumber; i++) {
+        calledPages[i] = 0;
+        dsmPages[i] = 0;
+        virtualAddrs[i] = 0;
+    }
 
-  //step1. give clusters by modules information
-  int cluster_idx = 0 ;
-  int all_page(){
-      clusters[0].start = 0xd0000000;
-      clusters[0].end = 0xe0000000;
-      clusters[0].name = "all";
-      clusters[0].pageSize = 4096;
-      return 1;
-  }
+    //step1. give clusters by modules information
+    int cluster_idx = 0 ;
+    int all_page(){
+        clusters[0].start = 0xd0000000;
+        clusters[0].end = 0xe0000000;
+        clusters[0].name = "all";
+        clusters[0].pageSize = 4096;
+        return 1;
+    }
   
-  extern char *modules;
-  extern int isGenerator;
-  int cluster_len = 0;
-  if (isGenerator == 1)
-    cluster_len = read_modules_info(modules);
-  else
-    cluster_len = all_page();
+    extern char *modules;
+    extern int isGenerator;
+    int cluster_len = 0;
+    if (isGenerator == 1)
+        cluster_len = read_modules_info(modules);
+    else
+        cluster_len = all_page();
 
-  for(cluster_idx = 0; cluster_idx < cluster_len; cluster_idx++){
+    for(cluster_idx = 0; cluster_idx < cluster_len; cluster_idx++){
 
-    int page_no= (clusters[cluster_idx].end - clusters[cluster_idx].start) / 0x1000;
-    printf("%x ~ %x, %s, %d\n",  clusters[cluster_idx].start, clusters[cluster_idx].end, clusters[cluster_idx].name, page_no);
+        int page_no= (clusters[cluster_idx].end - clusters[cluster_idx].start) / 0x1000;
+        printf("%x ~ %x, %s, %d\n",  clusters[cluster_idx].start, clusters[cluster_idx].end, clusters[cluster_idx].name, page_no);
 
-    range range_item = gen_range(clusters[cluster_idx]);
+        range range_item = gen_range(clusters[cluster_idx]);
 
-    unsigned codePageNo = 0;
-    unsigned vAddr;
-    for (vAddr = clusters[cluster_idx].start;
-         vAddr < clusters[cluster_idx].end; vAddr += 0x1000) {
-      unsigned pAddr = vtop(mem->mem, mem->mem_size, mem->pgd, vAddr);
-      //puts("here");
-      //if ( vAddr== 0xd0c5a000)
-        printf("vaddr: %x, paddr: %x\n", vAddr, pAddr);
+        unsigned codePageNo = 0;
+        unsigned vAddr;
+        for (vAddr = clusters[cluster_idx].start;
+             vAddr < clusters[cluster_idx].end; vAddr += 0x1000) {
+            unsigned pAddr = vtop(mem->mem, mem->mem_size, mem->pgd, vAddr);
+            //puts("here");
+            //if ( vAddr== 0xd0c5a000)
+            if( pAddr != -1)
+                printf("vaddr: %x, paddr: %x\n", vAddr, pAddr);
 
-      if (vAddr == out_pc)
-        code_init(mem, vAddr, pageSize, dsmPages, virtualAddrs, 1,
-                  calledPages, &codePageNo);
-      else
-        code_init(mem, vAddr, pageSize, dsmPages, virtualAddrs, 0,
-                  calledPages, &codePageNo);
-    }
+            if (vAddr == out_pc)
+                code_init(mem, vAddr, pageSize, dsmPages, virtualAddrs, 1,
+                          calledPages, &codePageNo);
+            else
+                code_init(mem, vAddr, pageSize, dsmPages, virtualAddrs, 0,
+                          calledPages, &codePageNo);
+        }
 
-    //print md5 of pages that can be disassembled
-    for (startVirtualAddr = range_item.start; startVirtualAddr <= range_item.end;
-         startVirtualAddr += 0x1000) {
-      unsigned pAddr =
-        vtop(mem->mem, mem->mem_size, mem->pgd, startVirtualAddr);
-      //      printf("paddr %x\n", pAddr);
-      if (pAddr == -1 || pAddr > mem->mem_size)
-        continue;
+        //print md5 of pages that can be disassembled
+        for (startVirtualAddr = range_item.start; startVirtualAddr <= range_item.end;
+             startVirtualAddr += 0x1000) {
+            unsigned pAddr =
+                vtop(mem->mem, mem->mem_size, mem->pgd, startVirtualAddr);
+            //      printf("paddr %x\n", pAddr);
+            if (pAddr == -1 || pAddr > mem->mem_size)
+                continue;
       
-      int pageIndex = pAddr / pageSize;
-      //printf("page index: %d, dsmPages[pageIndex]: %d, vaddr: %x\n", pageIndex, dsmPages[pageIndex], startVirtualAddr);
-      if (dsmPages[pageIndex] == 1) { 
+            int pageIndex = pAddr / pageSize;
+            //printf("page index: %d, dsmPages[pageIndex]: %d, vaddr: %x\n", pageIndex, dsmPages[pageIndex], startVirtualAddr);
+            if (dsmPages[pageIndex] == 1) { 
 
-        unsigned offset = startVirtualAddr - range_item.start;
-        void *startAdress =
-          (void *) ((unsigned) mem->mem + pageIndex * pageSize);
-        genMd5WithOffset(startAdress, pageSize, startVirtualAddr,
-                         offset);
-      }
-    }
+                unsigned offset = startVirtualAddr - range_item.start;
+                void *startAdress =
+                    (void *) ((unsigned) mem->mem + pageIndex * pageSize);
+                genMd5WithOffset(startAdress, pageSize, startVirtualAddr,
+                                 offset);
+            }
+        }
 
 
 //    float byerate = (float) range_item.disasBytes / (4096 * disasPageNo);
 /*
-    printf
-      ("Success pages: %u/%u disassembled bytes rate: %f, page rate: %f\n",
-       disasPageNo, totalPageNo,
-       (float) range_item.disasBytes / (4096 * disasPageNo),
-       (float) disasPageNo / totalPageNo);
+  printf
+  ("Success pages: %u/%u disassembled bytes rate: %f, page rate: %f\n",
+  disasPageNo, totalPageNo,
+  (float) range_item.disasBytes / (4096 * disasPageNo),
+  (float) disasPageNo / totalPageNo);
 */
-  }
+    }
 }

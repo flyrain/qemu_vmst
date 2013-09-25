@@ -1792,7 +1792,7 @@ target_ulong module_revise(target_ulong snapshot_addr)
     for (i =0 ; i < module_info_idx; i ++){
         if (snapshot_addr > module_infos[i].start_addr && 
             snapshot_addr <= module_infos[i].start_addr + module_infos[i].size){
-            qemu_log("(module revise:%x %x)",snapshot_addr, snapshot_addr + module_infos[i].offset);
+            qemu_log("(module %s revise:%x %x)",module_infos[i].name, snapshot_addr, snapshot_addr + module_infos[i].offset);
             return snapshot_addr + module_infos[i].offset;
         }
     }
@@ -1804,10 +1804,15 @@ target_ulong module_revise(target_ulong snapshot_addr)
 static int get_patch_addrs(char * module_name, target_ulong * addrs, int * addrs_idx)
 {
     int ret = 0;
+    char * path = "./data/";
     char * suffix = ".rel";
-    char * filename = malloc(strlen(module_name) + strlen(suffix));
-    memcpy(filename, module_name, strlen(module_name));
-    memcpy(filename + strlen(module_name), suffix, strlen(suffix));
+    int filename_len = strlen(path) + strlen(module_name) + strlen(suffix) + 1;
+    char * filename = malloc(filename_len);
+    filename[filename_len -1 ] = '\0';
+    memcpy(filename, path, strlen(path));
+    memcpy(filename + strlen(path), module_name, strlen(module_name));
+    memcpy(filename + strlen(path) + strlen(module_name), suffix, strlen(suffix));
+    qemu_log(" filename: %s ", filename);
     
     struct stat fstat;
     if (stat(filename, &fstat) != 0) {
@@ -1850,6 +1855,7 @@ static int patch_module(char * module_name, int is_patch)
     int addrs_idx = 0;
     get_patch_addrs(module_name, addrs,  &addrs_idx);
 
+    qemu_log(" addrs_idx %d ", addrs_idx);
     struct module_info *module_item = 0;
     
     for (i =0 ; i < module_info_idx; i ++){
@@ -1863,11 +1869,14 @@ static int patch_module(char * module_name, int is_patch)
     
     for (i =0; i< addrs_idx; i++){
         //R_386_32 and value in some modules
-        target_ulong addr =  module_item -> start_addr + addrs[i];
+        target_ulong addr =  module_item -> start_addr + module_item -> offset  + addrs[i];
         //read value of memory 
         uint32_t value = 0;
         cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 0);
-        if (value >= module_item -> start_addr && value < module_item -> start_addr + module_item -> size){
+
+            
+        if (value >= module_item -> start_addr + module_item -> offset 
+            && value < module_item -> start_addr + module_item -> size + module_item -> offset){
             //apply offset
             if (is_patch)
                 value = value - module_item -> offset;
@@ -1896,27 +1905,19 @@ int patch_modules()
     else 
         is_patched = 0;
 
-    qemu_log("Patch modules");
+    qemu_log("Patch modules\n");
 
-    int ret = -1;
-    ret = patch_module("ext3", is_patched);
-    if (ret != 0 )
-        qemu_log("Patch module %s %d failed.","ext3", is_patched);
-    else
-        qemu_log("Patch module %s %d.","ext3", is_patched);
+    char * modules[] = {"ext3", "dm_mod", "dm_crypt", "ide_core", "ide_gd_mod"};
 
-    ret = patch_module("dm_mod", is_patched);
-    if (ret != 0 )
-        qemu_log("Patch module %s %d failed.", "dm_mod", is_patched);
-    else
-        qemu_log("Patch module %s %d.","dm_mod", is_patched);
-
-    ret = patch_module("ide_core", is_patched);
-    if (ret != 0 )
-        qemu_log("Patch module %s %d failed.", "ide_core", is_patched);
-    else
-        qemu_log("Patch module %s %d.","ide_core", is_patched);
-
+    int i; 
+    for(i = 0; i < sizeof(modules)/4; i ++){
+        int ret = -1;
+        ret = patch_module(modules[i], is_patched);
+        if (ret != 0 )
+            qemu_log("Patch module %s %d failed.\n", modules[i], is_patched);
+        else
+            qemu_log("Patch module %s %d success.\n", modules[i], is_patched);
+    }
 }
 
 static int read_module_offset(Monitor *mon, const char * filename)

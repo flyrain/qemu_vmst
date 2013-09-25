@@ -35,8 +35,8 @@
 
 #ifdef DEBUG_PCALL
 #  define LOG_PCALL(...) qemu_log_mask(CPU_LOG_PCALL, ## __VA_ARGS__)
-#  define LOG_PCALL_STATE(env) \
-          log_cpu_state_mask(CPU_LOG_PCALL, (env), X86_DUMP_CCOP)
+#  define LOG_PCALL_STATE(env)                              \
+    log_cpu_state_mask(CPU_LOG_PCALL, (env), X86_DUMP_CCOP)
 #else
 #  define LOG_PCALL(...) do { } while (0)
 #  define LOG_PCALL_STATE(env) do { } while (0)
@@ -139,11 +139,11 @@ static inline void cpu_load_efer(CPUState *env, uint64_t val)
 }
 
 #if 0
-#define raise_exception_err(a, b)\
-do {\
-    qemu_log("raise_exception line=%d\n", __LINE__);\
-    (raise_exception_err)(a, b);\
-} while (0)
+#define raise_exception_err(a, b)                           \
+    do {                                                    \
+        qemu_log("raise_exception line=%d\n", __LINE__);    \
+        (raise_exception_err)(a, b);                        \
+    } while (0)
 #endif
 
 static void QEMU_NORETURN raise_exception_err(int exception_index,
@@ -188,7 +188,7 @@ static const uint8_t parity_table[256] = {
 static const uint8_t rclw_table[32] = {
     0, 1, 2, 3, 4, 5, 6, 7,
     8, 9,10,11,12,13,14,15,
-   16, 0, 1, 2, 3, 4, 5, 6,
+    16, 0, 1, 2, 3, 4, 5, 6,
     7, 8, 9,10,11,12,13,14,
 };
 
@@ -358,9 +358,9 @@ static void tss_load_seg(int seg_reg, int selector)
         if (!(e2 & DESC_P_MASK))
             raise_exception_err(EXCP0B_NOSEG, selector & 0xfffc);
         cpu_x86_load_seg_cache(env, seg_reg, selector,
-                       get_seg_base(e1, e2),
-                       get_seg_limit(e1, e2),
-                       e2);
+                               get_seg_base(e1, e2),
+                               get_seg_limit(e1, e2),
+                               e2);
     } else {
         if (seg_reg == R_SS || seg_reg == R_CS)
             raise_exception_err(EXCP0A_TSS, selector & 0xfffc);
@@ -451,8 +451,8 @@ static void switch_tss(int tss_selector,
         new_trap = 0;
     }
     /* XXX: avoid a compiler warning, see
-     http://support.amd.com/us/Processor_TechDocs/24593.pdf
-     chapters 12.2.5 and 13.2.4 on how to implement TSS Trap bit */
+       http://support.amd.com/us/Processor_TechDocs/24593.pdf
+       chapters 12.2.5 and 13.2.4 on how to implement TSS Trap bit */
     (void)new_trap;
 
     /* NOTE: we must avoid memory exceptions during the task switch,
@@ -664,43 +664,43 @@ void helper_check_iol(uint32_t t0)
 
 void helper_outb(uint32_t port, uint32_t data)
 {
-  //if(qemu_log_enabled())
-  //      qemu_log("outb write %x to %x\n", data & 0xff, port);
+    //if(qemu_log_enabled())
+    //      qemu_log("outb write %x to %x\n", data & 0xff, port);
     cpu_outb(port, data & 0xff);
 }
 
 target_ulong helper_inb(uint32_t port)
 {
-  //	if(qemu_log_enabled())
-  //		qemu_log("inb read %x\n", port);
+    //	if(qemu_log_enabled())
+    //		qemu_log("inb read %x\n", port);
     return cpu_inb(port);
 }
 
 void helper_outw(uint32_t port, uint32_t data)
 {
-  //if(qemu_log_enabled())
-  //      qemu_log("outw write %x to %x\n", data & 0xffff, port);
+    //if(qemu_log_enabled())
+    //      qemu_log("outw write %x to %x\n", data & 0xffff, port);
     cpu_outw(port, data & 0xffff);
 }
 
 target_ulong helper_inw(uint32_t port)
 {
-  //	if(qemu_log_enabled())
-  //qemu_log("inw read %x\n", port);
+    //	if(qemu_log_enabled())
+    //qemu_log("inw read %x\n", port);
     return cpu_inw(port);
 }
 
 void helper_outl(uint32_t port, uint32_t data)
 {
-  //if(qemu_log_enabled())
-  //qemu_log("outl write %x to %x\n", data, port);
+    //if(qemu_log_enabled())
+    //qemu_log("outl write %x to %x\n", data, port);
     cpu_outl(port, data);
 }
 
 target_ulong helper_inl(uint32_t port)
 {
-  //	if(qemu_log_enabled())
-  //		qemu_log("inl read %x\n", port);
+    //	if(qemu_log_enabled())
+    //		qemu_log("inl read %x\n", port);
     return cpu_inl(port);
 }
 
@@ -715,29 +715,29 @@ static inline unsigned int get_sp_mask(unsigned int e2)
 
 static int exeption_has_error_code(int intno)
 {
-        switch(intno) {
-        case 8:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 17:
-            return 1;
-        }
+    switch(intno) {
+    case 8:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 17:
+        return 1;
+    }
 	return 0;
 }
 
 #ifdef TARGET_X86_64
-#define SET_ESP(val, sp_mask)\
-do {\
-    if ((sp_mask) == 0xffff)\
-        ESP = (ESP & ~0xffff) | ((val) & 0xffff);\
-    else if ((sp_mask) == 0xffffffffLL)\
-        ESP = (uint32_t)(val);\
-    else\
-        ESP = (val);\
-} while (0)
+#define SET_ESP(val, sp_mask)                           \
+    do {                                                \
+        if ((sp_mask) == 0xffff)                        \
+            ESP = (ESP & ~0xffff) | ((val) & 0xffff);   \
+        else if ((sp_mask) == 0xffffffffLL)             \
+            ESP = (uint32_t)(val);                      \
+        else                                            \
+            ESP = (val);                                \
+    } while (0)
 #else
 #define SET_ESP(val, sp_mask) ESP = (ESP & ~(sp_mask)) | ((val) & (sp_mask))
 #endif
@@ -747,29 +747,29 @@ do {\
 #define SEG_ADDL(ssp, sp, sp_mask) ((uint32_t)((ssp) + (sp & (sp_mask))))
 
 /* XXX: add a is_user flag to have proper security support */
-#define PUSHW(ssp, sp, sp_mask, val)\
-{\
-    sp -= 2;\
-    stw_kernel((ssp) + (sp & (sp_mask)), (val));\
-}
+#define PUSHW(ssp, sp, sp_mask, val)                    \
+    {                                                   \
+        sp -= 2;                                        \
+        stw_kernel((ssp) + (sp & (sp_mask)), (val));    \
+    }
 
-#define PUSHL(ssp, sp, sp_mask, val)\
-{\
-    sp -= 4;\
-    stl_kernel(SEG_ADDL(ssp, sp, sp_mask), (uint32_t)(val));\
-}
+#define PUSHL(ssp, sp, sp_mask, val)                                \
+    {                                                               \
+        sp -= 4;                                                    \
+        stl_kernel(SEG_ADDL(ssp, sp, sp_mask), (uint32_t)(val));    \
+    }
 
-#define POPW(ssp, sp, sp_mask, val)\
-{\
-    val = lduw_kernel((ssp) + (sp & (sp_mask)));\
-    sp += 2;\
-}
+#define POPW(ssp, sp, sp_mask, val)                     \
+    {                                                   \
+        val = lduw_kernel((ssp) + (sp & (sp_mask)));    \
+        sp += 2;                                        \
+    }
 
-#define POPL(ssp, sp, sp_mask, val)\
-{\
-    val = (uint32_t)ldl_kernel(SEG_ADDL(ssp, sp, sp_mask));\
-    sp += 4;\
-}
+#define POPL(ssp, sp, sp_mask, val)                             \
+    {                                                           \
+        val = (uint32_t)ldl_kernel(SEG_ADDL(ssp, sp, sp_mask)); \
+        sp += 4;                                                \
+    }
 
 /* protected mode interrupt */
 static void do_interrupt_protected(int intno, int is_int, int error_code,
@@ -952,9 +952,9 @@ static void do_interrupt_protected(int intno, int is_int, int error_code,
 
     selector = (selector & ~3) | dpl;
     cpu_x86_load_seg_cache(env, R_CS, selector,
-                   get_seg_base(e1, e2),
-                   get_seg_limit(e1, e2),
-                   e2);
+                           get_seg_base(e1, e2),
+                           get_seg_limit(e1, e2),
+                           e2);
     cpu_x86_set_cpl(env, dpl);
     env->eip = offset;
 
@@ -967,17 +967,17 @@ static void do_interrupt_protected(int intno, int is_int, int error_code,
 
 #ifdef TARGET_X86_64
 
-#define PUSHQ(sp, val)\
-{\
-    sp -= 8;\
-    stq_kernel(sp, (val));\
-}
+#define PUSHQ(sp, val)                          \
+    {                                           \
+        sp -= 8;                                \
+        stq_kernel(sp, (val));                  \
+    }
 
-#define POPQ(sp, val)\
-{\
-    val = ldq_kernel(sp);\
-    sp += 8;\
-}
+#define POPQ(sp, val)                           \
+    {                                           \
+        val = ldq_kernel(sp);                   \
+        sp += 8;                                \
+    }
 
 static inline target_ulong get_rsp_from_tss(int level)
 {
@@ -1100,9 +1100,9 @@ static void do_interrupt64(int intno, int is_int, int error_code,
 
     selector = (selector & ~3) | dpl;
     cpu_x86_load_seg_cache(env, R_CS, selector,
-                   get_seg_base(e1, e2),
-                   get_seg_limit(e1, e2),
-                   e2);
+                           get_seg_base(e1, e2),
+                           get_seg_limit(e1, e2),
+                           e2);
     cpu_x86_set_cpl(env, dpl);
     env->eip = offset;
 
@@ -1141,7 +1141,7 @@ void helper_syscall(int next_eip_addend)
 
         cpu_x86_set_cpl(env, 0);
         cpu_x86_load_seg_cache(env, R_CS, selector & 0xfffc,
-                           0, 0xffffffff,
+                               0, 0xffffffff,
                                DESC_G_MASK | DESC_P_MASK |
                                DESC_S_MASK |
                                DESC_CS_MASK | DESC_R_MASK | DESC_A_MASK | DESC_L_MASK);
@@ -1161,7 +1161,7 @@ void helper_syscall(int next_eip_addend)
 
         cpu_x86_set_cpl(env, 0);
         cpu_x86_load_seg_cache(env, R_CS, selector & 0xfffc,
-                           0, 0xffffffff,
+                               0, 0xffffffff,
                                DESC_G_MASK | DESC_B_MASK | DESC_P_MASK |
                                DESC_S_MASK |
                                DESC_CS_MASK | DESC_R_MASK | DESC_A_MASK);
@@ -1305,7 +1305,7 @@ static void do_interrupt_user(int intno, int is_int, int error_code,
 #else
 
 static void handle_even_inj(int intno, int is_int, int error_code,
-		int is_hw, int rm)
+                            int is_hw, int rm)
 {
     uint32_t event_inj = ldl_phys(env->vm_vmcb + offsetof(struct vmcb, control.event_inj));
     if (!(event_inj & SVM_EVTINJ_VALID)) {
@@ -1348,13 +1348,13 @@ static void do_interrupt_all(int intno, int is_int, int error_code,
 		interrupt_hook(intno, is_int, next_eip);
 	
 	if(vmmi_start && cpu_single_env->cr[3] == vmmi_process_cr3){
-	#ifdef DEBUG_VMMI
+#ifdef DEBUG_VMMI
 		if(qemu_log_enabled())
 			qemu_log("In interrupt (%x), hw = %d, next_eip is (0x%08x, 0x%08x)", intno, is_hw, next_eip, env->eip);
 		if(qemu_log_enabled())
 			qemu_log(" interrupt stack(%d)", vmmi_interrupt_stack);
 
-	#endif
+#endif
 		interrupt_hook(intno, is_int, next_eip);	
 	}
 	//yang.end
@@ -1363,11 +1363,11 @@ static void do_interrupt_all(int intno, int is_int, int error_code,
         if ((env->cr[0] & CR0_PE_MASK)) {
             static int count;
             qemu_log("%6d: v=%02x e=%04x i=%d cpl=%d IP=%04x:" TARGET_FMT_lx " pc=" TARGET_FMT_lx " SP=%04x:" TARGET_FMT_lx,
-                    count, intno, error_code, is_int,
-                    env->hflags & HF_CPL_MASK,
-                    env->segs[R_CS].selector, EIP,
-                    (int)env->segs[R_CS].base + EIP,
-                    env->segs[R_SS].selector, ESP);
+                     count, intno, error_code, is_int,
+                     env->hflags & HF_CPL_MASK,
+                     env->segs[R_CS].selector, EIP,
+                     (int)env->segs[R_CS].base + EIP,
+                     env->segs[R_SS].selector, ESP);
             if (intno == 0x0e) {
                 qemu_log(" CR2=" TARGET_FMT_lx, env->cr[2]);
             } else {
@@ -1473,13 +1473,13 @@ void qemu_system_reset_request(void);
 static int check_exception(int intno, int *error_code)
 {
     int first_contributory = env->old_exception == 0 ||
-                              (env->old_exception >= 10 &&
-                               env->old_exception <= 13);
+        (env->old_exception >= 10 &&
+         env->old_exception <= 13);
     int second_contributory = intno == 0 ||
-                               (intno >= 10 && intno <= 13);
+        (intno >= 10 && intno <= 13);
 
     qemu_log_mask(CPU_LOG_INT, "check_exception old: 0x%x new 0x%x\n",
-                env->old_exception, intno);
+                  env->old_exception, intno);
 
 #if !defined(CONFIG_USER_ONLY)
     if (env->old_exception == EXCP08_DBLE) {
@@ -2382,12 +2382,12 @@ void helper_load_seg(int seg_reg, int selector)
         }
 
         cpu_x86_load_seg_cache(env, seg_reg, selector,
-                       get_seg_base(e1, e2),
-                       get_seg_limit(e1, e2),
-                       e2);
+                               get_seg_base(e1, e2),
+                               get_seg_limit(e1, e2),
+                               e2);
 #if 0
         qemu_log("load_seg: sel=0x%04x base=0x%08lx limit=0x%08lx flags=%08x\n",
-                selector, (unsigned long)sc->base, sc->limit, sc->flags);
+                 selector, (unsigned long)sc->base, sc->limit, sc->flags);
 #endif
     }
 }
@@ -2428,7 +2428,7 @@ void helper_ljmp_protected(int new_cs, target_ulong new_eip,
             !(env->hflags & HF_LMA_MASK) && !(e2 & DESC_L_MASK))
             raise_exception_err(EXCP0D_GPF, new_cs & 0xfffc);
         cpu_x86_load_seg_cache(env, R_CS, (new_cs & 0xfffc) | cpl,
-                       get_seg_base(e1, e2), limit, e2);
+                               get_seg_base(e1, e2), limit, e2);
         EIP = new_eip;
     } else {
         /* jump to call or task gate */
@@ -2632,7 +2632,7 @@ void helper_lcall_protected(int new_cs, target_ulong new_eip,
             /* to inner privilege */
             get_ss_esp_from_tss(&ss, &sp, dpl);
             LOG_PCALL("new ss:esp=%04x:%08x param_count=%d ESP=" TARGET_FMT_lx "\n",
-                        ss, sp, param_count, ESP);
+                      ss, sp, param_count, ESP);
             if ((ss & 0xfffc) == 0)
                 raise_exception_err(EXCP0A_TSS, ss & 0xfffc);
             if ((ss & 3) != dpl)
@@ -2701,9 +2701,9 @@ void helper_lcall_protected(int new_cs, target_ulong new_eip,
 
         selector = (selector & ~3) | dpl;
         cpu_x86_load_seg_cache(env, R_CS, selector,
-                       get_seg_base(e1, e2),
-                       get_seg_limit(e1, e2),
-                       e2);
+                               get_seg_base(e1, e2),
+                               get_seg_limit(e1, e2),
+                               e2);
         cpu_x86_set_cpl(env, dpl);
         SET_ESP(sp, sp_mask);
         EIP = offset;
@@ -2796,23 +2796,23 @@ static inline void helper_ret_protected(int shift, int is_iret, int addend)
         }
     } else
 #endif
-      if (shift == 1) {
-        /* 32 bits */
-        POPL(ssp, sp, sp_mask, new_eip);
-        POPL(ssp, sp, sp_mask, new_cs);
-        new_cs &= 0xffff;
-        if (is_iret) {
-          POPL(ssp, sp, sp_mask, new_eflags);
-          if (new_eflags & VM_MASK)
-            goto return_to_vm86;
+        if (shift == 1) {
+            /* 32 bits */
+            POPL(ssp, sp, sp_mask, new_eip);
+            POPL(ssp, sp, sp_mask, new_cs);
+            new_cs &= 0xffff;
+            if (is_iret) {
+                POPL(ssp, sp, sp_mask, new_eflags);
+                if (new_eflags & VM_MASK)
+                    goto return_to_vm86;
+            }
+        } else {
+            /* 16 bits */
+            POPW(ssp, sp, sp_mask, new_eip);
+            POPW(ssp, sp, sp_mask, new_cs);
+            if (is_iret)
+                POPW(ssp, sp, sp_mask, new_eflags);
         }
-    } else {
-        /* 16 bits */
-        POPW(ssp, sp, sp_mask, new_eip);
-        POPW(ssp, sp, sp_mask, new_cs);
-        if (is_iret)
-            POPW(ssp, sp, sp_mask, new_eflags);
-    }
     LOG_PCALL("lret new %04x:" TARGET_FMT_lx " s=%d addend=0x%x\n",
               new_cs, new_eip, shift, addend);
     LOG_PCALL_STATE(env);
@@ -2843,9 +2843,9 @@ static inline void helper_ret_protected(int shift, int is_iret, int addend)
                        ((env->hflags & HF_CS64_MASK) && !is_iret))) {
         /* return to same privilege level */
         cpu_x86_load_seg_cache(env, R_CS, new_cs,
-                       get_seg_base(e1, e2),
-                       get_seg_limit(e1, e2),
-                       e2);
+                               get_seg_base(e1, e2),
+                               get_seg_limit(e1, e2),
+                               e2);
     } else {
         /* return to different privilege level */
 #ifdef TARGET_X86_64
@@ -2855,18 +2855,18 @@ static inline void helper_ret_protected(int shift, int is_iret, int addend)
             new_ss &= 0xffff;
         } else
 #endif
-        if (shift == 1) {
-            /* 32 bits */
-            POPL(ssp, sp, sp_mask, new_esp);
-            POPL(ssp, sp, sp_mask, new_ss);
-            new_ss &= 0xffff;
-        } else {
-            /* 16 bits */
-            POPW(ssp, sp, sp_mask, new_esp);
-            POPW(ssp, sp, sp_mask, new_ss);
-        }
+            if (shift == 1) {
+                /* 32 bits */
+                POPL(ssp, sp, sp_mask, new_esp);
+                POPL(ssp, sp, sp_mask, new_ss);
+                new_ss &= 0xffff;
+            } else {
+                /* 16 bits */
+                POPW(ssp, sp, sp_mask, new_esp);
+                POPW(ssp, sp, sp_mask, new_ss);
+            }
         LOG_PCALL("new ss:esp=%04x:" TARGET_FMT_lx "\n",
-                    new_ss, new_esp);
+                  new_ss, new_esp);
         if ((new_ss & 0xfffc) == 0) {
 #ifdef TARGET_X86_64
             /* NULL ss is allowed in long mode if cpl != 3*/
@@ -2904,9 +2904,9 @@ static inline void helper_ret_protected(int shift, int is_iret, int addend)
         }
 
         cpu_x86_load_seg_cache(env, R_CS, new_cs,
-                       get_seg_base(e1, e2),
-                       get_seg_limit(e1, e2),
-                       e2);
+                               get_seg_base(e1, e2),
+                               get_seg_limit(e1, e2),
+                               e2);
         cpu_x86_set_cpl(env, rpl);
         sp = new_esp;
 #ifdef TARGET_X86_64
@@ -2940,7 +2940,7 @@ static inline void helper_ret_protected(int shift, int is_iret, int addend)
     }
     return;
 
- return_to_vm86:
+return_to_vm86:
     POPL(ssp, sp, sp_mask, new_esp);
     POPL(ssp, sp, sp_mask, new_ss);
     POPL(ssp, sp, sp_mask, new_es);
@@ -3239,25 +3239,25 @@ void helper_wrmsr(void)
         cpu_set_apic_base(env->apic_state, val);
         break;
     case MSR_EFER:
-        {
-            uint64_t update_mask;
-            update_mask = 0;
-            if (env->cpuid_ext2_features & CPUID_EXT2_SYSCALL)
-                update_mask |= MSR_EFER_SCE;
-            if (env->cpuid_ext2_features & CPUID_EXT2_LM)
-                update_mask |= MSR_EFER_LME;
-            if (env->cpuid_ext2_features & CPUID_EXT2_FFXSR)
-                update_mask |= MSR_EFER_FFXSR;
-            if (env->cpuid_ext2_features & CPUID_EXT2_NX)
-                update_mask |= MSR_EFER_NXE;
-            if (env->cpuid_ext3_features & CPUID_EXT3_SVM)
-                update_mask |= MSR_EFER_SVME;
-            if (env->cpuid_ext2_features & CPUID_EXT2_FFXSR)
-                update_mask |= MSR_EFER_FFXSR;
-            cpu_load_efer(env, (env->efer & ~update_mask) |
-                          (val & update_mask));
-        }
-        break;
+    {
+        uint64_t update_mask;
+        update_mask = 0;
+        if (env->cpuid_ext2_features & CPUID_EXT2_SYSCALL)
+            update_mask |= MSR_EFER_SCE;
+        if (env->cpuid_ext2_features & CPUID_EXT2_LM)
+            update_mask |= MSR_EFER_LME;
+        if (env->cpuid_ext2_features & CPUID_EXT2_FFXSR)
+            update_mask |= MSR_EFER_FFXSR;
+        if (env->cpuid_ext2_features & CPUID_EXT2_NX)
+            update_mask |= MSR_EFER_NXE;
+        if (env->cpuid_ext3_features & CPUID_EXT3_SVM)
+            update_mask |= MSR_EFER_SVME;
+        if (env->cpuid_ext2_features & CPUID_EXT2_FFXSR)
+            update_mask |= MSR_EFER_FFXSR;
+        cpu_load_efer(env, (env->efer & ~update_mask) |
+                      (val & update_mask));
+    }
+    break;
     case MSR_STAR:
         env->star = val;
         break;
@@ -4297,9 +4297,9 @@ void helper_fprem1(void)
 
         /* convert dblq to q by truncating towards zero */
         if (dblq < 0.0)
-           q = (signed long long int)(-dblq);
+            q = (signed long long int)(-dblq);
         else
-           q = (signed long long int)dblq;
+            q = (signed long long int)dblq;
 
         env->fpus &= (~0x4700); /* (C3,C2,C1,C0) <-- 0000 */
                                 /* (C0,C3,C1) <-- (q2,q1,q0) */
@@ -4312,7 +4312,7 @@ void helper_fprem1(void)
         fpsrcop = (st0 / st1) / fptemp;
         /* fpsrcop = integer obtained by chopping */
         fpsrcop = (fpsrcop < 0.0) ?
-                  -(floor(fabs(fpsrcop))) : floor(fpsrcop);
+            -(floor(fabs(fpsrcop))) : floor(fpsrcop);
         st0 -= (st1 * fpsrcop * fptemp);
     }
     ST0 = double_to_floatx80(st0);
@@ -4329,9 +4329,9 @@ void helper_fprem(void)
     st1 = floatx80_to_double(ST1);
 
     if (isinf(st0) || isnan(st0) || isnan(st1) || (st1 == 0.0)) {
-       ST0 = double_to_floatx80(0.0 / 0.0); /* NaN */
-       env->fpus &= (~0x4700); /* (C3,C2,C1,C0) <-- 0000 */
-       return;
+        ST0 = double_to_floatx80(0.0 / 0.0); /* NaN */
+        env->fpus &= (~0x4700); /* (C3,C2,C1,C0) <-- 0000 */
+        return;
     }
 
     fpsrcop = st0;
@@ -4355,9 +4355,9 @@ void helper_fprem(void)
 
         /* convert dblq to q by truncating towards zero */
         if (dblq < 0.0)
-           q = (signed long long int)(-dblq);
+            q = (signed long long int)(-dblq);
         else
-           q = (signed long long int)dblq;
+            q = (signed long long int)dblq;
 
         env->fpus &= (~0x4700); /* (C3,C2,C1,C0) <-- 0000 */
                                 /* (C0,C3,C1) <-- (q2,q1,q0) */
@@ -4371,7 +4371,7 @@ void helper_fprem(void)
         fpsrcop = (st0 / st1) / fptemp;
         /* fpsrcop = integer obtained by chopping */
         fpsrcop = (fpsrcop < 0.0) ?
-                  -(floor(fabs(fpsrcop))) : floor(fpsrcop);
+            -(floor(fabs(fpsrcop))) : floor(fpsrcop);
         st0 -= (st1 * fpsrcop * fptemp);
     }
     ST0 = double_to_floatx80(st0);
@@ -4494,19 +4494,19 @@ void helper_fstenv(target_ulong ptr, int data32)
     fpus = (env->fpus & ~0x3800) | (env->fpstt & 0x7) << 11;
     fptag = 0;
     for (i=7; i>=0; i--) {
-	fptag <<= 2;
-	if (env->fptags[i]) {
+        fptag <<= 2;
+        if (env->fptags[i]) {
             fptag |= 3;
-	} else {
+        } else {
             tmp.d = env->fpregs[i].d;
             exp = EXPD(tmp);
             mant = MANTD(tmp);
             if (exp == 0 && mant == 0) {
                 /* zero */
-	        fptag |= 1;
-	    } else if (exp == 0 || exp == MAXEXPD
+                fptag |= 1;
+            } else if (exp == 0 || exp == MAXEXPD
                        || (mant & (1LL << 63)) == 0
-                       ) {
+                ) {
                 /* NaNs, infinity, denormal */
                 fptag |= 2;
             }
@@ -4538,12 +4538,12 @@ void helper_fldenv(target_ulong ptr, int data32)
     int i, fpus, fptag;
 
     if (data32) {
-	env->fpuc = lduw(ptr);
+        env->fpuc = lduw(ptr);
         fpus = lduw(ptr + 4);
         fptag = lduw(ptr + 8);
     }
     else {
-	env->fpuc = lduw(ptr);
+        env->fpuc = lduw(ptr);
         fpus = lduw(ptr + 2);
         fptag = lduw(ptr + 4);
     }
@@ -4691,8 +4691,8 @@ void helper_fxsave(target_ulong ptr, int data64)
         addr = ptr + 0xa0;
         /* Fast FXSAVE leaves out the XMM registers */
         if (!(env->efer & MSR_EFER_FFXSR)
-          || (env->hflags & HF_CPL_MASK)
-          || !(env->hflags & HF_LMA_MASK)) {
+            || (env->hflags & HF_CPL_MASK)
+            || !(env->hflags & HF_LMA_MASK)) {
             for(i = 0; i < nb_xmm_regs; i++) {
                 stq(addr, env->xmm_regs[i].XMM_Q(0));
                 stq(addr + 8, env->xmm_regs[i].XMM_Q(1));
@@ -4741,8 +4741,8 @@ void helper_fxrstor(target_ulong ptr, int data64)
         addr = ptr + 0xa0;
         /* Fast FXRESTORE leaves out the XMM registers */
         if (!(env->efer & MSR_EFER_FFXSR)
-          || (env->hflags & HF_CPL_MASK)
-          || !(env->hflags & HF_LMA_MASK)) {
+            || (env->hflags & HF_CPL_MASK)
+            || !(env->hflags & HF_LMA_MASK)) {
             for(i = 0; i < nb_xmm_regs; i++) {
                 env->xmm_regs[i].XMM_Q(0) = ldq(addr);
                 env->xmm_regs[i].XMM_Q(1) = ldq(addr + 8);
@@ -5091,7 +5091,7 @@ void tlb_fill(target_ulong addr, int is_write, int mmu_idx, void *retaddr)
     ret = cpu_x86_handle_mmu_fault(env, addr, is_write, mmu_idx);
     if (ret) {
 		if(qemu_log_enabled())
-                  qemu_log("ERROR:real page fault %x, %d\n", addr, env->error_code);
+            qemu_log("ERROR:real page fault %x, %d\n", addr, env->error_code);
 		
         if (retaddr) {
 
@@ -5101,7 +5101,7 @@ void tlb_fill(target_ulong addr, int is_write, int mmu_idx, void *retaddr)
 			if (tb) {
                 /* the PC is inside the translated code. It means that we have
                    a virtual CPU fault */
-			                cpu_restore_state(tb, env, pc);
+                cpu_restore_state(tb, env, pc);
             }
         }
 
@@ -5265,7 +5265,7 @@ void helper_vmrun(int aflag, int next_eip_addend)
     stq_phys(env->vm_hsave + offsetof(struct vmcb, save.rflags), compute_eflags());
 
     svm_save_seg(env->vm_hsave + offsetof(struct vmcb, save.es), 
-                  &env->segs[R_ES]);
+                 &env->segs[R_ES]);
     svm_save_seg(env->vm_hsave + offsetof(struct vmcb, save.cs), 
                  &env->segs[R_CS]);
     svm_save_seg(env->vm_hsave + offsetof(struct vmcb, save.ss), 
@@ -5341,11 +5341,11 @@ void helper_vmrun(int aflag, int next_eip_addend)
     /* FIXME: guest state consistency checks */
 
     switch(ldub_phys(env->vm_vmcb + offsetof(struct vmcb, control.tlb_ctl))) {
-        case TLB_CONTROL_DO_NOTHING:
-            break;
-        case TLB_CONTROL_FLUSH_ALL_ASID:
-            /* FIXME: this is not 100% correct but should work for now */
-            tlb_flush(env, 1);
+    case TLB_CONTROL_DO_NOTHING:
+        break;
+    case TLB_CONTROL_FLUSH_ALL_ASID:
+        /* FIXME: this is not 100% correct but should work for now */
+        tlb_flush(env, 1);
         break;
     }
 
@@ -5366,38 +5366,38 @@ void helper_vmrun(int aflag, int next_eip_addend)
         /* FIXME: need to implement valid_err */
         switch (event_inj & SVM_EVTINJ_TYPE_MASK) {
         case SVM_EVTINJ_TYPE_INTR:
-                env->exception_index = vector;
-                env->error_code = event_inj_err;
-                env->exception_is_int = 0;
-                env->exception_next_eip = -1;
-                qemu_log_mask(CPU_LOG_TB_IN_ASM, "INTR");
-                /* XXX: is it always correct ? */
-                do_interrupt_all(vector, 0, 0, 0, 1);
-                break;
+            env->exception_index = vector;
+            env->error_code = event_inj_err;
+            env->exception_is_int = 0;
+            env->exception_next_eip = -1;
+            qemu_log_mask(CPU_LOG_TB_IN_ASM, "INTR");
+            /* XXX: is it always correct ? */
+            do_interrupt_all(vector, 0, 0, 0, 1);
+            break;
         case SVM_EVTINJ_TYPE_NMI:
-                env->exception_index = EXCP02_NMI;
-                env->error_code = event_inj_err;
-                env->exception_is_int = 0;
-                env->exception_next_eip = EIP;
-                qemu_log_mask(CPU_LOG_TB_IN_ASM, "NMI");
-                cpu_loop_exit(env);
-                break;
+            env->exception_index = EXCP02_NMI;
+            env->error_code = event_inj_err;
+            env->exception_is_int = 0;
+            env->exception_next_eip = EIP;
+            qemu_log_mask(CPU_LOG_TB_IN_ASM, "NMI");
+            cpu_loop_exit(env);
+            break;
         case SVM_EVTINJ_TYPE_EXEPT:
-                env->exception_index = vector;
-                env->error_code = event_inj_err;
-                env->exception_is_int = 0;
-                env->exception_next_eip = -1;
-                qemu_log_mask(CPU_LOG_TB_IN_ASM, "EXEPT");
-                cpu_loop_exit(env);
-                break;
+            env->exception_index = vector;
+            env->error_code = event_inj_err;
+            env->exception_is_int = 0;
+            env->exception_next_eip = -1;
+            qemu_log_mask(CPU_LOG_TB_IN_ASM, "EXEPT");
+            cpu_loop_exit(env);
+            break;
         case SVM_EVTINJ_TYPE_SOFT:
-                env->exception_index = vector;
-                env->error_code = event_inj_err;
-                env->exception_is_int = 1;
-                env->exception_next_eip = EIP;
-                qemu_log_mask(CPU_LOG_TB_IN_ASM, "SOFT");
-                cpu_loop_exit(env);
-                break;
+            env->exception_index = vector;
+            env->error_code = event_inj_err;
+            env->exception_is_int = 1;
+            env->exception_next_eip = EIP;
+            qemu_log_mask(CPU_LOG_TB_IN_ASM, "SOFT");
+            cpu_loop_exit(env);
+            break;
         }
         qemu_log_mask(CPU_LOG_TB_IN_ASM, " %#x %#x\n", env->exception_index, env->error_code);
     }
@@ -5420,8 +5420,8 @@ void helper_vmload(int aflag)
         addr = (uint32_t)EAX;
 
     qemu_log_mask(CPU_LOG_TB_IN_ASM, "vmload! " TARGET_FMT_lx "\nFS: %016" PRIx64 " | " TARGET_FMT_lx "\n",
-                addr, ldq_phys(addr + offsetof(struct vmcb, save.fs.base)),
-                env->segs[R_FS].base);
+                  addr, ldq_phys(addr + offsetof(struct vmcb, save.fs.base)),
+                  env->segs[R_FS].base);
 
     svm_load_seg_cache(addr + offsetof(struct vmcb, save.fs),
                        env, R_FS);
@@ -5455,8 +5455,8 @@ void helper_vmsave(int aflag)
         addr = (uint32_t)EAX;
 
     qemu_log_mask(CPU_LOG_TB_IN_ASM, "vmsave! " TARGET_FMT_lx "\nFS: %016" PRIx64 " | " TARGET_FMT_lx "\n",
-                addr, ldq_phys(addr + offsetof(struct vmcb, save.fs.base)),
-                env->segs[R_FS].base);
+                  addr, ldq_phys(addr + offsetof(struct vmcb, save.fs.base)),
+                  env->segs[R_FS].base);
 
     svm_save_seg(addr + offsetof(struct vmcb, save.fs), 
                  &env->segs[R_FS]);
@@ -5613,9 +5613,9 @@ void helper_vmexit(uint32_t exit_code, uint64_t exit_info_1)
     uint32_t int_ctl;
 
     qemu_log_mask(CPU_LOG_TB_IN_ASM, "vmexit(%08x, %016" PRIx64 ", %016" PRIx64 ", " TARGET_FMT_lx ")!\n",
-                exit_code, exit_info_1,
-                ldq_phys(env->vm_vmcb + offsetof(struct vmcb, control.exit_info_2)),
-                EIP);
+                  exit_code, exit_info_1,
+                  ldq_phys(env->vm_vmcb + offsetof(struct vmcb, control.exit_info_2)),
+                  EIP);
 
     if(env->hflags & HF_INHIBIT_IRQ_MASK) {
         stl_phys(env->vm_vmcb + offsetof(struct vmcb, control.int_state), SVM_INTERRUPT_SHADOW_MASK);
@@ -6012,8 +6012,8 @@ void helper_store(target_ulong value, target_ulong addr, int size)
 	}
 	if(size ==3) size++;
 
-        if(is_ins_log()){
-          qemu_log(" ST:0x%08x: (0x%08x) pc: %x", addr, value, current_pc);
+    if(is_ins_log()){
+        qemu_log(" ST:0x%08x: (0x%08x) pc: %x", addr, value, current_pc);
 	}
 }
 
@@ -6025,25 +6025,25 @@ void helper_load(target_ulong addr, int size)
 	{
 
 		if(addr >=0xc0000000){
-		uint32_t new =vmmi_vtop2(addr, size);
-		uint32_t old;
-		char buf[4];
-	 	cpu_memory_rw_debug(cpu_single_env, addr, (char *)&buf, size, 0);
-		if(new != -1){
-			if(size == 4){
-				old = *(uint32_t *) buf;
-			}else if (size == 2){
-				old = *(uint16_t *) buf;
-			}else{
-				old = *(uint8_t *) buf;
-			}
-			qemu_log("  LD:0x%08x:(0x%08x, 0x%08x) ",addr, old, new);
-                        //old means local memory value, new means
-                        //value in the snapshot.
+            uint32_t new =vmmi_vtop2(addr, size);
+            uint32_t old;
+            char buf[4];
+            cpu_memory_rw_debug(cpu_single_env, addr, (char *)&buf, size, 0);
+            if(new != -1){
+                if(size == 4){
+                    old = *(uint32_t *) buf;
+                }else if (size == 2){
+                    old = *(uint16_t *) buf;
+                }else{
+                    old = *(uint8_t *) buf;
+                }
+                qemu_log("  LD:0x%08x:(0x%08x, 0x%08x) ",addr, old, new);
+                //old means local memory value, new means
+                //value in the snapshot.
 		
-	//	qemu_log("  LD:0x%08x:new %x ",addr, *(uint8_t *)(newphyaddr));
-		}else
-			qemu_log("LD:0x%08x", addr);
+                //	qemu_log("  LD:0x%08x:new %x ",addr, *(uint8_t *)(newphyaddr));
+            }else
+                qemu_log("LD:0x%08x", addr);
 		}
 	}
 //	else
@@ -6217,21 +6217,21 @@ static target_ulong getKthread()
 
     //printf("process is 0x%08x, 0x%08x, 0x%08x\n", vmmi_process_cr3, new_cr3, cpu_single_env->cr[3] );
     do{
-      cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
-      comm[15]='\0';
-      cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
-      cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
-      //print the task
-      if(strcmp(comm, "kcryptd") == 0){
-          cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
-          qemu_log("find process %x %s %x\n", next, comm, pgd+0x40000000);
-      }
+        cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
+        comm[15]='\0';
+        cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
+        cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
+        //print the task
+        if(strcmp(comm, "kcryptd") == 0){
+            cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
+            qemu_log("find process %x %s %x\n", next, comm, pgd+0x40000000);
+        }
 
-      cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
-      next=list-0xe4;
-      i++;
-      if(i>100)
-        break;
+        cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
+        next=list-0xe4;
+        i++;
+        if(i>100)
+            break;
     }while(next!=task);
 
 }
@@ -6242,7 +6242,8 @@ extern int reg_name_modified ;
 extern int is_reg_module_modified; 
 extern uint32_t pre_reg_value;
 extern uint32_t file_flag ; 
-target_ulong current_task;  
+target_ulong current_task;
+int is_insert_work = 0;
 //yufei.end
 
 //every pc
@@ -6252,36 +6253,69 @@ void helper_inst_hook(int a)
 
     //yufei.begin
     if (is_reg_module_modified == 1){
-      cpu_single_env->regs[reg_name_modified] = pre_reg_value;
-      is_reg_module_modified = 0;
+        cpu_single_env->regs[reg_name_modified] = pre_reg_value;
+        is_reg_module_modified = 0;
     }
     //yufei.end
 
-    static int schedule_count = 0;
-    //second times, recover it.
-    if(current_pc == 0xc125e1e4){
-        schedule_count ++;
-        if( schedule_count == 2)
-            EAX = current_task;
+
+    //yufei.begin
+    //start from function schedule(), no redirect data
+    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag){
+        const target_ulong schedule_addr = 0xc125dcff;  //2.6.32.8
+        if (current_pc == 0xc103ea47){
+            is_insert_work = 1;
+        }
+
+        if(is_insert_work == 0){
+
+            if( sys_need_red == 1 && a == schedule_addr) {
+                set_sys_need_red(0);
+                //get ret address for future redirect again.
+                if(ret_addr == 0)
+                    cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
+            }
+    
+            //if schedule() ret, need redirect again
+            if (current_pc == ret_addr && sys_need_red == 0){
+                set_sys_need_red(1);
+                ret_addr = 0;
+            }
+        }else{
+
+            //second times, recover it.
+            static int schedule_count = 0;
+            if (current_pc == schedule_addr){
+                schedule_count ++;
+                qemu_log(" schedule_count %d ", schedule_count);
+            }
+          
+            if(current_pc == 0xc125e1e4 && schedule_count == 2){
+                EAX = current_task;
+                is_insert_work = 0;  //out of work_thread
+            }
+        }
     }
-      
+    //yufei.end
+
+
 
     //yufei.begin
     /*
-   if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
-       && sys_need_red ==1 && a == 0xc110a257 ) {
+      if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
+      && sys_need_red ==1 && a == 0xc110a257 ) {
       //change value from 2c to 29
       char buff[20];
       target_ulong v_address = EAX;
       
       vmac_memory_read(v_address, buff, 20);
       qemu_log("name:%s", buff);
-   }
+      }
 
-    //this function is executed before instruction execution, and EDX
-    //already have the memory address.
-    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
-       && sys_need_red ==1 && a == 0xc147c2e5 ) {
+      //this function is executed before instruction execution, and EDX
+      //already have the memory address.
+      if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
+      && sys_need_red ==1 && a == 0xc147c2e5 ) {
       //change value from 2c to 29
       int value;
       target_ulong flag_address = EDX;
@@ -6290,18 +6324,18 @@ void helper_inst_hook(int a)
       //      qemu_log("value:0x%08x", value);
 
       if(value ==0x0000002c ) 
-        value = 0x00000029;
+      value = 0x00000029;
 
       vmac_memory_write(flag_address, &value , 4);
-    }
+      }
     */
     
     /*
     //get name of kthread
     if (vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] &&  current_pc == 0xc1041256){
-        char kthread_name[16] = {};
-        cpu_memory_rw_debug(cpu_single_env, EAX + 536 , kthread_name, 16, 0);
-        qemu_log(" kthread name: %s ", kthread_name);
+    char kthread_name[16] = {};
+    cpu_memory_rw_debug(cpu_single_env, EAX + 536 , kthread_name, 16, 0);
+    qemu_log(" kthread name: %s ", kthread_name);
     }
     */  
 
@@ -6309,39 +6343,39 @@ void helper_inst_hook(int a)
     //schedule no redx
     if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag){
             
-      //start from function schedule(), no redirect data
-      //int schedule_start_addr = 0xc147b621;  // 2.6.32-rc8
-      target_ulong schedule_start_addr = 0xc125dcff;  //2.6.32.8
-      if( sys_need_red == 1 && a == schedule_start_addr) {
+    //start from function schedule(), no redirect data
+    //int schedule_addr = 0xc147b621;  // 2.6.32-rc8
+    target_ulong schedule_addr = 0xc125dcff;  //2.6.32.8
+    if( sys_need_red == 1 && a == schedule_addr) {
 
-        set_sys_need_red(0);
-        //get ret address for future redirect again.
-        if(ret_addr == 0)
-          cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
-      }
+    set_sys_need_red(0);
+    //get ret address for future redirect again.
+    if(ret_addr == 0)
+    cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
+    }
 
 
-      //worker_thread, need red, switch to kthread.
-      target_ulong worker_thread_addr = 0xc103e870; //2.6.32.8
-      if (sys_need_red == 0 && ( current_pc == worker_thread_addr || current_pc == 0xc103e850 ) ){
-        getKthread();
-        //TODO 
-        set_sys_need_red(1);
-      }
+    //worker_thread, need red, switch to kthread.
+    target_ulong worker_thread_addr = 0xc103e870; //2.6.32.8
+    if (sys_need_red == 0 && ( current_pc == worker_thread_addr || current_pc == 0xc103e850 ) ){
+    getKthread();
+    //TODO 
+    set_sys_need_red(1);
+    }
     
-      //if schedule() ret, need redirect again
-      if (current_pc == ret_addr && sys_need_red == 0){
-        set_sys_need_red(1);
-        ret_addr = 0;
-      }
+    //if schedule() ret, need redirect again
+    if (current_pc == ret_addr && sys_need_red == 0){
+    set_sys_need_red(1);
+    ret_addr = 0;
+    }
     }
     */
     //yufei.end
 
 #ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
 	if(!is_interrupt && iret_handle!=NULL){
-	  if(qemu_log_enabled())
-	   qemu_log("handle call\n");
+        if(qemu_log_enabled())
+            qemu_log("handle call\n");
 		iret_handle();
 		iret_handle=NULL;
 		is_sysenter=0;
@@ -6356,8 +6390,8 @@ void helper_inst_hook(int a)
 #endif
 
 
-        uint8_t buf[15];
-        char str[128];
+    uint8_t buf[15];
+    char str[128];
 	 
 //	 if(
 //		take_snapshot==1
@@ -6365,57 +6399,57 @@ void helper_inst_hook(int a)
 //	   )
 //		 save_snapshot();
 		 
-	 if(
+    if(
 		take_snapshot_esp==1
 	    &&(cpu_single_env->hflags & HF_CPL_MASK) != 3
 		&&snapshot_cr3 == cpu_single_env->cr[3]
-	   )
-	  { 
+        )
+    { 
 		FILE *f;
 	 	f = fopen("./esp","a+");
-                fprintf(f,"%x\n",env->regs[R_ESP]);
-                fclose(f);
+        fprintf(f,"%x\n",env->regs[R_ESP]);
+        fclose(f);
 		take_snapshot_esp=0;
-	   }
+    }
 	 
-	 if(vmmi_start
+    if(vmmi_start
 //		&&((cpu_single_env->hflags &HF_CPL_MASK)!=3)
-		&&vmmi_process_cr3 ==cpu_single_env->cr[3]
-	   )
-	 {
-             cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
-             xed_decoded_inst_zero_set_mode(&xedd_g, &dstate);
+       &&vmmi_process_cr3 ==cpu_single_env->cr[3]
+        )
+    {
+        cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
+        xed_decoded_inst_zero_set_mode(&xedd_g, &dstate);
 
-             xed_error_enum_t xed_error = xed_decode(&xedd_g,
-                                                     STATIC_CAST(const xed_uint8_t *,  buf), 15); 
+        xed_error_enum_t xed_error = xed_decode(&xedd_g,
+                                                STATIC_CAST(const xed_uint8_t *,  buf), 15); 
 
-             if(
-                !is_interrupt
-                && sys_need_red
-                && qemu_log_enabled()
-                //                && file_flag
-                )
-               {
-                 //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
-                 //qemu_log("%s",str); //yufei
-                 my_monitor_disas(a); 
-                 //qemu_log(" Recx %x, ebx %x, edx %x", ECX, EBX, EDX);//yufei
-               }
+        if(
+            !is_interrupt
+            && sys_need_red
+            && qemu_log_enabled()
+            //                && file_flag
+            )
+        {
+            //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
+            //qemu_log("%s",str); //yufei
+            my_monitor_disas(a); 
+            //qemu_log(" Recx %x, ebx %x, edx %x", ECX, EBX, EDX);//yufei
+        }
 
-             if (xed_error == XED_ERROR_NONE) {
-               xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
+        if (xed_error == XED_ERROR_NONE) {
+            xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
 
 #ifdef DEBUG_VMMI	
-                 if(
+            if(
 				0&&
 				qemu_log_enabled()
 				&&vmmi_start
 	   			&& ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-	//		   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
-	//			&&!is_interrupt
-	//			&&(log_eip==0x5deafa1a|| start_log)
+                //		   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
+                //			&&!is_interrupt
+                //			&&(log_eip==0x5deafa1a|| start_log)
 				&&a==0xc0106bc0 || start_log
-			  )
+                )
 			{
 				
 				const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
@@ -6457,23 +6491,23 @@ void helper_inst_hook(int a)
 			if(
 				0
 				&&start_trace
-		//	   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
+                //	   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
 	   			&& ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
 				&&!is_interrupt
-			  )
+                )
 			{
 				my_monitor_disas(a);
-			//	uint32_t esp0, esp1,esp2;
-			//	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
-			//	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
-			//	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
-			//	if(qemu_log_enabled())
-			//		qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
+                //	uint32_t esp0, esp1,esp2;
+                //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
+                //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
+                //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
+                //	if(qemu_log_enabled())
+                //		qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
 
 			}
 #ifdef MONITOR_INST
 			if(qemu_log_enabled()&&a>=vmmi_mon_start &&a<=vmmi_mon_end						
-			){
+                ){
 				my_monitor_disas(a);
 				uint32_t esp0, esp1,esp2;
 				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
@@ -6486,8 +6520,8 @@ void helper_inst_hook(int a)
 
 
 			if(
-	//			start_trace&&
-			//	(current_syscall==120 || current_syscall==114 || current_syscall==42 || is_pipe)					
+                //			start_trace&&
+                //	(current_syscall==120 || current_syscall==114 || current_syscall==42 || is_pipe)					
 				0
 				&&qemu_log_enabled()
 				&&vmmi_start
@@ -6495,7 +6529,7 @@ void helper_inst_hook(int a)
 			   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
 				&&!is_interrupt
 				&&sys_need_red==1
-			  )
+                )
 			{
 				if(current_syscall==102)
 					fprintf(inst_dis_log,"%x:%x\n", current_syscall, a);
@@ -6508,51 +6542,51 @@ void helper_inst_hook(int a)
 					qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
 				my_monitor_disas(a);
 				//for socket do_ipt_get_ctl return value : for iptabls
-	//			if(a==0xc11f290e)
-	//				cpu_single_env->regs[R_EAX]=0;
+                //			if(a==0xc11f290e)
+                //				cpu_single_env->regs[R_EAX]=0;
 				//for ifconfig hook
-	//			if(a==0xc11d85f1)
-	//				cpu_single_env->regs[R_EDX]=0;
-	//			if(a==0xc1055f75)
-	//				cpu_single_env->regs[R_EAX]=0;
-	//			if(a==0xc100321e)
-	//				start_trace=0;
+                //			if(a==0xc11d85f1)
+                //				cpu_single_env->regs[R_EDX]=0;
+                //			if(a==0xc1055f75)
+                //				cpu_single_env->regs[R_EAX]=0;
+                //			if(a==0xc100321e)
+                //				start_trace=0;
 				if(a==0xc1055e6d){
 					char buf[100];
 					uint64_t addr = (uint64_t)vmmi_mem_shadow + vmmi_vtop(cpu_single_env->regs[R_EAX]+0xc);
-		//			cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EAX]+0xc, buf, 100, 0);
+                    //			cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EAX]+0xc, buf, 100, 0);
 					memcpy(buf, addr, 99);
 					buf[99]='\0';
 					printf("module is %x %s\n", cpu_single_env->regs[R_EAX], buf);
 				}
 /*
-				xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
-				fprintf(logfile, "\n");
-				fprintf(logfile, "0x" TARGET_FMT_lx "\t", cpu_single_env->cr[3]);
-				fprintf(logfile, "0x" TARGET_FMT_lx "\t", a);
-   				fprintf(logfile, "%s",str);
+  xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
+  fprintf(logfile, "\n");
+  fprintf(logfile, "0x" TARGET_FMT_lx "\t", cpu_single_env->cr[3]);
+  fprintf(logfile, "0x" TARGET_FMT_lx "\t", a);
+  fprintf(logfile, "%s",str);
 
-				uint32_t size = xed_decoded_inst_get_length(&xedd_g);
-				uint32_t i;
-				fprintf(logfile,"\n");
-				for( i=0;i<size;i++)
-					fprintf(logfile, "%02x ", buf[i]);
-			*/	
+  uint32_t size = xed_decoded_inst_get_length(&xedd_g);
+  uint32_t i;
+  fprintf(logfile,"\n");
+  for( i=0;i<size;i++)
+  fprintf(logfile, "%02x ", buf[i]);
+*/	
 			}
 			/*
-			if( 
-				0
-			    &&qemu_log_enabled()
-				&&vmmi_start
-			   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
+              if( 
+              0
+              &&qemu_log_enabled()
+              &&vmmi_start
+              && vmmi_process_cr3 == cpu_single_env->cr[3]
 			  )
-			{
-				xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
-				fprintf(inst_dis_log, "\n");
-				fprintf(inst_dis_log, "0x" TARGET_FMT_lx "\t", cpu_single_env->cr[3]);
-				fprintf(inst_dis_log, "0x" TARGET_FMT_lx "\t", a);
-   				fprintf(inst_dis_log, "%s",str);
-			}
+              {
+              xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
+              fprintf(inst_dis_log, "\n");
+              fprintf(inst_dis_log, "0x" TARGET_FMT_lx "\t", cpu_single_env->cr[3]);
+              fprintf(inst_dis_log, "0x" TARGET_FMT_lx "\t", a);
+              fprintf(inst_dis_log, "%s",str);
+              }
 			*/
 
 #endif
@@ -6560,11 +6594,11 @@ void helper_inst_hook(int a)
 			xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
 		    const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
 
-	if(
+            if(
 			   	vmmi_start
 			   	&&!is_print
 			   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
-		      )
+                )
 			{	
 			     
 			    Instrument(xi);
@@ -6574,20 +6608,20 @@ void helper_inst_hook(int a)
 			}
 
 #ifdef VMMI_KERNEL
-		prev_opcode = opcode;
+            prev_opcode = opcode;
 #endif
-       }
+        }
 		
 
-	 }
-	 prev_pc=a;
+    }
+    prev_pc=a;
 		
 }
 
 int vmmi_init()
 {
 	xed_decoded_inst_set_mode(&xedd_g, XED_MACHINE_MODE_LEGACY_32,
-			XED_ADDRESS_WIDTH_32b);
+                              XED_ADDRESS_WIDTH_32b);
 	
 	setup_inst_hook();
 	setup_inst_hook_fd();

@@ -1754,6 +1754,9 @@ void do_cpu_sipi(CPUState *env)
 #endif
 
 
+void my_fun(){
+    qemu_log("my_fun");
+}
 
 //zlin.begin
 
@@ -1842,8 +1845,11 @@ int vmmi_cpu_x86_handle_mmu_fault(CPUX86State *env, target_ulong addr,
             virt_addr = addr & ~0xfff;
         }
 
+        int greater = 0;
 	//yang.begin
 	if(pte>=snapshot_size){
+        my_fun();
+        greater = 1;
 		if(qemu_log_enabled())
 			qemu_log("io address %x\n", addr);
 		//return -1;
@@ -1876,8 +1882,13 @@ int vmmi_cpu_x86_handle_mmu_fault(CPUX86State *env, target_ulong addr,
     page_offset = (addr & TARGET_PAGE_MASK) & (page_size - 1);
     paddr = (pte & TARGET_PAGE_MASK) + page_offset;
     vaddr = virt_addr + page_offset;
-
+    
+    if(greater)
+        qemu_log("before vmmi_tlb_set_page\n");
     vmmi_tlb_set_page(env, vaddr, paddr, prot, mmu_idx, page_size);
+    if(greater)
+        qemu_log("after vmmi_tlb_set_page\n");
+    greater = 0;
     return 0;
 
  do_fault_protect:

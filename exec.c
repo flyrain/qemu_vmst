@@ -2352,11 +2352,18 @@ void tlb_set_page(CPUState *env, target_ulong vaddr,
     CPUWatchpoint *wp;
     target_phys_addr_t iotlb;
 
+    if(vaddr == (0xffffb0b0 & ~0xfff ) ) //yufei
+        qemu_log("(paddr %x)", paddr); //yufei
+
     assert(size >= TARGET_PAGE_SIZE);
     if (size != TARGET_PAGE_SIZE) {
         tlb_add_large_page(env, vaddr, size);
     }
     p = phys_page_find(paddr >> TARGET_PAGE_BITS);
+
+    if(vaddr == (0xffffb0b0 & ~0xfff ) ) //yufei
+        qemu_log("(p %x)", p); //yufei
+
     if (!p) {
         pd = IO_MEM_UNASSIGNED;
     } else {
@@ -2381,6 +2388,8 @@ void tlb_set_page(CPUState *env, target_ulong vaddr,
         address |= TLB_MMIO;
     }
     addend = (unsigned long)qemu_get_ram_ptr(pd & TARGET_PAGE_MASK);
+    if(vaddr == (0xffffb0b0 & ~0xfff ) ) //yufei
+        qemu_log("(pd %x, TARGET_PAGE_MASK %x, IO_MEM_ROM %x )", pd, TARGET_PAGE_MASK, IO_MEM_ROM); //yufei
     if ((pd & ~TARGET_PAGE_MASK) <= IO_MEM_ROM) {
         /* Normal RAM.  */
         iotlb = pd & TARGET_PAGE_MASK;
@@ -2388,6 +2397,10 @@ void tlb_set_page(CPUState *env, target_ulong vaddr,
             iotlb |= IO_MEM_NOTDIRTY;
         else
             iotlb |= IO_MEM_ROM;
+
+        if(vaddr == (0xffffb0b0 & ~0xfff ) ) //yufei
+            qemu_log("(if iotlb %x)", iotlb); //yufei
+
     } else {
         /* IO handlers are currently passed a physical address.
            It would be nice to pass an offset from the base address
@@ -2401,6 +2414,9 @@ void tlb_set_page(CPUState *env, target_ulong vaddr,
         } else {
             iotlb += paddr;
         }
+
+        if(vaddr == (0xffffb0b0 & ~0xfff ) ) //yufei
+            qemu_log("(else iotlb %x)", iotlb); //yufei
     }
 
     code_address = address;
@@ -2419,6 +2435,10 @@ void tlb_set_page(CPUState *env, target_ulong vaddr,
 
     index = (vaddr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     env->iotlb[mmu_idx][index] = iotlb - vaddr;
+
+    if(vaddr == (0xffffb0b0 & ~0xfff )) //yufei
+        qemu_log("(iotlb %x)", iotlb); //yufei
+
     te = &env->tlb_table[mmu_idx][index];
     te->addend = addend - vaddr;
     if (prot & PAGE_READ) {
@@ -2468,6 +2488,15 @@ void vmmi_tlb_set_page(CPUState *env, target_ulong vaddr,
     assert(size >= TARGET_PAGE_SIZE);
     pd = paddr; 
 
+    p = phys_page_find(paddr >> TARGET_PAGE_BITS);
+
+    if (!p) {
+        pd = IO_MEM_UNASSIGNED;
+    } else {
+        pd = p->phys_offset;
+    }
+
+
 	//zlin
 	if(qemu_loglevel_mask(CPU_LOG_MMU))
     	qemu_log("tlb_set_page: vaddr=" TARGET_FMT_lx " paddr=0x" TARGET_FMT_plx
@@ -2486,6 +2515,9 @@ void vmmi_tlb_set_page(CPUState *env, target_ulong vaddr,
         address |= TLB_MMIO;
     }
     addend = (unsigned long)vmmi_mem_shadow + pd;
+
+//    if(vaddr == (0xffffb0b0 & ~0xfff ) ) //yufei
+//        qemu_log("(pd %x, TARGET_PAGE_MASK %x, IO_MEM_ROM %x )", pd, TARGET_PAGE_MASK, IO_MEM_ROM); //yufei
     if ((pd & ~TARGET_PAGE_MASK) <= IO_MEM_ROM) {
         /* Normal RAM.  */
         iotlb = pd & TARGET_PAGE_MASK;
@@ -2493,6 +2525,10 @@ void vmmi_tlb_set_page(CPUState *env, target_ulong vaddr,
             iotlb |= IO_MEM_NOTDIRTY;
         else
             iotlb |= IO_MEM_ROM;
+
+        //if(vaddr == (0xffffb0b0 & ~0xfff ) ) //yufei
+        //    qemu_log("(if iotlb %x)", iotlb); //yufei
+
     } else {
         /* IO handlers are currently passed a physical address.
            It would be nice to pass an offset from the base address
@@ -2501,11 +2537,16 @@ void vmmi_tlb_set_page(CPUState *env, target_ulong vaddr,
            We can't use the high bits of pd for this because
            IO_MEM_ROMD uses these as a ram address.  */
         iotlb = (pd & ~TARGET_PAGE_MASK);
+        
         if (p) {
             iotlb += p->region_offset;
         } else {
             iotlb += paddr;
         }
+
+        // if(vaddr == (0xffffb0b0 & ~0xfff )) //yufei
+        //    qemu_log("(else iotlb %x)", iotlb); //yufei
+
     }
 
     code_address = address;
@@ -2524,6 +2565,10 @@ void vmmi_tlb_set_page(CPUState *env, target_ulong vaddr,
 
     index = (vaddr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     env->vmmi_iotlb[mmu_idx][index] = iotlb - vaddr;
+
+    //if(vaddr == (0xffffb0b0 & ~0xfff )) //yufei
+    //    qemu_log("(iotlb %x)", iotlb); //yufei
+
     te = &env->vmmi_tlb_table[mmu_idx][index];
     te->addend = addend - vaddr;
     if (prot & PAGE_READ) {

@@ -302,7 +302,7 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* IO access */
             if ((addr & (DATA_SIZE - 1)) != 0)
                 goto do_unaligned_access1;
-            ioaddr = env->iotlb[mmu_idx][index];
+            ioaddr = env->vmmi_iotlb[mmu_idx][index];
             set_io_need_red(); //yufei
             res = glue(io_read, SUFFIX)(ioaddr, addr, retaddr);
         } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
@@ -397,11 +397,13 @@ static inline void glue(io_write, SUFFIX)(target_phys_addr_t physaddr,
                                           void *retaddr)
 {
 	
-			if(is_ins_log())
-				qemu_log(" addr is io 2");
     int index;
     index = (physaddr >> IO_MEM_SHIFT) & (IO_MEM_NB_ENTRIES - 1);
     physaddr = (physaddr & TARGET_PAGE_MASK) + addr;
+
+    if(is_ins_log())
+        qemu_log(" addr is io 2, index %d, phy %x \n", index, physaddr);
+
     if (index > (IO_MEM_NOTDIRTY >> IO_MEM_SHIFT)
             && !can_do_io(env)) {
         cpu_io_recompile(env, retaddr);
@@ -409,8 +411,9 @@ static inline void glue(io_write, SUFFIX)(target_phys_addr_t physaddr,
 
     env->mem_io_vaddr = addr;
     env->mem_io_pc = (unsigned long)retaddr;
+//    qemu_log(" fun: %x\n", io_mem_write[index][SHIFT]); //yufei
 #if SHIFT <= 2
-
+    
     io_mem_write[index][SHIFT](io_mem_opaque[index], physaddr, val);
 #else
 #ifdef TARGET_WORDS_BIGENDIAN
@@ -469,7 +472,7 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
             if ((addr & (DATA_SIZE - 1)) != 0)
                 goto do_unaligned_access1;
             retaddr = GETPC();
-            ioaddr = env->iotlb[mmu_idx][index];
+            ioaddr = env->vmmi_iotlb[mmu_idx][index];
             set_io_need_red();//yufei
             glue(io_write, SUFFIX)(ioaddr, val, addr, retaddr);
         } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
@@ -571,7 +574,7 @@ static void glue(glue(slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* IO access */
             if ((addr & (DATA_SIZE - 1)) != 0)
                 goto do_unaligned_access1;
-            ioaddr = env->iotlb[mmu_idx][index];
+            ioaddr = env->vmmi_iotlb[mmu_idx][index];
             set_io_need_red();//yufei
             glue(io_write, SUFFIX)(ioaddr, val, addr, retaddr);
         } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
