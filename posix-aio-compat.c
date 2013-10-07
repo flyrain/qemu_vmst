@@ -184,6 +184,12 @@ static ssize_t handle_aiocb_rw_vector(struct qemu_paiocb *aiocb)
 {
     size_t offset = 0;
     ssize_t len;
+    
+    //yufei.begin
+    extern uint32_t sys_need_red;
+    if(sys_need_red)  
+        qemu_log("handle_aiocb_rw_vector, 0x%08lx", aiocb->aio_offset);
+    //yufei.end
 
     do {
         if (aiocb->aio_type & QEMU_AIO_WRITE)

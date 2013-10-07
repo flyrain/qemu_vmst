@@ -31,6 +31,7 @@
 #include "softmmu_exec.h"
 #endif /* !defined(CONFIG_USER_ONLY) */
 
+
 //#define DEBUG_PCALL
 
 #ifdef DEBUG_PCALL
@@ -204,6 +205,8 @@ static const uint8_t rclb_table[32] = {
 #define floatx80_l2e make_floatx80( 0x3fff, 0xb8aa3b295c17f0bcLL )
 #define floatx80_l2t make_floatx80( 0x4000, 0xd49a784bcd1b8afeLL )
 
+
+extern uint32_t sys_need_red;//yufei
 /* broken thread support */
 
 static spinlock_t global_cpu_lock = SPIN_LOCK_UNLOCKED;
@@ -664,43 +667,46 @@ void helper_check_iol(uint32_t t0)
 
 void helper_outb(uint32_t port, uint32_t data)
 {
-    //if(qemu_log_enabled())
-    //      qemu_log("outb write %x to %x\n", data & 0xff, port);
+    if(qemu_log_enabled() && sys_need_red) //yufei
+        qemu_log("outb write %x to %x\n", data & 0xff, port);
     cpu_outb(port, data & 0xff);
 }
 
 target_ulong helper_inb(uint32_t port)
 {
-    //	if(qemu_log_enabled())
-    //		qemu_log("inb read %x\n", port);
+    if(qemu_log_enabled() && sys_need_red)
+        qemu_log("inb read %x\n", port);
     return cpu_inb(port);
 }
 
 void helper_outw(uint32_t port, uint32_t data)
 {
-    //if(qemu_log_enabled())
-    //      qemu_log("outw write %x to %x\n", data & 0xffff, port);
+    if(qemu_log_enabled() && sys_need_red)
+        qemu_log("outw write %x to %x\n", data & 0xffff, port);
     cpu_outw(port, data & 0xffff);
 }
 
 target_ulong helper_inw(uint32_t port)
 {
-    //	if(qemu_log_enabled())
-    //qemu_log("inw read %x\n", port);
+    if(qemu_log_enabled() && sys_need_red)
+        qemu_log("inw read %x\n", port);
+
     return cpu_inw(port);
 }
 
 void helper_outl(uint32_t port, uint32_t data)
 {
-    //if(qemu_log_enabled())
-    //qemu_log("outl write %x to %x\n", data, port);
+    if(qemu_log_enabled() && sys_need_red)
+        qemu_log("outl write %x to %x\n", data, port);
+
     cpu_outl(port, data);
 }
 
 target_ulong helper_inl(uint32_t port)
 {
-    //	if(qemu_log_enabled())
-    //		qemu_log("inl read %x\n", port);
+    if(qemu_log_enabled() && sys_need_red)
+        qemu_log("inl read %x\n", port);
+
     return cpu_inl(port);
 }
 
@@ -6263,7 +6269,9 @@ void helper_inst_hook(int a)
     //start from function schedule(), no redirect data
     if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag){
         const target_ulong schedule_addr = 0xc125dcff;  //2.6.32.8
-        if (current_pc == 0xc103ea47){
+        //if (current_pc == 0xc103ea47){
+        //0xc102abfa is the address of function "try_to_wake_up"
+        if (current_pc == 0xc102abfa){
             is_insert_work = 1;
         }
 
@@ -6293,6 +6301,8 @@ void helper_inst_hook(int a)
             if(current_pc == 0xc125e1e4 && schedule_count == 2){
                 EAX = current_task;
                 is_insert_work = 0;  //out of work_thread
+                schedule_count = 0;  //reset schedule_count, because
+                                     //of multi-work_thread
             }
         }
     }
@@ -6433,7 +6443,7 @@ void helper_inst_hook(int a)
             //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
             //qemu_log("%s",str); //yufei
             my_monitor_disas(a); 
-            //qemu_log(" Recx %x, ebx %x, edx %x", ECX, EBX, EDX);//yufei
+            qemu_log(" Recx %x, eax %x, edx %x", ECX, EAX, EDX);//yufei
         }
 
         if (xed_error == XED_ERROR_NONE) {

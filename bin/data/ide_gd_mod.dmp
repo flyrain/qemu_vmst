@@ -1,0 +1,3423 @@
+
+/lib/modules/2.6.32.8/kernel/drivers/ide/ide-gd_mod.ko:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <ide_gd_capacity>:
+       0:	55                   	push   %ebp
+       1:	89 e5                	mov    %esp,%ebp
+       3:	57                   	push   %edi
+       4:	8b 50 74             	mov    0x74(%eax),%edx
+       7:	5f                   	pop    %edi
+       8:	8b 40 70             	mov    0x70(%eax),%eax
+       b:	5d                   	pop    %ebp
+       c:	c3                   	ret    
+
+0000000d <ide_gd_resume>:
+       d:	8b 50 1c             	mov    0x1c(%eax),%edx
+      10:	0f b7 8a a6 00 00 00 	movzwl 0xa6(%edx),%ecx
+      17:	81 e1 00 c0 00 00    	and    $0xc000,%ecx
+      1d:	81 f9 00 40 00 00    	cmp    $0x4000,%ecx
+      23:	75 2d                	jne    52 <ide_gd_resume+0x45>
+      25:	0f b7 8a ae 00 00 00 	movzwl 0xae(%edx),%ecx
+      2c:	81 e1 00 c0 00 00    	and    $0xc000,%ecx
+      32:	81 f9 00 40 00 00    	cmp    $0x4000,%ecx
+      38:	75 18                	jne    52 <ide_gd_resume+0x45>
+      3a:	f6 82 ab 00 00 00 04 	testb  $0x4,0xab(%edx)
+      41:	74 0f                	je     52 <ide_gd_resume+0x45>
+      43:	f6 82 a5 00 00 00 04 	testb  $0x4,0xa5(%edx)
+      4a:	74 06                	je     52 <ide_gd_resume+0x45>
+      4c:	8b 50 2c             	mov    0x2c(%eax),%edx
+      4f:	ff 52 04             	call   *0x4(%edx)
+      52:	c3                   	ret    
+
+00000053 <ide_disk_proc_entries>:
+      53:	89 c2                	mov    %eax,%edx
+      55:	b8 00 00 00 00       	mov    $0x0,%eax
+			56: R_386_32	ide_floppy_proc
+      5a:	80 7a 46 20          	cmpb   $0x20,0x46(%edx)
+      5e:	ba 00 00 00 00       	mov    $0x0,%edx
+			5f: R_386_32	ide_disk_proc
+      63:	0f 44 c2             	cmove  %edx,%eax
+      66:	c3                   	ret    
+
+00000067 <ide_disk_proc_devsets>:
+      67:	89 c2                	mov    %eax,%edx
+      69:	b8 00 00 00 00       	mov    $0x0,%eax
+			6a: R_386_32	ide_floppy_settings
+      6e:	80 7a 46 20          	cmpb   $0x20,0x46(%edx)
+      72:	ba 00 00 00 00       	mov    $0x0,%edx
+			73: R_386_32	ide_disk_settings
+      77:	0f 44 c2             	cmove  %edx,%eax
+      7a:	c3                   	ret    
+
+0000007b <ide_gd_do_request>:
+      7b:	8b 48 2c             	mov    0x2c(%eax),%ecx
+      7e:	ff 74 24 08          	pushl  0x8(%esp)
+      82:	ff 74 24 08          	pushl  0x8(%esp)
+      86:	ff 51 1c             	call   *0x1c(%ecx)
+      89:	5a                   	pop    %edx
+      8a:	59                   	pop    %ecx
+      8b:	c3                   	ret    
+
+0000008c <ide_gd_getgeo>:
+      8c:	8b 40 50             	mov    0x50(%eax),%eax
+      8f:	8b 80 98 01 00 00    	mov    0x198(%eax),%eax
+      95:	8b 40 fc             	mov    -0x4(%eax),%eax
+      98:	8a 48 4e             	mov    0x4e(%eax),%cl
+      9b:	88 0a                	mov    %cl,(%edx)
+      9d:	8a 48 4f             	mov    0x4f(%eax),%cl
+      a0:	88 4a 01             	mov    %cl,0x1(%edx)
+      a3:	8b 40 54             	mov    0x54(%eax),%eax
+      a6:	66 89 42 02          	mov    %ax,0x2(%edx)
+      aa:	31 c0                	xor    %eax,%eax
+      ac:	c3                   	ret    
+
+000000ad <ide_gd_media_changed>:
+      ad:	8b 80 98 01 00 00    	mov    0x198(%eax),%eax
+      b3:	8b 48 fc             	mov    -0x4(%eax),%ecx
+      b6:	8b 51 30             	mov    0x30(%ecx),%edx
+      b9:	f6 c6 08             	test   $0x8,%dh
+      bc:	74 09                	je     c7 <ide_gd_media_changed+0x1a>
+      be:	80 e6 f7             	and    $0xf7,%dh
+      c1:	31 c0                	xor    %eax,%eax
+      c3:	89 51 30             	mov    %edx,0x30(%ecx)
+      c6:	c3                   	ret    
+      c7:	89 d0                	mov    %edx,%eax
+      c9:	81 e2 ff ff ff ef    	and    $0xefffffff,%edx
+      cf:	c1 e8 1c             	shr    $0x1c,%eax
+      d2:	83 e0 01             	and    $0x1,%eax
+      d5:	89 51 30             	mov    %edx,0x30(%ecx)
+      d8:	c3                   	ret    
+
+000000d9 <ide_gd_set_capacity>:
+      d9:	55                   	push   %ebp
+      da:	89 e5                	mov    %esp,%ebp
+      dc:	57                   	push   %edi
+      dd:	53                   	push   %ebx
+      de:	8b 80 98 01 00 00    	mov    0x198(%eax),%eax
+      e4:	8b 40 fc             	mov    -0x4(%eax),%eax
+      e7:	8b 58 2c             	mov    0x2c(%eax),%ebx
+      ea:	8b 5b 08             	mov    0x8(%ebx),%ebx
+      ed:	85 db                	test   %ebx,%ebx
+      ef:	74 04                	je     f5 <ide_gd_set_capacity+0x1c>
+      f1:	ff d3                	call   *%ebx
+      f3:	eb 06                	jmp    fb <ide_gd_set_capacity+0x22>
+      f5:	8b 50 74             	mov    0x74(%eax),%edx
+      f8:	8b 40 70             	mov    0x70(%eax),%eax
+      fb:	5b                   	pop    %ebx
+      fc:	5f                   	pop    %edi
+      fd:	5d                   	pop    %ebp
+      fe:	c3                   	ret    
+
+000000ff <ide_gd_revalidate_disk>:
+      ff:	56                   	push   %esi
+     100:	89 c6                	mov    %eax,%esi
+     102:	53                   	push   %ebx
+     103:	8b 80 98 01 00 00    	mov    0x198(%eax),%eax
+     109:	8b 58 fc             	mov    -0x4(%eax),%ebx
+     10c:	8b 43 30             	mov    0x30(%ebx),%eax
+     10f:	f6 c4 08             	test   $0x8,%ah
+     112:	74 08                	je     11c <ide_gd_revalidate_disk+0x1d>
+     114:	80 e4 f7             	and    $0xf7,%ah
+     117:	89 43 30             	mov    %eax,0x30(%ebx)
+     11a:	eb 1a                	jmp    136 <ide_gd_revalidate_disk+0x37>
+     11c:	89 c2                	mov    %eax,%edx
+     11e:	81 e2 ff ff ff ef    	and    $0xefffffff,%edx
+     124:	a9 00 00 00 10       	test   $0x10000000,%eax
+     129:	89 53 30             	mov    %edx,0x30(%ebx)
+     12c:	74 08                	je     136 <ide_gd_revalidate_disk+0x37>
+     12e:	8b 53 2c             	mov    0x2c(%ebx),%edx
+     131:	89 d8                	mov    %ebx,%eax
+     133:	ff 52 04             	call   *0x4(%edx)
+     136:	8b 43 70             	mov    0x70(%ebx),%eax
+     139:	8b 53 74             	mov    0x74(%ebx),%edx
+     13c:	5b                   	pop    %ebx
+     13d:	89 46 3c             	mov    %eax,0x3c(%esi)
+     140:	31 c0                	xor    %eax,%eax
+     142:	89 56 40             	mov    %edx,0x40(%esi)
+     145:	5e                   	pop    %esi
+     146:	c3                   	ret    
+
+00000147 <ide_gd_ioctl>:
+     147:	56                   	push   %esi
+     148:	89 c6                	mov    %eax,%esi
+     14a:	53                   	push   %ebx
+     14b:	8b 40 50             	mov    0x50(%eax),%eax
+     14e:	8b 80 98 01 00 00    	mov    0x198(%eax),%eax
+     154:	8b 40 fc             	mov    -0x4(%eax),%eax
+     157:	8b 58 2c             	mov    0x2c(%eax),%ebx
+     15a:	ff 74 24 0c          	pushl  0xc(%esp)
+     15e:	51                   	push   %ecx
+     15f:	89 d1                	mov    %edx,%ecx
+     161:	89 f2                	mov    %esi,%edx
+     163:	ff 53 20             	call   *0x20(%ebx)
+     166:	5b                   	pop    %ebx
+     167:	5e                   	pop    %esi
+     168:	5b                   	pop    %ebx
+     169:	5e                   	pop    %esi
+     16a:	c3                   	ret    
+
+0000016b <ide_gd_shutdown>:
+     16b:	83 3d 00 00 00 00 04 	cmpl   $0x4,0x0
+			16d: R_386_32	system_state
+     172:	53                   	push   %ebx
+     173:	89 c3                	mov    %eax,%ebx
+     175:	75 18                	jne    18f <ide_gd_shutdown+0x24>
+     177:	b8 00 00 00 00       	mov    $0x0,%eax
+			178: R_386_32	.rodata
+     17c:	e8 fc ff ff ff       	call   17d <ide_gd_shutdown+0x12>
+			17d: R_386_PC32	dmi_check_system
+     181:	85 c0                	test   %eax,%eax
+     183:	75 0a                	jne    18f <ide_gd_shutdown+0x24>
+     185:	8b 53 2c             	mov    0x2c(%ebx),%edx
+     188:	89 d8                	mov    %ebx,%eax
+     18a:	ff 52 10             	call   *0x10(%edx)
+     18d:	eb 21                	jmp    1b0 <ide_gd_shutdown+0x45>
+     18f:	53                   	push   %ebx
+     190:	68 00 00 00 00       	push   $0x0
+			191: R_386_32	.rodata.str1.1
+     195:	e8 fc ff ff ff       	call   196 <ide_gd_shutdown+0x2b>
+			196: R_386_PC32	printk
+     19a:	8b 8b d0 00 00 00    	mov    0xd0(%ebx),%ecx
+     1a0:	ba 02 00 00 00       	mov    $0x2,%edx
+     1a5:	8d 83 8c 00 00 00    	lea    0x8c(%ebx),%eax
+     1ab:	ff 51 24             	call   *0x24(%ecx)
+     1ae:	58                   	pop    %eax
+     1af:	5a                   	pop    %edx
+     1b0:	5b                   	pop    %ebx
+     1b1:	c3                   	ret    
+
+000001b2 <ide_gd_remove>:
+     1b2:	57                   	push   %edi
+     1b3:	56                   	push   %esi
+     1b4:	53                   	push   %ebx
+     1b5:	8b 70 18             	mov    0x18(%eax),%esi
+     1b8:	89 c3                	mov    %eax,%ebx
+     1ba:	8b 56 04             	mov    0x4(%esi),%edx
+     1bd:	8b 7e 08             	mov    0x8(%esi),%edi
+     1c0:	83 c6 0c             	add    $0xc,%esi
+     1c3:	e8 fc ff ff ff       	call   1c4 <ide_gd_remove+0x12>
+			1c4: R_386_PC32	ide_proc_unregister_driver
+     1c8:	89 f0                	mov    %esi,%eax
+     1ca:	e8 fc ff ff ff       	call   1cb <ide_gd_remove+0x19>
+			1cb: R_386_PC32	device_del
+     1cf:	89 f8                	mov    %edi,%eax
+     1d1:	e8 fc ff ff ff       	call   1d2 <ide_gd_remove+0x20>
+			1d2: R_386_PC32	del_gendisk
+     1d6:	8b 53 2c             	mov    0x2c(%ebx),%edx
+     1d9:	89 d8                	mov    %ebx,%eax
+     1db:	ff 52 10             	call   *0x10(%edx)
+     1de:	b8 54 00 00 00       	mov    $0x54,%eax
+			1df: R_386_32	.data
+     1e3:	e8 fc ff ff ff       	call   1e4 <ide_gd_remove+0x32>
+			1e4: R_386_PC32	mutex_lock
+     1e8:	89 f0                	mov    %esi,%eax
+     1ea:	e8 fc ff ff ff       	call   1eb <ide_gd_remove+0x39>
+			1eb: R_386_PC32	put_device
+     1ef:	b8 54 00 00 00       	mov    $0x54,%eax
+			1f0: R_386_32	.data
+     1f4:	5b                   	pop    %ebx
+     1f5:	5e                   	pop    %esi
+     1f6:	5f                   	pop    %edi
+     1f7:	e9 fc ff ff ff       	jmp    1f8 <ide_gd_remove+0x46>
+			1f8: R_386_PC32	mutex_unlock
+
+000001fc <ide_disk_release>:
+     1fc:	53                   	push   %ebx
+     1fd:	8b 50 f4             	mov    -0xc(%eax),%edx
+     200:	8d 58 f4             	lea    -0xc(%eax),%ebx
+     203:	8b 43 08             	mov    0x8(%ebx),%eax
+     206:	c7 42 2c 00 00 00 00 	movl   $0x0,0x2c(%edx)
+     20d:	c7 42 18 00 00 00 00 	movl   $0x0,0x18(%edx)
+     214:	c7 80 98 01 00 00 00 	movl   $0x0,0x198(%eax)
+     21b:	00 00 00 
+     21e:	e8 fc ff ff ff       	call   21f <ide_disk_release+0x23>
+			21f: R_386_PC32	put_disk
+     223:	89 d8                	mov    %ebx,%eax
+     225:	5b                   	pop    %ebx
+     226:	e9 fc ff ff ff       	jmp    227 <ide_disk_release+0x2b>
+			227: R_386_PC32	kfree
+
+0000022b <ide_disk_put>:
+     22b:	56                   	push   %esi
+     22c:	53                   	push   %ebx
+     22d:	89 c3                	mov    %eax,%ebx
+     22f:	8b 30                	mov    (%eax),%esi
+     231:	b8 54 00 00 00       	mov    $0x54,%eax
+			232: R_386_32	.data
+     236:	e8 fc ff ff ff       	call   237 <ide_disk_put+0xc>
+			237: R_386_PC32	mutex_lock
+     23b:	8d 43 0c             	lea    0xc(%ebx),%eax
+     23e:	e8 fc ff ff ff       	call   23f <ide_disk_put+0x14>
+			23f: R_386_PC32	put_device
+     243:	89 f0                	mov    %esi,%eax
+     245:	e8 fc ff ff ff       	call   246 <ide_disk_put+0x1b>
+			246: R_386_PC32	ide_device_put
+     24a:	b8 54 00 00 00       	mov    $0x54,%eax
+			24b: R_386_32	.data
+     24f:	5b                   	pop    %ebx
+     250:	5e                   	pop    %esi
+     251:	e9 fc ff ff ff       	jmp    252 <ide_disk_put+0x27>
+			252: R_386_PC32	mutex_unlock
+
+00000256 <ide_gd_release>:
+     256:	55                   	push   %ebp
+     257:	89 c5                	mov    %eax,%ebp
+     259:	57                   	push   %edi
+     25a:	56                   	push   %esi
+     25b:	53                   	push   %ebx
+     25c:	8b 80 98 01 00 00    	mov    0x198(%eax),%eax
+     262:	8d 78 fc             	lea    -0x4(%eax),%edi
+     265:	8b 70 fc             	mov    -0x4(%eax),%esi
+     268:	83 bf 2c 01 00 00 01 	cmpl   $0x1,0x12c(%edi)
+     26f:	75 08                	jne    279 <ide_gd_release+0x23>
+     271:	8b 56 2c             	mov    0x2c(%esi),%edx
+     274:	89 f0                	mov    %esi,%eax
+     276:	ff 52 10             	call   *0x10(%edx)
+     279:	f6 46 31 04          	testb  $0x4,0x31(%esi)
+     27d:	74 1c                	je     29b <ide_gd_release+0x45>
+     27f:	83 bf 2c 01 00 00 01 	cmpl   $0x1,0x12c(%edi)
+     286:	75 13                	jne    29b <ide_gd_release+0x45>
+     288:	8b 5e 2c             	mov    0x2c(%esi),%ebx
+     28b:	31 c9                	xor    %ecx,%ecx
+     28d:	89 ea                	mov    %ebp,%edx
+     28f:	89 f0                	mov    %esi,%eax
+     291:	ff 53 18             	call   *0x18(%ebx)
+     294:	81 66 30 ff ff ff bf 	andl   $0xbfffffff,0x30(%esi)
+     29b:	ff 8f 2c 01 00 00    	decl   0x12c(%edi)
+     2a1:	89 f8                	mov    %edi,%eax
+     2a3:	e8 83 ff ff ff       	call   22b <ide_disk_put>
+     2a8:	31 c0                	xor    %eax,%eax
+     2aa:	5b                   	pop    %ebx
+     2ab:	5e                   	pop    %esi
+     2ac:	5f                   	pop    %edi
+     2ad:	5d                   	pop    %ebp
+     2ae:	c3                   	ret    
+
+000002af <ide_gd_open>:
+     2af:	55                   	push   %ebp
+     2b0:	89 c5                	mov    %eax,%ebp
+     2b2:	57                   	push   %edi
+     2b3:	56                   	push   %esi
+     2b4:	53                   	push   %ebx
+     2b5:	83 ec 08             	sub    $0x8,%esp
+     2b8:	89 54 24 04          	mov    %edx,0x4(%esp)
+     2bc:	8b 78 50             	mov    0x50(%eax),%edi
+     2bf:	b8 54 00 00 00       	mov    $0x54,%eax
+			2c0: R_386_32	.data
+     2c4:	e8 fc ff ff ff       	call   2c5 <ide_gd_open+0x16>
+			2c5: R_386_PC32	mutex_lock
+     2c9:	8b b7 98 01 00 00    	mov    0x198(%edi),%esi
+     2cf:	89 f3                	mov    %esi,%ebx
+     2d1:	83 eb 04             	sub    $0x4,%ebx
+     2d4:	74 18                	je     2ee <ide_gd_open+0x3f>
+     2d6:	8b 46 fc             	mov    -0x4(%esi),%eax
+     2d9:	e8 fc ff ff ff       	call   2da <ide_gd_open+0x2b>
+			2da: R_386_PC32	ide_device_get
+     2de:	85 c0                	test   %eax,%eax
+     2e0:	74 04                	je     2e6 <ide_gd_open+0x37>
+     2e2:	31 db                	xor    %ebx,%ebx
+     2e4:	eb 08                	jmp    2ee <ide_gd_open+0x3f>
+     2e6:	8d 46 08             	lea    0x8(%esi),%eax
+     2e9:	e8 fc ff ff ff       	call   2ea <ide_gd_open+0x3b>
+			2ea: R_386_PC32	get_device
+     2ee:	b8 54 00 00 00       	mov    $0x54,%eax
+			2ef: R_386_32	.data
+     2f3:	e8 fc ff ff ff       	call   2f4 <ide_gd_open+0x45>
+			2f4: R_386_PC32	mutex_unlock
+     2f8:	85 db                	test   %ebx,%ebx
+     2fa:	ba fa ff ff ff       	mov    $0xfffffffa,%edx
+     2ff:	0f 84 90 00 00 00    	je     395 <ide_gd_open+0xe6>
+     305:	8b 93 2c 01 00 00    	mov    0x12c(%ebx),%edx
+     30b:	8b 33                	mov    (%ebx),%esi
+     30d:	42                   	inc    %edx
+     30e:	89 93 2c 01 00 00    	mov    %edx,0x12c(%ebx)
+     314:	8b 46 30             	mov    0x30(%esi),%eax
+     317:	f6 c4 04             	test   $0x4,%ah
+     31a:	74 56                	je     372 <ide_gd_open+0xc3>
+     31c:	4a                   	dec    %edx
+     31d:	75 53                	jne    372 <ide_gd_open+0xc3>
+     31f:	8b 4e 2c             	mov    0x2c(%esi),%ecx
+     322:	25 ff ff ff bf       	and    $0xbfffffff,%eax
+     327:	89 fa                	mov    %edi,%edx
+     329:	89 46 30             	mov    %eax,0x30(%esi)
+     32c:	89 f0                	mov    %esi,%eax
+     32e:	ff 51 14             	call   *0x14(%ecx)
+     331:	85 c0                	test   %eax,%eax
+     333:	74 0c                	je     341 <ide_gd_open+0x92>
+     335:	f6 44 24 04 40       	testb  $0x40,0x4(%esp)
+     33a:	ba fb ff ff ff       	mov    $0xfffffffb,%edx
+     33f:	74 41                	je     382 <ide_gd_open+0xd3>
+     341:	f6 46 33 20          	testb  $0x20,0x33(%esi)
+     345:	74 0c                	je     353 <ide_gd_open+0xa4>
+     347:	f6 44 24 04 02       	testb  $0x2,0x4(%esp)
+     34c:	ba e2 ff ff ff       	mov    $0xffffffe2,%edx
+     351:	75 2f                	jne    382 <ide_gd_open+0xd3>
+     353:	8b 5e 2c             	mov    0x2c(%esi),%ebx
+     356:	b9 01 00 00 00       	mov    $0x1,%ecx
+     35b:	89 fa                	mov    %edi,%edx
+     35d:	89 f0                	mov    %esi,%eax
+     35f:	ff 53 18             	call   *0x18(%ebx)
+     362:	89 e8                	mov    %ebp,%eax
+     364:	81 4e 30 00 00 00 10 	orl    $0x10000000,0x30(%esi)
+     36b:	e8 fc ff ff ff       	call   36c <ide_gd_open+0xbd>
+			36c: R_386_PC32	check_disk_change
+     370:	eb 0c                	jmp    37e <ide_gd_open+0xcf>
+     372:	a9 00 00 00 40       	test   $0x40000000,%eax
+     377:	ba f0 ff ff ff       	mov    $0xfffffff0,%edx
+     37c:	75 04                	jne    382 <ide_gd_open+0xd3>
+     37e:	31 d2                	xor    %edx,%edx
+     380:	eb 13                	jmp    395 <ide_gd_open+0xe6>
+     382:	ff 8b 2c 01 00 00    	decl   0x12c(%ebx)
+     388:	89 d8                	mov    %ebx,%eax
+     38a:	89 14 24             	mov    %edx,(%esp)
+     38d:	e8 99 fe ff ff       	call   22b <ide_disk_put>
+     392:	8b 14 24             	mov    (%esp),%edx
+     395:	59                   	pop    %ecx
+     396:	89 d0                	mov    %edx,%eax
+     398:	5b                   	pop    %ebx
+     399:	5b                   	pop    %ebx
+     39a:	5e                   	pop    %esi
+     39b:	5f                   	pop    %edi
+     39c:	5d                   	pop    %ebp
+     39d:	c3                   	ret    
+
+0000039e <ide_gd_probe>:
+     39e:	55                   	push   %ebp
+     39f:	57                   	push   %edi
+     3a0:	56                   	push   %esi
+     3a1:	53                   	push   %ebx
+     3a2:	89 c3                	mov    %eax,%ebx
+     3a4:	83 ec 08             	sub    $0x8,%esp
+     3a7:	8d 50 04             	lea    0x4(%eax),%edx
+     3aa:	b8 28 00 00 00       	mov    $0x28,%eax
+			3ab: R_386_32	.rodata.str1.1
+     3af:	e8 fc ff ff ff       	call   3b0 <ide_gd_probe+0x12>
+			3b0: R_386_PC32	strstr
+     3b4:	85 c0                	test   %eax,%eax
+     3b6:	0f 84 69 01 00 00    	je     525 <ide_gd_probe+0x187>
+     3bc:	8a 43 46             	mov    0x46(%ebx),%al
+     3bf:	3c 20                	cmp    $0x20,%al
+     3c1:	0f 84 6a 01 00 00    	je     531 <ide_gd_probe+0x193>
+     3c7:	84 c0                	test   %al,%al
+     3c9:	bd 00 00 00 00       	mov    $0x0,%ebp
+			3ca: R_386_32	ide_atapi_disk_ops
+     3ce:	0f 84 62 01 00 00    	je     536 <ide_gd_probe+0x198>
+     3d4:	e9 4c 01 00 00       	jmp    525 <ide_gd_probe+0x187>
+     3d9:	53                   	push   %ebx
+     3da:	68 2f 00 00 00       	push   $0x2f
+			3db: R_386_32	.rodata.str1.1
+     3df:	eb 58                	jmp    439 <ide_gd_probe+0x9b>
+     3e1:	ba d0 80 00 00       	mov    $0x80d0,%edx
+     3e6:	b8 24 09 00 00       	mov    $0x924,%eax
+			3e7: R_386_32	kmalloc_caches
+     3eb:	e8 fc ff ff ff       	call   3ec <ide_gd_probe+0x4e>
+			3ec: R_386_PC32	kmem_cache_alloc
+     3f0:	83 3d 04 00 00 00 00 	cmpl   $0x0,0x4
+			3f2: R_386_32	__tracepoint_kmalloc
+     3f7:	89 c6                	mov    %eax,%esi
+     3f9:	a1 28 09 00 00       	mov    0x928,%eax
+			3fa: R_386_32	kmalloc_caches
+     3fe:	89 44 24 04          	mov    %eax,0x4(%esp)
+     402:	74 2b                	je     42f <ide_gd_probe+0x91>
+     404:	8b 3d 10 00 00 00    	mov    0x10,%edi
+			406: R_386_32	__tracepoint_kmalloc
+     40a:	85 ff                	test   %edi,%edi
+     40c:	74 21                	je     42f <ide_gd_probe+0x91>
+     40e:	68 d0 80 00 00       	push   $0x80d0
+     413:	89 f2                	mov    %esi,%edx
+     415:	ff 74 24 08          	pushl  0x8(%esp)
+     419:	b8 e1 03 00 00       	mov    $0x3e1,%eax
+			41a: R_386_32	.text
+     41e:	b9 90 01 00 00       	mov    $0x190,%ecx
+     423:	ff 17                	call   *(%edi)
+     425:	83 c7 04             	add    $0x4,%edi
+     428:	83 3f 00             	cmpl   $0x0,(%edi)
+     42b:	58                   	pop    %eax
+     42c:	5a                   	pop    %edx
+     42d:	eb dd                	jmp    40c <ide_gd_probe+0x6e>
+     42f:	85 f6                	test   %esi,%esi
+     431:	75 17                	jne    44a <ide_gd_probe+0xac>
+     433:	53                   	push   %ebx
+     434:	68 5c 00 00 00       	push   $0x5c
+			435: R_386_32	.rodata.str1.1
+     439:	e8 fc ff ff ff       	call   43a <ide_gd_probe+0x9c>
+			43a: R_386_PC32	printk
+     43e:	b8 ed ff ff ff       	mov    $0xffffffed,%eax
+     443:	5b                   	pop    %ebx
+     444:	5e                   	pop    %esi
+     445:	e9 e0 00 00 00       	jmp    52a <ide_gd_probe+0x18c>
+     44a:	83 ca ff             	or     $0xffffffff,%edx
+     44d:	b8 40 00 00 00       	mov    $0x40,%eax
+     452:	e8 fc ff ff ff       	call   453 <ide_gd_probe+0xb5>
+			453: R_386_PC32	alloc_disk_node
+     457:	85 c0                	test   %eax,%eax
+     459:	89 c7                	mov    %eax,%edi
+     45b:	0f 84 bd 00 00 00    	je     51e <ide_gd_probe+0x180>
+     461:	89 da                	mov    %ebx,%edx
+     463:	e8 fc ff ff ff       	call   464 <ide_gd_probe+0xc6>
+			464: R_386_PC32	ide_init_disk
+     468:	8d 83 8c 00 00 00    	lea    0x8c(%ebx),%eax
+     46e:	8d 56 0c             	lea    0xc(%esi),%edx
+     471:	89 44 24 04          	mov    %eax,0x4(%esp)
+     475:	89 46 0c             	mov    %eax,0xc(%esi)
+     478:	c7 86 28 01 00 00 fc 	movl   $0x1fc,0x128(%esi)
+     47f:	01 00 00 
+			47e: R_386_32	.text
+     482:	ff b3 94 00 00 00    	pushl  0x94(%ebx)
+     488:	52                   	push   %edx
+     489:	89 54 24 08          	mov    %edx,0x8(%esp)
+     48d:	e8 fc ff ff ff       	call   48e <ide_gd_probe+0xf0>
+			48e: R_386_PC32	dev_set_name
+     492:	8b 54 24 08          	mov    0x8(%esp),%edx
+     496:	89 d0                	mov    %edx,%eax
+     498:	e8 fc ff ff ff       	call   499 <ide_gd_probe+0xfb>
+			499: R_386_PC32	device_register
+     49d:	5a                   	pop    %edx
+     49e:	59                   	pop    %ecx
+     49f:	85 c0                	test   %eax,%eax
+     4a1:	75 74                	jne    517 <ide_gd_probe+0x179>
+     4a3:	8d 46 04             	lea    0x4(%esi),%eax
+     4a6:	89 1e                	mov    %ebx,(%esi)
+     4a8:	c7 46 04 00 00 00 00 	movl   $0x0,0x4(%esi)
+			4ab: R_386_32	.data
+     4af:	89 7e 08             	mov    %edi,0x8(%esi)
+     4b2:	89 87 98 01 00 00    	mov    %eax,0x198(%edi)
+     4b8:	89 73 18             	mov    %esi,0x18(%ebx)
+     4bb:	a1 00 00 00 00       	mov    0x0,%eax
+			4bc: R_386_32	.bss
+     4c0:	89 6b 2c             	mov    %ebp,0x2c(%ebx)
+     4c3:	89 83 80 00 00 00    	mov    %eax,0x80(%ebx)
+     4c9:	89 d8                	mov    %ebx,%eax
+     4cb:	ff 55 0c             	call   *0xc(%ebp)
+     4ce:	8b 43 70             	mov    0x70(%ebx),%eax
+     4d1:	8b 53 74             	mov    0x74(%ebx),%edx
+     4d4:	c7 47 08 40 00 00 00 	movl   $0x40,0x8(%edi)
+     4db:	89 47 3c             	mov    %eax,0x3c(%edi)
+     4de:	89 57 40             	mov    %edx,0x40(%edi)
+     4e1:	8b 44 24 04          	mov    0x4(%esp),%eax
+     4e5:	83 8f 9c 01 00 00 40 	orl    $0x40,0x19c(%edi)
+     4ec:	89 87 a0 01 00 00    	mov    %eax,0x1a0(%edi)
+     4f2:	f6 43 31 04          	testb  $0x4,0x31(%ebx)
+     4f6:	74 0a                	je     502 <ide_gd_probe+0x164>
+     4f8:	c7 87 9c 01 00 00 01 	movl   $0x1,0x19c(%edi)
+     4ff:	00 00 00 
+     502:	89 f8                	mov    %edi,%eax
+     504:	c7 87 90 01 00 00 98 	movl   $0x298,0x190(%edi)
+     50b:	02 00 00 
+			50a: R_386_32	.rodata
+     50e:	e8 fc ff ff ff       	call   50f <ide_gd_probe+0x171>
+			50f: R_386_PC32	add_disk
+     513:	31 c0                	xor    %eax,%eax
+     515:	eb 13                	jmp    52a <ide_gd_probe+0x18c>
+     517:	89 f8                	mov    %edi,%eax
+     519:	e8 fc ff ff ff       	call   51a <ide_gd_probe+0x17c>
+			51a: R_386_PC32	put_disk
+     51e:	89 f0                	mov    %esi,%eax
+     520:	e8 fc ff ff ff       	call   521 <ide_gd_probe+0x183>
+			521: R_386_PC32	kfree
+     525:	b8 ed ff ff ff       	mov    $0xffffffed,%eax
+     52a:	5a                   	pop    %edx
+     52b:	59                   	pop    %ecx
+     52c:	5b                   	pop    %ebx
+     52d:	5e                   	pop    %esi
+     52e:	5f                   	pop    %edi
+     52f:	5d                   	pop    %ebp
+     530:	c3                   	ret    
+     531:	bd 00 00 00 00       	mov    $0x0,%ebp
+			532: R_386_32	ide_ata_disk_ops
+     536:	ba 28 00 00 00       	mov    $0x28,%edx
+			537: R_386_32	.rodata.str1.1
+     53b:	89 d8                	mov    %ebx,%eax
+     53d:	ff 55 00             	call   *0x0(%ebp)
+     540:	85 c0                	test   %eax,%eax
+     542:	0f 85 99 fe ff ff    	jne    3e1 <ide_gd_probe+0x43>
+     548:	e9 8c fe ff ff       	jmp    3d9 <ide_gd_probe+0x3b>
+     54d:	90                   	nop
+     54e:	90                   	nop
+     54f:	90                   	nop
+
+00000550 <ata_id_lba48_enabled>:
+     550:	56                   	push   %esi
+     551:	53                   	push   %ebx
+     552:	0f b7 98 a6 00 00 00 	movzwl 0xa6(%eax),%ebx
+     559:	89 da                	mov    %ebx,%edx
+     55b:	81 e2 00 c0 00 00    	and    $0xc000,%edx
+     561:	81 fa 00 40 00 00    	cmp    $0x4000,%edx
+     567:	75 5c                	jne    5c5 <ata_id_lba48_enabled+0x75>
+     569:	66 83 b8 ce 00 00 00 	cmpw   $0x0,0xce(%eax)
+     570:	00 
+     571:	75 2a                	jne    59d <ata_id_lba48_enabled+0x4d>
+     573:	66 83 b8 cc 00 00 00 	cmpw   $0x0,0xcc(%eax)
+     57a:	00 
+     57b:	75 20                	jne    59d <ata_id_lba48_enabled+0x4d>
+     57d:	66 83 b8 c8 00 00 00 	cmpw   $0x0,0xc8(%eax)
+     584:	00 
+     585:	75 16                	jne    59d <ata_id_lba48_enabled+0x4d>
+     587:	0f b7 90 ca 00 00 00 	movzwl 0xca(%eax),%edx
+     58e:	31 c9                	xor    %ecx,%ecx
+     590:	0f a4 d1 10          	shld   $0x10,%edx,%ecx
+     594:	89 ce                	mov    %ecx,%esi
+     596:	c1 e2 10             	shl    $0x10,%edx
+     599:	09 d6                	or     %edx,%esi
+     59b:	74 28                	je     5c5 <ata_id_lba48_enabled+0x75>
+     59d:	80 e7 04             	and    $0x4,%bh
+     5a0:	74 23                	je     5c5 <ata_id_lba48_enabled+0x75>
+     5a2:	0f b7 90 ae 00 00 00 	movzwl 0xae(%eax),%edx
+     5a9:	81 e2 00 c0 00 00    	and    $0xc000,%edx
+     5af:	81 fa 00 40 00 00    	cmp    $0x4000,%edx
+     5b5:	75 0e                	jne    5c5 <ata_id_lba48_enabled+0x75>
+     5b7:	0f b7 80 ac 00 00 00 	movzwl 0xac(%eax),%eax
+     5be:	25 00 04 00 00       	and    $0x400,%eax
+     5c3:	eb 02                	jmp    5c7 <ata_id_lba48_enabled+0x77>
+     5c5:	31 c0                	xor    %eax,%eax
+     5c7:	5b                   	pop    %ebx
+     5c8:	5e                   	pop    %esi
+     5c9:	c3                   	ret    
+
+000005ca <sectors_to_MB>:
+     5ca:	55                   	push   %ebp
+     5cb:	89 c1                	mov    %eax,%ecx
+     5cd:	89 e5                	mov    %esp,%ebp
+     5cf:	57                   	push   %edi
+     5d0:	53                   	push   %ebx
+     5d1:	89 d3                	mov    %edx,%ebx
+     5d3:	0f a4 c3 09          	shld   $0x9,%eax,%ebx
+     5d7:	83 ec 04             	sub    $0x4,%esp
+     5da:	c1 e1 09             	shl    $0x9,%ecx
+     5dd:	89 da                	mov    %ebx,%edx
+     5df:	89 c8                	mov    %ecx,%eax
+     5e1:	89 d1                	mov    %edx,%ecx
+     5e3:	31 d2                	xor    %edx,%edx
+     5e5:	85 c9                	test   %ecx,%ecx
+     5e7:	89 45 f4             	mov    %eax,-0xc(%ebp)
+     5ea:	74 0d                	je     5f9 <sectors_to_MB+0x2f>
+     5ec:	89 c8                	mov    %ecx,%eax
+     5ee:	bb 40 42 0f 00       	mov    $0xf4240,%ebx
+     5f3:	31 d2                	xor    %edx,%edx
+     5f5:	f7 f3                	div    %ebx
+     5f7:	89 c1                	mov    %eax,%ecx
+     5f9:	8b 45 f4             	mov    -0xc(%ebp),%eax
+     5fc:	bb 40 42 0f 00       	mov    $0xf4240,%ebx
+     601:	5f                   	pop    %edi
+     602:	f7 f3                	div    %ebx
+     604:	89 ca                	mov    %ecx,%edx
+     606:	5b                   	pop    %ebx
+     607:	5f                   	pop    %edi
+     608:	5d                   	pop    %ebp
+     609:	c3                   	ret    
+
+0000060a <get_multcount>:
+     60a:	0f b6 40 48          	movzbl 0x48(%eax),%eax
+     60e:	c3                   	ret    
+
+0000060f <get_nowerr>:
+     60f:	8b 40 30             	mov    0x30(%eax),%eax
+     612:	c1 e8 17             	shr    $0x17,%eax
+     615:	83 e0 01             	and    $0x1,%eax
+     618:	c3                   	ret    
+
+00000619 <set_nowerr>:
+     619:	83 fa 01             	cmp    $0x1,%edx
+     61c:	b9 ea ff ff ff       	mov    $0xffffffea,%ecx
+     621:	77 1d                	ja     640 <set_nowerr+0x27>
+     623:	85 d2                	test   %edx,%edx
+     625:	74 0b                	je     632 <set_nowerr+0x19>
+     627:	81 48 30 00 00 80 00 	orl    $0x800000,0x30(%eax)
+     62e:	b2 81                	mov    $0x81,%dl
+     630:	eb 09                	jmp    63b <set_nowerr+0x22>
+     632:	81 60 30 ff ff 7f ff 	andl   $0xff7fffff,0x30(%eax)
+     639:	b2 a1                	mov    $0xa1,%dl
+     63b:	88 50 4b             	mov    %dl,0x4b(%eax)
+     63e:	31 c9                	xor    %ecx,%ecx
+     640:	89 c8                	mov    %ecx,%eax
+     642:	c3                   	ret    
+
+00000643 <get_wcache>:
+     643:	8b 40 30             	mov    0x30(%eax),%eax
+     646:	c1 e8 16             	shr    $0x16,%eax
+     649:	83 e0 01             	and    $0x1,%eax
+     64c:	c3                   	ret    
+
+0000064d <get_acoustic>:
+     64d:	0f b6 40 45          	movzbl 0x45(%eax),%eax
+     651:	c3                   	ret    
+
+00000652 <get_addressing>:
+     652:	8b 40 30             	mov    0x30(%eax),%eax
+     655:	c1 e8 15             	shr    $0x15,%eax
+     658:	83 e0 01             	and    $0x1,%eax
+     65b:	c3                   	ret    
+
+0000065c <set_addressing>:
+     65c:	56                   	push   %esi
+     65d:	83 fa 02             	cmp    $0x2,%edx
+     660:	53                   	push   %ebx
+     661:	89 d6                	mov    %edx,%esi
+     663:	89 c3                	mov    %eax,%ebx
+     665:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+     66a:	77 2c                	ja     698 <set_addressing+0x3c>
+     66c:	85 d2                	test   %edx,%edx
+     66e:	74 1a                	je     68a <set_addressing+0x2e>
+     670:	8b 43 28             	mov    0x28(%ebx),%eax
+     673:	f6 40 5e 02          	testb  $0x2,0x5e(%eax)
+     677:	75 1a                	jne    693 <set_addressing+0x37>
+     679:	8b 43 1c             	mov    0x1c(%ebx),%eax
+     67c:	e8 cf fe ff ff       	call   550 <ata_id_lba48_enabled>
+     681:	85 c0                	test   %eax,%eax
+     683:	74 0e                	je     693 <set_addressing+0x37>
+     685:	83 fe 02             	cmp    $0x2,%esi
+     688:	75 11                	jne    69b <set_addressing+0x3f>
+     68a:	81 63 30 ff ff df ff 	andl   $0xffdfffff,0x30(%ebx)
+     691:	eb 0f                	jmp    6a2 <set_addressing+0x46>
+     693:	b8 fb ff ff ff       	mov    $0xfffffffb,%eax
+     698:	5b                   	pop    %ebx
+     699:	5e                   	pop    %esi
+     69a:	c3                   	ret    
+     69b:	81 4b 30 00 00 20 00 	orl    $0x200000,0x30(%ebx)
+     6a2:	31 c0                	xor    %eax,%eax
+     6a4:	eb f2                	jmp    698 <set_addressing+0x3c>
+
+000006a6 <ide_disk_check>:
+     6a6:	b8 01 00 00 00       	mov    $0x1,%eax
+     6ab:	c3                   	ret    
+
+000006ac <ide_disk_init_media>:
+     6ac:	31 c0                	xor    %eax,%eax
+     6ae:	c3                   	ret    
+
+000006af <ide_do_rw_disk>:
+     6af:	55                   	push   %ebp
+     6b0:	89 d5                	mov    %edx,%ebp
+     6b2:	57                   	push   %edi
+     6b3:	56                   	push   %esi
+     6b4:	53                   	push   %ebx
+     6b5:	89 c3                	mov    %eax,%ebx
+     6b7:	83 ec 44             	sub    $0x44,%esp
+     6ba:	8b 70 28             	mov    0x28(%eax),%esi
+     6bd:	f6 40 32 02          	testb  $0x2,0x32(%eax)
+     6c1:	74 04                	je     6c7 <ide_do_rw_disk+0x18>
+     6c3:	0f 0b                	ud2a   
+     6c5:	eb fe                	jmp    6c5 <ide_do_rw_disk+0x16>
+     6c7:	83 7a 28 01          	cmpl   $0x1,0x28(%edx)
+     6cb:	74 04                	je     6d1 <ide_do_rw_disk+0x22>
+     6cd:	0f 0b                	ud2a   
+     6cf:	eb fe                	jmp    6cf <ide_do_rw_disk+0x20>
+     6d1:	e8 fc ff ff ff       	call   6d2 <ide_do_rw_disk+0x23>
+			6d2: R_386_PC32	ledtrig_ide_activity
+     6d6:	8b 4e 6c             	mov    0x6c(%esi),%ecx
+     6d9:	85 c9                	test   %ecx,%ecx
+     6db:	74 06                	je     6e3 <ide_do_rw_disk+0x34>
+     6dd:	89 ea                	mov    %ebp,%edx
+     6df:	89 d8                	mov    %ebx,%eax
+     6e1:	ff d1                	call   *%ecx
+     6e3:	8b 73 30             	mov    0x30(%ebx),%esi
+     6e6:	8b 45 38             	mov    0x38(%ebp),%eax
+     6e9:	89 f2                	mov    %esi,%edx
+     6eb:	c1 ea 15             	shr    $0x15,%edx
+     6ee:	d1 ee                	shr    %esi
+     6f0:	88 d1                	mov    %dl,%cl
+     6f2:	c1 e8 09             	shr    $0x9,%eax
+     6f5:	83 e6 01             	and    $0x1,%esi
+     6f8:	80 e1 01             	and    $0x1,%cl
+     6fb:	66 89 04 24          	mov    %ax,(%esp)
+     6ff:	88 4c 24 03          	mov    %cl,0x3(%esp)
+     703:	74 3d                	je     742 <ide_do_rw_disk+0x93>
+     705:	8b 53 28             	mov    0x28(%ebx),%edx
+     708:	f6 42 5e 04          	testb  $0x4,0x5e(%edx)
+     70c:	74 34                	je     742 <ide_do_rw_disk+0x93>
+     70e:	89 f2                	mov    %esi,%edx
+     710:	84 d2                	test   %dl,%dl
+     712:	c6 44 24 03 01       	movb   $0x1,0x3(%esp)
+     717:	74 29                	je     742 <ide_do_rw_disk+0x93>
+     719:	31 d2                	xor    %edx,%edx
+     71b:	03 44 24 58          	add    0x58(%esp),%eax
+     71f:	13 54 24 5c          	adc    0x5c(%esp),%edx
+     723:	83 fa 00             	cmp    $0x0,%edx
+     726:	77 13                	ja     73b <ide_do_rw_disk+0x8c>
+     728:	3d 00 00 00 10       	cmp    $0x10000000,%eax
+     72d:	77 0c                	ja     73b <ide_do_rw_disk+0x8c>
+     72f:	be 01 00 00 00       	mov    $0x1,%esi
+     734:	c6 44 24 03 00       	movb   $0x0,0x3(%esp)
+     739:	eb 07                	jmp    742 <ide_do_rw_disk+0x93>
+     73b:	31 f6                	xor    %esi,%esi
+     73d:	c6 44 24 03 01       	movb   $0x1,0x3(%esp)
+     742:	8d 7c 24 04          	lea    0x4(%esp),%edi
+     746:	b9 10 00 00 00       	mov    $0x10,%ecx
+     74b:	31 c0                	xor    %eax,%eax
+     74d:	f3 ab                	rep stos %eax,%es:(%edi)
+     74f:	f6 43 33 02          	testb  $0x2,0x33(%ebx)
+     753:	c6 44 24 14 7e       	movb   $0x7e,0x14(%esp)
+     758:	c6 44 24 16 7c       	movb   $0x7c,0x16(%esp)
+     75d:	0f 84 be 00 00 00    	je     821 <ide_do_rw_disk+0x172>
+     763:	80 7c 24 03 00       	cmpb   $0x0,0x3(%esp)
+     768:	74 70                	je     7da <ide_do_rw_disk+0x12b>
+     76a:	8a 44 24 58          	mov    0x58(%esp),%al
+     76e:	8b 54 24 5c          	mov    0x5c(%esp),%edx
+     772:	8a 0c 24             	mov    (%esp),%cl
+     775:	c6 44 24 0a 40       	movb   $0x40,0xa(%esp)
+     77a:	88 44 24 07          	mov    %al,0x7(%esp)
+     77e:	8b 44 24 58          	mov    0x58(%esp),%eax
+     782:	c6 44 24 15 3e       	movb   $0x3e,0x15(%esp)
+     787:	88 4c 24 06          	mov    %cl,0x6(%esp)
+     78b:	c6 44 24 17 3e       	movb   $0x3e,0x17(%esp)
+     790:	0f ac d0 08          	shrd   $0x8,%edx,%eax
+     794:	8b 54 24 5c          	mov    0x5c(%esp),%edx
+     798:	88 44 24 08          	mov    %al,0x8(%esp)
+     79c:	8b 44 24 58          	mov    0x58(%esp),%eax
+     7a0:	66 83 4c 24 18 01    	orw    $0x1,0x18(%esp)
+     7a6:	0f ac d0 10          	shrd   $0x10,%edx,%eax
+     7aa:	8b 54 24 5c          	mov    0x5c(%esp),%edx
+     7ae:	88 44 24 09          	mov    %al,0x9(%esp)
+     7b2:	8b 04 24             	mov    (%esp),%eax
+     7b5:	66 c1 e8 08          	shr    $0x8,%ax
+     7b9:	88 44 24 0e          	mov    %al,0xe(%esp)
+     7bd:	8b 44 24 58          	mov    0x58(%esp),%eax
+     7c1:	0f ac d0 18          	shrd   $0x18,%edx,%eax
+     7c5:	88 44 24 0f          	mov    %al,0xf(%esp)
+     7c9:	8b 44 24 5c          	mov    0x5c(%esp),%eax
+     7cd:	88 44 24 10          	mov    %al,0x10(%esp)
+     7d1:	c1 e8 08             	shr    $0x8,%eax
+     7d4:	88 44 24 11          	mov    %al,0x11(%esp)
+     7d8:	eb 79                	jmp    853 <ide_do_rw_disk+0x1a4>
+     7da:	8a 14 24             	mov    (%esp),%dl
+     7dd:	8b 44 24 58          	mov    0x58(%esp),%eax
+     7e1:	8a 4c 24 58          	mov    0x58(%esp),%cl
+     7e5:	88 54 24 06          	mov    %dl,0x6(%esp)
+     7e9:	8b 54 24 5c          	mov    0x5c(%esp),%edx
+     7ed:	88 4c 24 07          	mov    %cl,0x7(%esp)
+     7f1:	0f ac d0 08          	shrd   $0x8,%edx,%eax
+     7f5:	8b 54 24 5c          	mov    0x5c(%esp),%edx
+     7f9:	88 44 24 08          	mov    %al,0x8(%esp)
+     7fd:	8b 44 24 58          	mov    0x58(%esp),%eax
+     801:	0f ac d0 10          	shrd   $0x10,%edx,%eax
+     805:	8b 54 24 5c          	mov    0x5c(%esp),%edx
+     809:	88 44 24 09          	mov    %al,0x9(%esp)
+     80d:	8b 44 24 58          	mov    0x58(%esp),%eax
+     811:	0f ac d0 18          	shrd   $0x18,%edx,%eax
+     815:	83 e0 0f             	and    $0xf,%eax
+     818:	83 c8 40             	or     $0x40,%eax
+     81b:	88 44 24 0a          	mov    %al,0xa(%esp)
+     81f:	eb 32                	jmp    853 <ide_do_rw_disk+0x1a4>
+     821:	8b 44 24 58          	mov    0x58(%esp),%eax
+     825:	0f b6 4b 4d          	movzbl 0x4d(%ebx),%ecx
+     829:	99                   	cltd   
+     82a:	f7 f9                	idiv   %ecx
+     82c:	0f b6 4b 4c          	movzbl 0x4c(%ebx),%ecx
+     830:	89 d7                	mov    %edx,%edi
+     832:	31 d2                	xor    %edx,%edx
+     834:	f7 f1                	div    %ecx
+     836:	8a 0c 24             	mov    (%esp),%cl
+     839:	88 4c 24 06          	mov    %cl,0x6(%esp)
+     83d:	8d 4f 01             	lea    0x1(%edi),%ecx
+     840:	88 4c 24 07          	mov    %cl,0x7(%esp)
+     844:	88 44 24 08          	mov    %al,0x8(%esp)
+     848:	c1 e8 08             	shr    $0x8,%eax
+     84b:	88 44 24 09          	mov    %al,0x9(%esp)
+     84f:	88 54 24 0a          	mov    %dl,0xa(%esp)
+     853:	8b 44 24 18          	mov    0x18(%esp),%eax
+     857:	89 c2                	mov    %eax,%edx
+     859:	83 ca 40             	or     $0x40,%edx
+     85c:	66 89 54 24 18       	mov    %dx,0x18(%esp)
+     861:	f6 45 24 01          	testb  $0x1,0x24(%ebp)
+     865:	74 08                	je     86f <ide_do_rw_disk+0x1c0>
+     867:	83 c8 42             	or     $0x42,%eax
+     86a:	66 89 44 24 18       	mov    %ax,0x18(%esp)
+     86f:	0f b7 44 24 18       	movzwl 0x18(%esp),%eax
+     874:	89 f2                	mov    %esi,%edx
+     876:	89 c1                	mov    %eax,%ecx
+     878:	83 e1 01             	and    $0x1,%ecx
+     87b:	f7 d9                	neg    %ecx
+     87d:	83 e1 02             	and    $0x2,%ecx
+     880:	84 d2                	test   %dl,%dl
+     882:	74 0c                	je     890 <ide_do_rw_disk+0x1e1>
+     884:	c7 44 24 1c 03 00 00 	movl   $0x3,0x1c(%esp)
+     88b:	00 
+     88c:	b2 08                	mov    $0x8,%dl
+     88e:	eb 19                	jmp    8a9 <ide_do_rw_disk+0x1fa>
+     890:	80 7b 48 00          	cmpb   $0x0,0x48(%ebx)
+     894:	b2 04                	mov    $0x4,%dl
+     896:	c7 44 24 1c 02 00 00 	movl   $0x2,0x1c(%esp)
+     89d:	00 
+     89e:	74 09                	je     8a9 <ide_do_rw_disk+0x1fa>
+     8a0:	66 81 4c 24 18 80 00 	orw    $0x80,0x18(%esp)
+     8a7:	31 d2                	xor    %edx,%edx
+     8a9:	d1 e8                	shr    %eax
+     8ab:	0f b6 c9             	movzbl %cl,%ecx
+     8ae:	83 e0 01             	and    $0x1,%eax
+     8b1:	0f b6 d2             	movzbl %dl,%edx
+     8b4:	8d 84 01 30 03 00 00 	lea    0x330(%ecx,%eax,1),%eax
+			8b7: R_386_32	.rodata
+     8bb:	89 f1                	mov    %esi,%ecx
+     8bd:	8a 04 10             	mov    (%eax,%edx,1),%al
+     8c0:	84 c9                	test   %cl,%cl
+     8c2:	89 6c 24 40          	mov    %ebp,0x40(%esp)
+     8c6:	88 44 24 0b          	mov    %al,0xb(%esp)
+     8ca:	75 1b                	jne    8e7 <ide_do_rw_disk+0x238>
+     8cc:	0f b7 14 24          	movzwl (%esp),%edx
+     8d0:	8d 7c 24 04          	lea    0x4(%esp),%edi
+     8d4:	89 f8                	mov    %edi,%eax
+     8d6:	c1 e2 09             	shl    $0x9,%edx
+     8d9:	e8 fc ff ff ff       	call   8da <ide_do_rw_disk+0x22b>
+			8da: R_386_PC32	ide_init_sg_cmd
+     8de:	89 fa                	mov    %edi,%edx
+     8e0:	89 d8                	mov    %ebx,%eax
+     8e2:	e8 fc ff ff ff       	call   8e3 <ide_do_rw_disk+0x234>
+			8e3: R_386_PC32	ide_map_sg
+     8e7:	8d 54 24 04          	lea    0x4(%esp),%edx
+     8eb:	89 d8                	mov    %ebx,%eax
+     8ed:	e8 fc ff ff ff       	call   8ee <ide_do_rw_disk+0x23f>
+			8ee: R_386_PC32	do_rw_taskfile
+     8f2:	85 c0                	test   %eax,%eax
+     8f4:	75 71                	jne    967 <ide_do_rw_disk+0x2b8>
+     8f6:	89 f2                	mov    %esi,%edx
+     8f8:	84 d2                	test   %dl,%dl
+     8fa:	74 6b                	je     967 <ide_do_rw_disk+0x2b8>
+     8fc:	8b 74 24 18          	mov    0x18(%esp),%esi
+     900:	c7 44 24 1c 02 00 00 	movl   $0x2,0x1c(%esp)
+     907:	00 
+     908:	89 f1                	mov    %esi,%ecx
+     90a:	83 c9 08             	or     $0x8,%ecx
+     90d:	0f b7 c1             	movzwl %cx,%eax
+     910:	89 c2                	mov    %eax,%edx
+     912:	83 e2 01             	and    $0x1,%edx
+     915:	f7 da                	neg    %edx
+     917:	83 e2 02             	and    $0x2,%edx
+     91a:	80 7b 48 00          	cmpb   $0x0,0x48(%ebx)
+     91e:	66 89 4c 24 18       	mov    %cx,0x18(%esp)
+     923:	b1 04                	mov    $0x4,%cl
+     925:	74 0c                	je     933 <ide_do_rw_disk+0x284>
+     927:	66 81 ce 88 00       	or     $0x88,%si
+     92c:	31 c9                	xor    %ecx,%ecx
+     92e:	66 89 74 24 18       	mov    %si,0x18(%esp)
+     933:	d1 e8                	shr    %eax
+     935:	0f b6 d2             	movzbl %dl,%edx
+     938:	83 e0 01             	and    $0x1,%eax
+     93b:	0f b6 c9             	movzbl %cl,%ecx
+     93e:	8d 84 02 30 03 00 00 	lea    0x330(%edx,%eax,1),%eax
+			941: R_386_32	.rodata
+     945:	0f b7 14 24          	movzwl (%esp),%edx
+     949:	8a 04 08             	mov    (%eax,%ecx,1),%al
+     94c:	8d 74 24 04          	lea    0x4(%esp),%esi
+     950:	c1 e2 09             	shl    $0x9,%edx
+     953:	88 44 24 0b          	mov    %al,0xb(%esp)
+     957:	89 f0                	mov    %esi,%eax
+     959:	e8 fc ff ff ff       	call   95a <ide_do_rw_disk+0x2ab>
+			95a: R_386_PC32	ide_init_sg_cmd
+     95e:	89 f2                	mov    %esi,%edx
+     960:	89 d8                	mov    %ebx,%eax
+     962:	e8 fc ff ff ff       	call   963 <ide_do_rw_disk+0x2b4>
+			963: R_386_PC32	do_rw_taskfile
+     967:	83 c4 44             	add    $0x44,%esp
+     96a:	5b                   	pop    %ebx
+     96b:	5e                   	pop    %esi
+     96c:	5f                   	pop    %edi
+     96d:	5d                   	pop    %ebp
+     96e:	c3                   	ret    
+
+0000096f <ide_disk_set_doorlock>:
+     96f:	57                   	push   %edi
+     970:	56                   	push   %esi
+     971:	89 ce                	mov    %ecx,%esi
+     973:	53                   	push   %ebx
+     974:	89 c3                	mov    %eax,%ebx
+     976:	83 ec 40             	sub    $0x40,%esp
+     979:	31 c0                	xor    %eax,%eax
+     97b:	66 83 7b 30 00       	cmpw   $0x0,0x30(%ebx)
+     980:	79 35                	jns    9b7 <ide_disk_set_doorlock+0x48>
+     982:	89 e2                	mov    %esp,%edx
+     984:	b9 10 00 00 00       	mov    $0x10,%ecx
+     989:	89 e7                	mov    %esp,%edi
+     98b:	f3 ab                	rep stos %eax,%es:(%edi)
+     98d:	83 fe 01             	cmp    $0x1,%esi
+     990:	19 c0                	sbb    %eax,%eax
+     992:	f7 d0                	not    %eax
+     994:	83 e8 21             	sub    $0x21,%eax
+     997:	88 44 24 07          	mov    %al,0x7(%esp)
+     99b:	89 d8                	mov    %ebx,%eax
+     99d:	c6 44 24 10 7e       	movb   $0x7e,0x10(%esp)
+     9a2:	c6 44 24 12 7c       	movb   $0x7c,0x12(%esp)
+     9a7:	e8 fc ff ff ff       	call   9a8 <ide_disk_set_doorlock+0x39>
+			9a8: R_386_PC32	ide_no_data_taskfile
+     9ac:	85 c0                	test   %eax,%eax
+     9ae:	74 07                	je     9b7 <ide_disk_set_doorlock+0x48>
+     9b0:	81 63 30 ff 7f ff ff 	andl   $0xffff7fff,0x30(%ebx)
+     9b7:	83 c4 40             	add    $0x40,%esp
+     9ba:	5b                   	pop    %ebx
+     9bb:	5e                   	pop    %esi
+     9bc:	5f                   	pop    %edi
+     9bd:	c3                   	ret    
+
+000009be <set_acoustic>:
+     9be:	55                   	push   %ebp
+     9bf:	89 c5                	mov    %eax,%ebp
+     9c1:	57                   	push   %edi
+     9c2:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+     9c7:	56                   	push   %esi
+     9c8:	53                   	push   %ebx
+     9c9:	89 d3                	mov    %edx,%ebx
+     9cb:	83 ec 40             	sub    $0x40,%esp
+     9ce:	81 fa fe 00 00 00    	cmp    $0xfe,%edx
+     9d4:	77 3e                	ja     a14 <set_acoustic+0x56>
+     9d6:	83 fa 01             	cmp    $0x1,%edx
+     9d9:	b9 10 00 00 00       	mov    $0x10,%ecx
+     9de:	19 d2                	sbb    %edx,%edx
+     9e0:	89 e7                	mov    %esp,%edi
+     9e2:	81 e2 80 00 00 00    	and    $0x80,%edx
+     9e8:	31 c0                	xor    %eax,%eax
+     9ea:	83 c2 42             	add    $0x42,%edx
+     9ed:	f3 ab                	rep stos %eax,%es:(%edi)
+     9ef:	88 54 24 01          	mov    %dl,0x1(%esp)
+     9f3:	89 e8                	mov    %ebp,%eax
+     9f5:	89 e2                	mov    %esp,%edx
+     9f7:	88 5c 24 02          	mov    %bl,0x2(%esp)
+     9fb:	c6 44 24 07 ef       	movb   $0xef,0x7(%esp)
+     a00:	c6 44 24 10 7e       	movb   $0x7e,0x10(%esp)
+     a05:	c6 44 24 12 7c       	movb   $0x7c,0x12(%esp)
+     a0a:	e8 fc ff ff ff       	call   a0b <set_acoustic+0x4d>
+			a0b: R_386_PC32	ide_no_data_taskfile
+     a0f:	31 c0                	xor    %eax,%eax
+     a11:	88 5d 45             	mov    %bl,0x45(%ebp)
+     a14:	83 c4 40             	add    $0x40,%esp
+     a17:	5b                   	pop    %ebx
+     a18:	5e                   	pop    %esi
+     a19:	5f                   	pop    %edi
+     a1a:	5d                   	pop    %ebp
+     a1b:	c3                   	ret    
+
+00000a1c <ide_disk_flush>:
+     a1c:	57                   	push   %edi
+     a1d:	53                   	push   %ebx
+     a1e:	89 c3                	mov    %eax,%ebx
+     a20:	83 ec 40             	sub    $0x40,%esp
+     a23:	8b 40 1c             	mov    0x1c(%eax),%eax
+     a26:	0f b7 90 a6 00 00 00 	movzwl 0xa6(%eax),%edx
+     a2d:	89 d1                	mov    %edx,%ecx
+     a2f:	81 e1 00 c0 00 00    	and    $0xc000,%ecx
+     a35:	81 f9 00 40 00 00    	cmp    $0x4000,%ecx
+     a3b:	0f 85 ba 00 00 00    	jne    afb <ide_disk_flush+0xdf>
+     a41:	80 e6 10             	and    $0x10,%dh
+     a44:	0f 84 b1 00 00 00    	je     afb <ide_disk_flush+0xdf>
+     a4a:	0f b7 90 ae 00 00 00 	movzwl 0xae(%eax),%edx
+     a51:	81 e2 00 c0 00 00    	and    $0xc000,%edx
+     a57:	81 fa 00 40 00 00    	cmp    $0x4000,%edx
+     a5d:	0f 85 98 00 00 00    	jne    afb <ide_disk_flush+0xdf>
+     a63:	f6 80 ad 00 00 00 10 	testb  $0x10,0xad(%eax)
+     a6a:	0f 84 8b 00 00 00    	je     afb <ide_disk_flush+0xdf>
+     a70:	f6 43 32 40          	testb  $0x40,0x32(%ebx)
+     a74:	0f 84 81 00 00 00    	je     afb <ide_disk_flush+0xdf>
+     a7a:	89 e7                	mov    %esp,%edi
+     a7c:	66 b9 10 00          	mov    $0x10,%cx
+     a80:	31 c0                	xor    %eax,%eax
+     a82:	f3 ab                	rep stos %eax,%es:(%edi)
+     a84:	8b 43 1c             	mov    0x1c(%ebx),%eax
+     a87:	0f b7 90 a6 00 00 00 	movzwl 0xa6(%eax),%edx
+     a8e:	89 d1                	mov    %edx,%ecx
+     a90:	81 e1 00 c0 00 00    	and    $0xc000,%ecx
+     a96:	81 f9 00 40 00 00    	cmp    $0x4000,%ecx
+     a9c:	75 34                	jne    ad2 <ide_disk_flush+0xb6>
+     a9e:	80 e6 20             	and    $0x20,%dh
+     aa1:	74 2f                	je     ad2 <ide_disk_flush+0xb6>
+     aa3:	0f b7 90 ae 00 00 00 	movzwl 0xae(%eax),%edx
+     aaa:	81 e2 00 c0 00 00    	and    $0xc000,%edx
+     ab0:	81 fa 00 40 00 00    	cmp    $0x4000,%edx
+     ab6:	75 1a                	jne    ad2 <ide_disk_flush+0xb6>
+     ab8:	0f b7 80 ac 00 00 00 	movzwl 0xac(%eax),%eax
+     abf:	25 00 24 00 00       	and    $0x2400,%eax
+     ac4:	3d 00 24 00 00       	cmp    $0x2400,%eax
+     ac9:	75 07                	jne    ad2 <ide_disk_flush+0xb6>
+     acb:	c6 44 24 07 ea       	movb   $0xea,0x7(%esp)
+     ad0:	eb 05                	jmp    ad7 <ide_disk_flush+0xbb>
+     ad2:	c6 44 24 07 e7       	movb   $0xe7,0x7(%esp)
+     ad7:	89 e2                	mov    %esp,%edx
+     ad9:	89 d8                	mov    %ebx,%eax
+     adb:	c6 44 24 10 7e       	movb   $0x7e,0x10(%esp)
+     ae0:	c6 44 24 12 7c       	movb   $0x7c,0x12(%esp)
+     ae5:	e8 fc ff ff ff       	call   ae6 <ide_disk_flush+0xca>
+			ae6: R_386_PC32	ide_no_data_taskfile
+     aea:	85 c0                	test   %eax,%eax
+     aec:	74 0d                	je     afb <ide_disk_flush+0xdf>
+     aee:	53                   	push   %ebx
+     aef:	68 bc 00 00 00       	push   $0xbc
+			af0: R_386_32	.rodata.str1.1
+     af4:	e8 fc ff ff ff       	call   af5 <ide_disk_flush+0xd9>
+			af5: R_386_PC32	printk
+     af9:	58                   	pop    %eax
+     afa:	5a                   	pop    %edx
+     afb:	83 c4 40             	add    $0x40,%esp
+     afe:	5b                   	pop    %ebx
+     aff:	5f                   	pop    %edi
+     b00:	c3                   	ret    
+
+00000b01 <ide_disk_hpa_get_native_capacity>:
+     b01:	55                   	push   %ebp
+     b02:	b9 10 00 00 00       	mov    $0x10,%ecx
+     b07:	89 e5                	mov    %esp,%ebp
+     b09:	57                   	push   %edi
+     b0a:	56                   	push   %esi
+     b0b:	53                   	push   %ebx
+     b0c:	83 ec 50             	sub    $0x50,%esp
+     b0f:	89 55 ac             	mov    %edx,-0x54(%ebp)
+     b12:	89 c2                	mov    %eax,%edx
+     b14:	89 45 b0             	mov    %eax,-0x50(%ebp)
+     b17:	8b 40 70             	mov    0x70(%eax),%eax
+     b1a:	8d 7d b4             	lea    -0x4c(%ebp),%edi
+     b1d:	8b 52 74             	mov    0x74(%edx),%edx
+     b20:	89 45 a4             	mov    %eax,-0x5c(%ebp)
+     b23:	31 c0                	xor    %eax,%eax
+     b25:	89 55 a8             	mov    %edx,-0x58(%ebp)
+     b28:	f3 ab                	rep stos %eax,%es:(%edi)
+     b2a:	83 7d ac 01          	cmpl   $0x1,-0x54(%ebp)
+     b2e:	c6 45 ba 40          	movb   $0x40,-0x46(%ebp)
+     b32:	c6 45 c4 7e          	movb   $0x7e,-0x3c(%ebp)
+     b36:	19 c0                	sbb    %eax,%eax
+     b38:	83 e0 d1             	and    $0xffffffd1,%eax
+     b3b:	83 c0 27             	add    $0x27,%eax
+     b3e:	83 7d ac 00          	cmpl   $0x0,-0x54(%ebp)
+     b42:	88 45 bb             	mov    %al,-0x45(%ebp)
+     b45:	c6 45 c6 7c          	movb   $0x7c,-0x3a(%ebp)
+     b49:	74 0e                	je     b59 <ide_disk_hpa_get_native_capacity+0x58>
+     b4b:	c6 45 c5 3e          	movb   $0x3e,-0x3b(%ebp)
+     b4f:	c6 45 c7 3e          	movb   $0x3e,-0x39(%ebp)
+     b53:	66 c7 45 c8 01 00    	movw   $0x1,-0x38(%ebp)
+     b59:	8b 45 b0             	mov    -0x50(%ebp),%eax
+     b5c:	8d 7d b4             	lea    -0x4c(%ebp),%edi
+     b5f:	31 db                	xor    %ebx,%ebx
+     b61:	89 fa                	mov    %edi,%edx
+     b63:	31 f6                	xor    %esi,%esi
+     b65:	e8 fc ff ff ff       	call   b66 <ide_disk_hpa_get_native_capacity+0x65>
+			b66: R_386_PC32	ide_no_data_taskfile
+     b6a:	f6 45 bb 01          	testb  $0x1,-0x45(%ebp)
+     b6e:	75 14                	jne    b84 <ide_disk_hpa_get_native_capacity+0x83>
+     b70:	8b 55 ac             	mov    -0x54(%ebp),%edx
+     b73:	89 f8                	mov    %edi,%eax
+     b75:	e8 fc ff ff ff       	call   b76 <ide_disk_hpa_get_native_capacity+0x75>
+			b76: R_386_PC32	ide_get_lba_addr
+     b7a:	89 c3                	mov    %eax,%ebx
+     b7c:	89 d6                	mov    %edx,%esi
+     b7e:	83 c3 01             	add    $0x1,%ebx
+     b81:	83 d6 00             	adc    $0x0,%esi
+     b84:	8b 55 b0             	mov    -0x50(%ebp),%edx
+     b87:	8b 42 1c             	mov    0x1c(%edx),%eax
+     b8a:	ba 3c 03 00 00       	mov    $0x33c,%edx
+			b8b: R_386_32	.rodata
+     b8f:	e8 fc ff ff ff       	call   b90 <ide_disk_hpa_get_native_capacity+0x8f>
+			b90: R_386_PC32	ide_in_drive_list
+     b94:	85 c0                	test   %eax,%eax
+     b96:	74 1a                	je     bb2 <ide_disk_hpa_get_native_capacity+0xb1>
+     b98:	8b 45 a4             	mov    -0x5c(%ebp),%eax
+     b9b:	8b 55 a8             	mov    -0x58(%ebp),%edx
+     b9e:	83 c0 01             	add    $0x1,%eax
+     ba1:	83 d2 00             	adc    $0x0,%edx
+     ba4:	39 d6                	cmp    %edx,%esi
+     ba6:	75 0a                	jne    bb2 <ide_disk_hpa_get_native_capacity+0xb1>
+     ba8:	39 c3                	cmp    %eax,%ebx
+     baa:	75 06                	jne    bb2 <ide_disk_hpa_get_native_capacity+0xb1>
+     bac:	83 c3 ff             	add    $0xffffffff,%ebx
+     baf:	83 d6 ff             	adc    $0xffffffff,%esi
+     bb2:	83 c4 50             	add    $0x50,%esp
+     bb5:	89 d8                	mov    %ebx,%eax
+     bb7:	89 f2                	mov    %esi,%edx
+     bb9:	5b                   	pop    %ebx
+     bba:	5e                   	pop    %esi
+     bbb:	5f                   	pop    %edi
+     bbc:	5d                   	pop    %ebp
+     bbd:	c3                   	ret    
+
+00000bbe <ide_disk_hpa_set_capacity>:
+     bbe:	55                   	push   %ebp
+     bbf:	89 e5                	mov    %esp,%ebp
+     bc1:	57                   	push   %edi
+     bc2:	56                   	push   %esi
+     bc3:	89 ce                	mov    %ecx,%esi
+     bc5:	53                   	push   %ebx
+     bc6:	89 d3                	mov    %edx,%ebx
+     bc8:	8d 7d 08             	lea    0x8(%ebp),%edi
+     bcb:	83 ec 48             	sub    $0x48,%esp
+     bce:	89 45 ac             	mov    %eax,-0x54(%ebp)
+     bd1:	8b 3f                	mov    (%edi),%edi
+     bd3:	83 c3 ff             	add    $0xffffffff,%ebx
+     bd6:	83 d6 ff             	adc    $0xffffffff,%esi
+     bd9:	b9 10 00 00 00       	mov    $0x10,%ecx
+     bde:	31 c0                	xor    %eax,%eax
+     be0:	89 7d b0             	mov    %edi,-0x50(%ebp)
+     be3:	8d 7d b4             	lea    -0x4c(%ebp),%edi
+     be6:	f3 ab                	rep stos %eax,%es:(%edi)
+     be8:	89 d8                	mov    %ebx,%eax
+     bea:	0f ac f0 08          	shrd   $0x8,%esi,%eax
+     bee:	88 45 b8             	mov    %al,-0x48(%ebp)
+     bf1:	89 d8                	mov    %ebx,%eax
+     bf3:	0f ac f0 10          	shrd   $0x10,%esi,%eax
+     bf7:	83 7d b0 00          	cmpl   $0x0,-0x50(%ebp)
+     bfb:	88 5d b7             	mov    %bl,-0x49(%ebp)
+     bfe:	88 45 b9             	mov    %al,-0x47(%ebp)
+     c01:	74 1f                	je     c22 <ide_disk_hpa_set_capacity+0x64>
+     c03:	89 d8                	mov    %ebx,%eax
+     c05:	89 f2                	mov    %esi,%edx
+     c07:	0f ac f0 18          	shrd   $0x18,%esi,%eax
+     c0b:	89 f3                	mov    %esi,%ebx
+     c0d:	31 f6                	xor    %esi,%esi
+     c0f:	0f ac f3 08          	shrd   $0x8,%esi,%ebx
+     c13:	88 45 bf             	mov    %al,-0x41(%ebp)
+     c16:	88 55 c0             	mov    %dl,-0x40(%ebp)
+     c19:	88 5d c1             	mov    %bl,-0x3f(%ebp)
+     c1c:	c6 45 bb 37          	movb   $0x37,-0x45(%ebp)
+     c20:	eb 0e                	jmp    c30 <ide_disk_hpa_set_capacity+0x72>
+     c22:	0f ac f3 18          	shrd   $0x18,%esi,%ebx
+     c26:	83 e3 0f             	and    $0xf,%ebx
+     c29:	88 5d ba             	mov    %bl,-0x46(%ebp)
+     c2c:	c6 45 bb f9          	movb   $0xf9,-0x45(%ebp)
+     c30:	80 4d ba 40          	orb    $0x40,-0x46(%ebp)
+     c34:	83 7d b0 00          	cmpl   $0x0,-0x50(%ebp)
+     c38:	c6 45 c4 7e          	movb   $0x7e,-0x3c(%ebp)
+     c3c:	c6 45 c6 7c          	movb   $0x7c,-0x3a(%ebp)
+     c40:	74 0e                	je     c50 <ide_disk_hpa_set_capacity+0x92>
+     c42:	c6 45 c5 3e          	movb   $0x3e,-0x3b(%ebp)
+     c46:	c6 45 c7 3e          	movb   $0x3e,-0x39(%ebp)
+     c4a:	66 c7 45 c8 01 00    	movw   $0x1,-0x38(%ebp)
+     c50:	8b 45 ac             	mov    -0x54(%ebp),%eax
+     c53:	8d 5d b4             	lea    -0x4c(%ebp),%ebx
+     c56:	89 da                	mov    %ebx,%edx
+     c58:	e8 fc ff ff ff       	call   c59 <ide_disk_hpa_set_capacity+0x9b>
+			c59: R_386_PC32	ide_no_data_taskfile
+     c5d:	31 c0                	xor    %eax,%eax
+     c5f:	31 d2                	xor    %edx,%edx
+     c61:	f6 45 bb 01          	testb  $0x1,-0x45(%ebp)
+     c65:	75 1f                	jne    c86 <ide_disk_hpa_set_capacity+0xc8>
+     c67:	8b 55 b0             	mov    -0x50(%ebp),%edx
+     c6a:	89 d8                	mov    %ebx,%eax
+     c6c:	e8 fc ff ff ff       	call   c6d <ide_disk_hpa_set_capacity+0xaf>
+			c6d: R_386_PC32	ide_get_lba_addr
+     c71:	83 c0 01             	add    $0x1,%eax
+     c74:	83 d2 00             	adc    $0x0,%edx
+     c77:	89 d1                	mov    %edx,%ecx
+     c79:	09 c1                	or     %eax,%ecx
+     c7b:	74 09                	je     c86 <ide_disk_hpa_set_capacity+0xc8>
+     c7d:	8b 4d ac             	mov    -0x54(%ebp),%ecx
+     c80:	89 41 70             	mov    %eax,0x70(%ecx)
+     c83:	89 51 74             	mov    %edx,0x74(%ecx)
+     c86:	83 c4 48             	add    $0x48,%esp
+     c89:	5b                   	pop    %ebx
+     c8a:	5e                   	pop    %esi
+     c8b:	5f                   	pop    %edi
+     c8c:	5d                   	pop    %ebp
+     c8d:	c3                   	ret    
+
+00000c8e <ide_disk_set_capacity>:
+     c8e:	55                   	push   %ebp
+     c8f:	89 e5                	mov    %esp,%ebp
+     c91:	57                   	push   %edi
+     c92:	56                   	push   %esi
+     c93:	53                   	push   %ebx
+     c94:	89 c3                	mov    %eax,%ebx
+     c96:	83 ec 10             	sub    $0x10,%esp
+     c99:	89 55 ec             	mov    %edx,-0x14(%ebp)
+     c9c:	8b 53 1c             	mov    0x1c(%ebx),%edx
+     c9f:	8b 78 68             	mov    0x68(%eax),%edi
+     ca2:	8b 40 6c             	mov    0x6c(%eax),%eax
+     ca5:	89 4d e4             	mov    %ecx,-0x1c(%ebp)
+     ca8:	89 55 e8             	mov    %edx,-0x18(%ebp)
+     cab:	89 45 f0             	mov    %eax,-0x10(%ebp)
+     cae:	89 d0                	mov    %edx,%eax
+     cb0:	e8 9b f8 ff ff       	call   550 <ata_id_lba48_enabled>
+     cb5:	8b 55 e8             	mov    -0x18(%ebp),%edx
+     cb8:	f6 43 33 02          	testb  $0x2,0x33(%ebx)
+     cbc:	89 c6                	mov    %eax,%esi
+     cbe:	74 73                	je     d33 <ide_disk_set_capacity+0xa5>
+     cc0:	0f b7 82 a6 00 00 00 	movzwl 0xa6(%edx),%eax
+     cc7:	25 00 c0 00 00       	and    $0xc000,%eax
+     ccc:	3d 00 40 00 00       	cmp    $0x4000,%eax
+     cd1:	75 60                	jne    d33 <ide_disk_set_capacity+0xa5>
+     cd3:	0f b7 82 ae 00 00 00 	movzwl 0xae(%edx),%eax
+     cda:	25 00 c0 00 00       	and    $0xc000,%eax
+     cdf:	3d 00 40 00 00       	cmp    $0x4000,%eax
+     ce4:	75 4d                	jne    d33 <ide_disk_set_capacity+0xa5>
+     ce6:	f6 82 ab 00 00 00 04 	testb  $0x4,0xab(%edx)
+     ced:	74 44                	je     d33 <ide_disk_set_capacity+0xa5>
+     cef:	f6 82 a5 00 00 00 04 	testb  $0x4,0xa5(%edx)
+     cf6:	74 3b                	je     d33 <ide_disk_set_capacity+0xa5>
+     cf8:	89 f2                	mov    %esi,%edx
+     cfa:	89 d8                	mov    %ebx,%eax
+     cfc:	e8 00 fe ff ff       	call   b01 <ide_disk_hpa_get_native_capacity>
+     d01:	8b 4d e4             	mov    -0x1c(%ebp),%ecx
+     d04:	09 c2                	or     %eax,%edx
+     d06:	74 2b                	je     d33 <ide_disk_set_capacity+0xa5>
+     d08:	3b 4d f0             	cmp    -0x10(%ebp),%ecx
+     d0b:	8b 55 ec             	mov    -0x14(%ebp),%edx
+     d0e:	72 0b                	jb     d1b <ide_disk_set_capacity+0x8d>
+     d10:	77 04                	ja     d16 <ide_disk_set_capacity+0x88>
+     d12:	39 fa                	cmp    %edi,%edx
+     d14:	76 05                	jbe    d1b <ide_disk_set_capacity+0x8d>
+     d16:	8b 4d f0             	mov    -0x10(%ebp),%ecx
+     d19:	89 fa                	mov    %edi,%edx
+     d1b:	56                   	push   %esi
+     d1c:	89 d8                	mov    %ebx,%eax
+     d1e:	e8 9b fe ff ff       	call   bbe <ide_disk_hpa_set_capacity>
+     d23:	5e                   	pop    %esi
+     d24:	89 d1                	mov    %edx,%ecx
+     d26:	09 c1                	or     %eax,%ecx
+     d28:	74 09                	je     d33 <ide_disk_set_capacity+0xa5>
+     d2a:	81 4b 30 80 00 00 00 	orl    $0x80,0x30(%ebx)
+     d31:	eb 06                	jmp    d39 <ide_disk_set_capacity+0xab>
+     d33:	8b 43 70             	mov    0x70(%ebx),%eax
+     d36:	8b 53 74             	mov    0x74(%ebx),%edx
+     d39:	8d 65 f4             	lea    -0xc(%ebp),%esp
+     d3c:	5b                   	pop    %ebx
+     d3d:	5e                   	pop    %esi
+     d3e:	5f                   	pop    %edi
+     d3f:	5d                   	pop    %ebp
+     d40:	c3                   	ret    
+
+00000d41 <ide_disk_get_capacity>:
+     d41:	55                   	push   %ebp
+     d42:	57                   	push   %edi
+     d43:	56                   	push   %esi
+     d44:	53                   	push   %ebx
+     d45:	83 ec 10             	sub    $0x10,%esp
+     d48:	89 04 24             	mov    %eax,(%esp)
+     d4b:	8b 58 1c             	mov    0x1c(%eax),%ebx
+     d4e:	89 d8                	mov    %ebx,%eax
+     d50:	e8 fb f7 ff ff       	call   550 <ata_id_lba48_enabled>
+     d55:	85 c0                	test   %eax,%eax
+     d57:	74 3c                	je     d95 <ide_disk_get_capacity+0x54>
+     d59:	0f b7 83 ce 00 00 00 	movzwl 0xce(%ebx),%eax
+     d60:	31 c9                	xor    %ecx,%ecx
+     d62:	0f b7 93 cc 00 00 00 	movzwl 0xcc(%ebx),%edx
+     d69:	0f b7 b3 c8 00 00 00 	movzwl 0xc8(%ebx),%esi
+     d70:	8b 3c 24             	mov    (%esp),%edi
+     d73:	c1 e0 10             	shl    $0x10,%eax
+     d76:	09 d0                	or     %edx,%eax
+     d78:	0f b7 93 ca 00 00 00 	movzwl 0xca(%ebx),%edx
+     d7f:	0f a4 d1 10          	shld   $0x10,%edx,%ecx
+     d83:	c1 e2 10             	shl    $0x10,%edx
+     d86:	09 c8                	or     %ecx,%eax
+     d88:	09 d6                	or     %edx,%esi
+     d8a:	89 77 70             	mov    %esi,0x70(%edi)
+     d8d:	89 47 74             	mov    %eax,0x74(%edi)
+     d90:	e9 a1 00 00 00       	jmp    e36 <ide_disk_get_capacity+0xf5>
+     d95:	f6 43 63 02          	testb  $0x2,0x63(%ebx)
+     d99:	0f 84 9e 00 00 00    	je     e3d <ide_disk_get_capacity+0xfc>
+     d9f:	66 8b 43 02          	mov    0x2(%ebx),%ax
+     da3:	66 85 c0             	test   %ax,%ax
+     da6:	74 74                	je     e1c <ide_disk_get_capacity+0xdb>
+     da8:	0f b7 7b 7a          	movzwl 0x7a(%ebx),%edi
+     dac:	0f b7 53 78          	movzwl 0x78(%ebx),%edx
+     db0:	c1 e7 10             	shl    $0x10,%edi
+     db3:	09 d7                	or     %edx,%edi
+     db5:	66 3d ff 3f          	cmp    $0x3fff,%ax
+     db9:	74 0e                	je     dc9 <ide_disk_get_capacity+0x88>
+     dbb:	66 3d fc 0f          	cmp    $0xffc,%ax
+     dbf:	75 29                	jne    dea <ide_disk_get_capacity+0xa9>
+     dc1:	66 81 7b 6c ff 3f    	cmpw   $0x3fff,0x6c(%ebx)
+     dc7:	75 21                	jne    dea <ide_disk_get_capacity+0xa9>
+     dc9:	66 83 7b 0c 3f       	cmpw   $0x3f,0xc(%ebx)
+     dce:	75 1a                	jne    dea <ide_disk_get_capacity+0xa9>
+     dd0:	66 8b 53 06          	mov    0x6(%ebx),%dx
+     dd4:	8d 4a f1             	lea    -0xf(%edx),%ecx
+     dd7:	66 83 f9 01          	cmp    $0x1,%cx
+     ddb:	77 0d                	ja     dea <ide_disk_get_capacity+0xa9>
+     ddd:	0f b7 d2             	movzwl %dx,%edx
+     de0:	69 d2 c1 bf 0f 00    	imul   $0xfbfc1,%edx,%edx
+     de6:	39 d7                	cmp    %edx,%edi
+     de8:	73 32                	jae    e1c <ide_disk_get_capacity+0xdb>
+     dea:	0f b7 4b 06          	movzwl 0x6(%ebx),%ecx
+     dee:	0f b7 c0             	movzwl %ax,%eax
+     df1:	31 d2                	xor    %edx,%edx
+     df3:	be 0a 00 00 00       	mov    $0xa,%esi
+     df8:	0f af c8             	imul   %eax,%ecx
+     dfb:	0f b7 43 0c          	movzwl 0xc(%ebx),%eax
+     dff:	0f af c8             	imul   %eax,%ecx
+     e02:	89 c8                	mov    %ecx,%eax
+     e04:	f7 f6                	div    %esi
+     e06:	89 fa                	mov    %edi,%edx
+     e08:	29 ca                	sub    %ecx,%edx
+     e0a:	39 c2                	cmp    %eax,%edx
+     e0c:	72 0e                	jb     e1c <ide_disk_get_capacity+0xdb>
+     e0e:	c1 c7 10             	rol    $0x10,%edi
+     e11:	89 fa                	mov    %edi,%edx
+     e13:	29 ca                	sub    %ecx,%edx
+     e15:	39 c2                	cmp    %eax,%edx
+     e17:	73 24                	jae    e3d <ide_disk_get_capacity+0xfc>
+     e19:	89 7b 78             	mov    %edi,0x78(%ebx)
+     e1c:	0f b7 43 7a          	movzwl 0x7a(%ebx),%eax
+     e20:	0f b7 53 78          	movzwl 0x78(%ebx),%edx
+     e24:	8b 0c 24             	mov    (%esp),%ecx
+     e27:	c1 e0 10             	shl    $0x10,%eax
+     e2a:	09 d0                	or     %edx,%eax
+     e2c:	89 41 70             	mov    %eax,0x70(%ecx)
+     e2f:	c7 41 74 00 00 00 00 	movl   $0x0,0x74(%ecx)
+     e36:	b8 01 00 00 00       	mov    $0x1,%eax
+     e3b:	eb 1e                	jmp    e5b <ide_disk_get_capacity+0x11a>
+     e3d:	8b 34 24             	mov    (%esp),%esi
+     e40:	0f b6 46 4c          	movzbl 0x4c(%esi),%eax
+     e44:	0f b6 56 4d          	movzbl 0x4d(%esi),%edx
+     e48:	c7 46 74 00 00 00 00 	movl   $0x0,0x74(%esi)
+     e4f:	0f af c2             	imul   %edx,%eax
+     e52:	0f af 46 58          	imul   0x58(%esi),%eax
+     e56:	89 46 70             	mov    %eax,0x70(%esi)
+     e59:	31 c0                	xor    %eax,%eax
+     e5b:	8b 0c 24             	mov    (%esp),%ecx
+     e5e:	85 c0                	test   %eax,%eax
+     e60:	8b 34 24             	mov    (%esp),%esi
+     e63:	8b 51 70             	mov    0x70(%ecx),%edx
+     e66:	8b 49 74             	mov    0x74(%ecx),%ecx
+     e69:	89 54 24 04          	mov    %edx,0x4(%esp)
+     e6d:	89 4c 24 08          	mov    %ecx,0x8(%esp)
+     e71:	89 56 68             	mov    %edx,0x68(%esi)
+     e74:	89 4e 6c             	mov    %ecx,0x6c(%esi)
+     e77:	0f 84 e6 00 00 00    	je     f63 <ide_disk_get_capacity+0x222>
+     e7d:	81 4e 30 00 00 00 02 	orl    $0x2000000,0x30(%esi)
+     e84:	0f b7 83 a6 00 00 00 	movzwl 0xa6(%ebx),%eax
+     e8b:	25 00 c0 00 00       	and    $0xc000,%eax
+     e90:	3d 00 40 00 00       	cmp    $0x4000,%eax
+     e95:	0f 85 c8 00 00 00    	jne    f63 <ide_disk_get_capacity+0x222>
+     e9b:	0f b7 83 ae 00 00 00 	movzwl 0xae(%ebx),%eax
+     ea2:	25 00 c0 00 00       	and    $0xc000,%eax
+     ea7:	3d 00 40 00 00       	cmp    $0x4000,%eax
+     eac:	0f 85 b1 00 00 00    	jne    f63 <ide_disk_get_capacity+0x222>
+     eb2:	f6 83 ab 00 00 00 04 	testb  $0x4,0xab(%ebx)
+     eb9:	0f 84 a4 00 00 00    	je     f63 <ide_disk_get_capacity+0x222>
+     ebf:	f6 83 a5 00 00 00 04 	testb  $0x4,0xa5(%ebx)
+     ec6:	0f 84 97 00 00 00    	je     f63 <ide_disk_get_capacity+0x222>
+     ecc:	8b 46 1c             	mov    0x1c(%esi),%eax
+     ecf:	e8 7c f6 ff ff       	call   550 <ata_id_lba48_enabled>
+     ed4:	89 44 24 0c          	mov    %eax,0xc(%esp)
+     ed8:	89 c2                	mov    %eax,%edx
+     eda:	89 f0                	mov    %esi,%eax
+     edc:	e8 20 fc ff ff       	call   b01 <ide_disk_hpa_get_native_capacity>
+     ee1:	3b 54 24 08          	cmp    0x8(%esp),%edx
+     ee5:	89 c3                	mov    %eax,%ebx
+     ee7:	89 d6                	mov    %edx,%esi
+     ee9:	72 78                	jb     f63 <ide_disk_get_capacity+0x222>
+     eeb:	77 06                	ja     ef3 <ide_disk_get_capacity+0x1b2>
+     eed:	3b 44 24 04          	cmp    0x4(%esp),%eax
+     ef1:	76 70                	jbe    f63 <ide_disk_get_capacity+0x222>
+     ef3:	8b 3c 24             	mov    (%esp),%edi
+     ef6:	89 d8                	mov    %ebx,%eax
+     ef8:	89 f2                	mov    %esi,%edx
+     efa:	89 5f 68             	mov    %ebx,0x68(%edi)
+     efd:	89 77 6c             	mov    %esi,0x6c(%edi)
+     f00:	e8 c5 f6 ff ff       	call   5ca <sectors_to_MB>
+     f05:	89 c7                	mov    %eax,%edi
+     f07:	89 d5                	mov    %edx,%ebp
+     f09:	8b 44 24 04          	mov    0x4(%esp),%eax
+     f0d:	8b 54 24 08          	mov    0x8(%esp),%edx
+     f11:	e8 b4 f6 ff ff       	call   5ca <sectors_to_MB>
+     f16:	55                   	push   %ebp
+     f17:	57                   	push   %edi
+     f18:	56                   	push   %esi
+     f19:	53                   	push   %ebx
+     f1a:	52                   	push   %edx
+     f1b:	50                   	push   %eax
+     f1c:	ff 74 24 20          	pushl  0x20(%esp)
+     f20:	ff 74 24 20          	pushl  0x20(%esp)
+     f24:	ff 74 24 20          	pushl  0x20(%esp)
+     f28:	68 d9 00 00 00       	push   $0xd9
+			f29: R_386_32	.rodata.str1.1
+     f2d:	e8 fc ff ff ff       	call   f2e <ide_disk_get_capacity+0x1ed>
+			f2e: R_386_PC32	printk
+     f32:	83 c4 28             	add    $0x28,%esp
+     f35:	8b 04 24             	mov    (%esp),%eax
+     f38:	80 78 30 00          	cmpb   $0x0,0x30(%eax)
+     f3c:	79 25                	jns    f63 <ide_disk_get_capacity+0x222>
+     f3e:	ff 74 24 0c          	pushl  0xc(%esp)
+     f42:	89 f1                	mov    %esi,%ecx
+     f44:	8b 44 24 04          	mov    0x4(%esp),%eax
+     f48:	89 da                	mov    %ebx,%edx
+     f4a:	e8 6f fc ff ff       	call   bbe <ide_disk_hpa_set_capacity>
+     f4f:	59                   	pop    %ecx
+     f50:	09 c2                	or     %eax,%edx
+     f52:	74 0f                	je     f63 <ide_disk_get_capacity+0x222>
+     f54:	ff 34 24             	pushl  (%esp)
+     f57:	68 57 01 00 00       	push   $0x157
+			f58: R_386_32	.rodata.str1.1
+     f5c:	e8 fc ff ff ff       	call   f5d <ide_disk_get_capacity+0x21c>
+			f5d: R_386_PC32	printk
+     f61:	5f                   	pop    %edi
+     f62:	5d                   	pop    %ebp
+     f63:	8b 14 24             	mov    (%esp),%edx
+     f66:	f6 42 32 20          	testb  $0x20,0x32(%edx)
+     f6a:	75 51                	jne    fbd <ide_disk_get_capacity+0x27c>
+     f6c:	8b 72 74             	mov    0x74(%edx),%esi
+     f6f:	8b 5a 70             	mov    0x70(%edx),%ebx
+     f72:	83 fe 00             	cmp    $0x0,%esi
+     f75:	77 08                	ja     f7f <ide_disk_get_capacity+0x23e>
+     f77:	81 fb 00 00 00 10    	cmp    $0x10000000,%ebx
+     f7d:	76 3e                	jbe    fbd <ide_disk_get_capacity+0x27c>
+     f7f:	89 f2                	mov    %esi,%edx
+     f81:	89 d8                	mov    %ebx,%eax
+     f83:	e8 42 f6 ff ff       	call   5ca <sectors_to_MB>
+     f88:	52                   	push   %edx
+     f89:	50                   	push   %eax
+     f8a:	56                   	push   %esi
+     f8b:	53                   	push   %ebx
+     f8c:	ff 74 24 10          	pushl  0x10(%esp)
+     f90:	68 7d 01 00 00       	push   $0x17d
+			f91: R_386_32	.rodata.str1.1
+     f95:	e8 fc ff ff ff       	call   f96 <ide_disk_get_capacity+0x255>
+			f96: R_386_PC32	printk
+     f9a:	8b 74 24 18          	mov    0x18(%esp),%esi
+     f9e:	83 c4 18             	add    $0x18,%esp
+     fa1:	c7 46 70 00 00 00 10 	movl   $0x10000000,0x70(%esi)
+     fa8:	c7 46 74 00 00 00 00 	movl   $0x0,0x74(%esi)
+     faf:	c7 46 68 00 00 00 10 	movl   $0x10000000,0x68(%esi)
+     fb6:	c7 46 6c 00 00 00 00 	movl   $0x0,0x6c(%esi)
+     fbd:	8b 3c 24             	mov    (%esp),%edi
+     fc0:	8b 47 28             	mov    0x28(%edi),%eax
+     fc3:	f6 40 5e 04          	testb  $0x4,0x5e(%eax)
+     fc7:	74 3c                	je     1005 <ide_disk_get_capacity+0x2c4>
+     fc9:	8b 47 30             	mov    0x30(%edi),%eax
+     fcc:	a9 00 00 20 00       	test   $0x200000,%eax
+     fd1:	74 32                	je     1005 <ide_disk_get_capacity+0x2c4>
+     fd3:	83 7f 74 00          	cmpl   $0x0,0x74(%edi)
+     fd7:	77 09                	ja     fe2 <ide_disk_get_capacity+0x2a1>
+     fd9:	81 7f 70 00 00 00 10 	cmpl   $0x10000000,0x70(%edi)
+     fe0:	76 18                	jbe    ffa <ide_disk_get_capacity+0x2b9>
+     fe2:	68 00 00 00 10       	push   $0x10000000
+     fe7:	ff 74 24 04          	pushl  0x4(%esp)
+     feb:	68 bd 01 00 00       	push   $0x1bd
+			fec: R_386_32	.rodata.str1.1
+     ff0:	e8 fc ff ff ff       	call   ff1 <ide_disk_get_capacity+0x2b0>
+			ff1: R_386_PC32	printk
+     ff5:	83 c4 0c             	add    $0xc,%esp
+     ff8:	eb 0b                	jmp    1005 <ide_disk_get_capacity+0x2c4>
+     ffa:	8b 14 24             	mov    (%esp),%edx
+     ffd:	25 ff ff df ff       	and    $0xffdfffff,%eax
+    1002:	89 42 30             	mov    %eax,0x30(%edx)
+    1005:	83 c4 10             	add    $0x10,%esp
+    1008:	31 c0                	xor    %eax,%eax
+    100a:	5b                   	pop    %ebx
+    100b:	5e                   	pop    %esi
+    100c:	5f                   	pop    %edi
+    100d:	5d                   	pop    %ebp
+    100e:	c3                   	ret    
+
+0000100f <set_wcache>:
+    100f:	55                   	push   %ebp
+    1010:	89 d5                	mov    %edx,%ebp
+    1012:	57                   	push   %edi
+    1013:	56                   	push   %esi
+    1014:	be ea ff ff ff       	mov    $0xffffffea,%esi
+    1019:	53                   	push   %ebx
+    101a:	89 c3                	mov    %eax,%ebx
+    101c:	83 ec 40             	sub    $0x40,%esp
+    101f:	83 fa 01             	cmp    $0x1,%edx
+    1022:	0f 87 62 01 00 00    	ja     118a <set_wcache+0x17b>
+    1028:	8b 40 1c             	mov    0x1c(%eax),%eax
+    102b:	0f b7 90 a6 00 00 00 	movzwl 0xa6(%eax),%edx
+    1032:	89 d1                	mov    %edx,%ecx
+    1034:	81 e1 00 c0 00 00    	and    $0xc000,%ecx
+    103a:	81 f9 00 40 00 00    	cmp    $0x4000,%ecx
+    1040:	75 78                	jne    10ba <set_wcache+0xab>
+    1042:	80 e6 10             	and    $0x10,%dh
+    1045:	74 73                	je     10ba <set_wcache+0xab>
+    1047:	0f b7 90 ae 00 00 00 	movzwl 0xae(%eax),%edx
+    104e:	81 e2 00 c0 00 00    	and    $0xc000,%edx
+    1054:	81 fa 00 40 00 00    	cmp    $0x4000,%edx
+    105a:	75 5e                	jne    10ba <set_wcache+0xab>
+    105c:	f6 80 ad 00 00 00 10 	testb  $0x10,0xad(%eax)
+    1063:	74 55                	je     10ba <set_wcache+0xab>
+    1065:	83 fd 01             	cmp    $0x1,%ebp
+    1068:	66 b9 10 00          	mov    $0x10,%cx
+    106c:	19 d2                	sbb    %edx,%edx
+    106e:	89 e7                	mov    %esp,%edi
+    1070:	81 e2 80 00 00 00    	and    $0x80,%edx
+    1076:	31 c0                	xor    %eax,%eax
+    1078:	83 c2 02             	add    $0x2,%edx
+    107b:	f3 ab                	rep stos %eax,%es:(%edi)
+    107d:	88 54 24 01          	mov    %dl,0x1(%esp)
+    1081:	89 d8                	mov    %ebx,%eax
+    1083:	89 e2                	mov    %esp,%edx
+    1085:	c6 44 24 02 00       	movb   $0x0,0x2(%esp)
+    108a:	c6 44 24 07 ef       	movb   $0xef,0x7(%esp)
+    108f:	c6 44 24 10 7e       	movb   $0x7e,0x10(%esp)
+    1094:	c6 44 24 12 7c       	movb   $0x7c,0x12(%esp)
+    1099:	e8 fc ff ff ff       	call   109a <set_wcache+0x8b>
+			109a: R_386_PC32	ide_no_data_taskfile
+    109e:	85 c0                	test   %eax,%eax
+    10a0:	89 c6                	mov    %eax,%esi
+    10a2:	75 1b                	jne    10bf <set_wcache+0xb0>
+    10a4:	85 ed                	test   %ebp,%ebp
+    10a6:	74 09                	je     10b1 <set_wcache+0xa2>
+    10a8:	81 4b 30 00 00 40 00 	orl    $0x400000,0x30(%ebx)
+    10af:	eb 0e                	jmp    10bf <set_wcache+0xb0>
+    10b1:	81 63 30 ff ff bf ff 	andl   $0xffbfffff,0x30(%ebx)
+    10b8:	eb 05                	jmp    10bf <set_wcache+0xb0>
+    10ba:	be 01 00 00 00       	mov    $0x1,%esi
+    10bf:	f6 43 32 40          	testb  $0x40,0x32(%ebx)
+    10c3:	8b 7b 1c             	mov    0x1c(%ebx),%edi
+    10c6:	75 0c                	jne    10d4 <set_wcache+0xc5>
+    10c8:	31 c9                	xor    %ecx,%ecx
+    10ca:	ba 21 00 00 00       	mov    $0x21,%edx
+    10cf:	e9 ae 00 00 00       	jmp    1182 <set_wcache+0x173>
+    10d4:	89 d8                	mov    %ebx,%eax
+    10d6:	e8 fc ff ff ff       	call   10d7 <set_wcache+0xc8>
+			10d7: R_386_PC32	ide_gd_capacity
+    10db:	0f b7 8f a6 00 00 00 	movzwl 0xa6(%edi),%ecx
+    10e2:	89 cd                	mov    %ecx,%ebp
+    10e4:	81 e5 00 c0 00 00    	and    $0xc000,%ebp
+    10ea:	81 fd 00 40 00 00    	cmp    $0x4000,%ebp
+    10f0:	75 67                	jne    1159 <set_wcache+0x14a>
+    10f2:	f6 c5 10             	test   $0x10,%ch
+    10f5:	74 62                	je     1159 <set_wcache+0x14a>
+    10f7:	0f b7 af ae 00 00 00 	movzwl 0xae(%edi),%ebp
+    10fe:	81 e5 00 c0 00 00    	and    $0xc000,%ebp
+    1104:	81 fd 00 40 00 00    	cmp    $0x4000,%ebp
+    110a:	75 4d                	jne    1159 <set_wcache+0x14a>
+    110c:	0f b7 bf ac 00 00 00 	movzwl 0xac(%edi),%edi
+    1113:	f7 c7 00 10 00 00    	test   $0x1000,%edi
+    1119:	74 3e                	je     1159 <set_wcache+0x14a>
+    111b:	8b 6b 30             	mov    0x30(%ebx),%ebp
+    111e:	f7 c5 08 00 00 00    	test   $0x8,%ebp
+    1124:	75 33                	jne    1159 <set_wcache+0x14a>
+    1126:	83 fa 00             	cmp    $0x0,%edx
+    1129:	77 07                	ja     1132 <set_wcache+0x123>
+    112b:	3d 00 00 00 10       	cmp    $0x10000000,%eax
+    1130:	76 1b                	jbe    114d <set_wcache+0x13e>
+    1132:	81 e5 00 00 20 00    	and    $0x200000,%ebp
+    1138:	74 13                	je     114d <set_wcache+0x13e>
+    113a:	80 e5 20             	and    $0x20,%ch
+    113d:	74 1a                	je     1159 <set_wcache+0x14a>
+    113f:	81 e7 00 24 00 00    	and    $0x2400,%edi
+    1145:	81 ff 00 24 00 00    	cmp    $0x2400,%edi
+    114b:	75 0c                	jne    1159 <set_wcache+0x14a>
+    114d:	bf 01 00 00 00       	mov    $0x1,%edi
+    1152:	b8 0d 02 00 00       	mov    $0x20d,%eax
+			1153: R_386_32	.rodata.str1.1
+    1157:	eb 07                	jmp    1160 <set_wcache+0x151>
+    1159:	31 ff                	xor    %edi,%edi
+    115b:	b8 0e 02 00 00       	mov    $0x20e,%eax
+			115c: R_386_32	.rodata.str1.1
+    1160:	50                   	push   %eax
+    1161:	53                   	push   %ebx
+    1162:	68 13 02 00 00       	push   $0x213
+			1163: R_386_32	.rodata.str1.1
+    1167:	e8 fc ff ff ff       	call   1168 <set_wcache+0x159>
+			1168: R_386_PC32	printk
+    116c:	31 c9                	xor    %ecx,%ecx
+    116e:	b8 d0 13 00 00       	mov    $0x13d0,%eax
+			116f: R_386_32	.text
+    1173:	89 fa                	mov    %edi,%edx
+    1175:	83 c4 0c             	add    $0xc,%esp
+    1178:	85 ff                	test   %edi,%edi
+    117a:	0f 45 c8             	cmovne %eax,%ecx
+    117d:	f7 da                	neg    %edx
+    117f:	83 e2 71             	and    $0x71,%edx
+    1182:	8b 43 10             	mov    0x10(%ebx),%eax
+    1185:	e8 fc ff ff ff       	call   1186 <set_wcache+0x177>
+			1186: R_386_PC32	blk_queue_ordered
+    118a:	83 c4 40             	add    $0x40,%esp
+    118d:	89 f0                	mov    %esi,%eax
+    118f:	5b                   	pop    %ebx
+    1190:	5e                   	pop    %esi
+    1191:	5f                   	pop    %edi
+    1192:	5d                   	pop    %ebp
+    1193:	c3                   	ret    
+
+00001194 <ide_disk_setup>:
+    1194:	55                   	push   %ebp
+    1195:	57                   	push   %edi
+    1196:	56                   	push   %esi
+    1197:	53                   	push   %ebx
+    1198:	89 c3                	mov    %eax,%ebx
+    119a:	8b 70 10             	mov    0x10(%eax),%esi
+    119d:	8b 78 28             	mov    0x28(%eax),%edi
+    11a0:	8b 68 1c             	mov    0x1c(%eax),%ebp
+    11a3:	8b 40 18             	mov    0x18(%eax),%eax
+    11a6:	8b 50 04             	mov    0x4(%eax),%edx
+    11a9:	89 d8                	mov    %ebx,%eax
+    11ab:	e8 fc ff ff ff       	call   11ac <ide_disk_setup+0x18>
+			11ac: R_386_PC32	ide_proc_register_driver
+    11b0:	8b 43 30             	mov    0x30(%ebx),%eax
+    11b3:	f6 c4 01             	test   $0x1,%ah
+    11b6:	0f 84 9c 01 00 00    	je     1358 <ide_disk_setup+0x1c4>
+    11bc:	f6 c4 04             	test   $0x4,%ah
+    11bf:	74 15                	je     11d6 <ide_disk_setup+0x42>
+    11c1:	80 7d 36 57          	cmpb   $0x57,0x36(%ebp)
+    11c5:	8d 55 36             	lea    0x36(%ebp),%edx
+    11c8:	75 06                	jne    11d0 <ide_disk_setup+0x3c>
+    11ca:	80 7a 01 44          	cmpb   $0x44,0x1(%edx)
+    11ce:	74 06                	je     11d6 <ide_disk_setup+0x42>
+    11d0:	80 cc 80             	or     $0x80,%ah
+    11d3:	89 43 30             	mov    %eax,0x30(%ebx)
+    11d6:	ba 01 00 00 00       	mov    $0x1,%edx
+    11db:	89 d8                	mov    %ebx,%eax
+    11dd:	e8 7a f4 ff ff       	call   65c <set_addressing>
+    11e2:	f6 43 32 20          	testb  $0x20,0x32(%ebx)
+    11e6:	74 1b                	je     1203 <ide_disk_setup+0x6f>
+    11e8:	8b 97 d4 00 00 00    	mov    0xd4(%edi),%edx
+    11ee:	b8 00 08 00 00       	mov    $0x800,%eax
+    11f3:	81 fa 00 08 00 00    	cmp    $0x800,%edx
+    11f9:	0f 4d d0             	cmovge %eax,%edx
+    11fc:	89 f0                	mov    %esi,%eax
+    11fe:	e8 fc ff ff ff       	call   11ff <ide_disk_setup+0x6b>
+			11ff: R_386_PC32	blk_queue_max_sectors
+    1203:	8b 86 60 02 00 00    	mov    0x260(%esi),%eax
+    1209:	d1 e8                	shr    %eax
+    120b:	50                   	push   %eax
+    120c:	53                   	push   %ebx
+    120d:	68 35 02 00 00       	push   $0x235
+			120e: R_386_32	.rodata.str1.1
+    1212:	e8 fc ff ff ff       	call   1213 <ide_disk_setup+0x7f>
+			1213: R_386_PC32	printk
+    1217:	83 c4 0c             	add    $0xc,%esp
+    121a:	66 83 bd b2 01 00 00 	cmpw   $0x1,0x1b2(%ebp)
+    1221:	01 
+    1222:	75 08                	jne    122c <ide_disk_setup+0x98>
+    1224:	0f ba ae b0 01 00 00 	btsl   $0xe,0x1b0(%esi)
+    122b:	0e 
+    122c:	89 d8                	mov    %ebx,%eax
+    122e:	e8 0e fb ff ff       	call   d41 <ide_disk_get_capacity>
+    1233:	89 d8                	mov    %ebx,%eax
+    1235:	e8 fc ff ff ff       	call   1236 <ide_disk_setup+0xa2>
+			1236: R_386_PC32	ide_gd_capacity
+    123a:	f6 43 31 10          	testb  $0x10,0x31(%ebx)
+    123e:	89 c6                	mov    %eax,%esi
+    1240:	89 d7                	mov    %edx,%edi
+    1242:	75 55                	jne    1299 <ide_disk_setup+0x105>
+    1244:	8b 43 1c             	mov    0x1c(%ebx),%eax
+    1247:	e8 04 f3 ff ff       	call   550 <ata_id_lba48_enabled>
+    124c:	85 c0                	test   %eax,%eax
+    124e:	74 08                	je     1258 <ide_disk_setup+0xc4>
+    1250:	c6 43 4f 3f          	movb   $0x3f,0x4f(%ebx)
+    1254:	c6 43 4e ff          	movb   $0xff,0x4e(%ebx)
+    1258:	8a 53 4f             	mov    0x4f(%ebx),%dl
+    125b:	84 d2                	test   %dl,%dl
+    125d:	74 3a                	je     1299 <ide_disk_setup+0x105>
+    125f:	8a 4b 4e             	mov    0x4e(%ebx),%cl
+    1262:	84 c9                	test   %cl,%cl
+    1264:	74 33                	je     1299 <ide_disk_setup+0x105>
+    1266:	85 ff                	test   %edi,%edi
+    1268:	89 f0                	mov    %esi,%eax
+    126a:	75 21                	jne    128d <ide_disk_setup+0xf9>
+    126c:	0f b6 d2             	movzbl %dl,%edx
+    126f:	0f b6 c9             	movzbl %cl,%ecx
+    1272:	0f af ca             	imul   %edx,%ecx
+    1275:	31 d2                	xor    %edx,%edx
+    1277:	f7 f1                	div    %ecx
+    1279:	ba ff ff 00 00       	mov    $0xffff,%edx
+    127e:	3d ff ff 00 00       	cmp    $0xffff,%eax
+    1283:	0f 46 d0             	cmovbe %eax,%edx
+    1286:	3b 53 54             	cmp    0x54(%ebx),%edx
+    1289:	76 0e                	jbe    1299 <ide_disk_setup+0x105>
+    128b:	eb 09                	jmp    1296 <ide_disk_setup+0x102>
+    128d:	c7 43 54 ff ff 00 00 	movl   $0xffff,0x54(%ebx)
+    1294:	eb 03                	jmp    1299 <ide_disk_setup+0x105>
+    1296:	89 53 54             	mov    %edx,0x54(%ebx)
+    1299:	89 f0                	mov    %esi,%eax
+    129b:	89 fa                	mov    %edi,%edx
+    129d:	e8 28 f3 ff ff       	call   5ca <sectors_to_MB>
+    12a2:	52                   	push   %edx
+    12a3:	50                   	push   %eax
+    12a4:	57                   	push   %edi
+    12a5:	56                   	push   %esi
+    12a6:	53                   	push   %ebx
+    12a7:	68 55 02 00 00       	push   $0x255
+			12a8: R_386_32	.rodata.str1.1
+    12ac:	e8 fc ff ff ff       	call   12ad <ide_disk_setup+0x119>
+			12ad: R_386_PC32	printk
+    12b1:	66 8b 45 2a          	mov    0x2a(%ebp),%ax
+    12b5:	83 c4 18             	add    $0x18,%esp
+    12b8:	66 85 c0             	test   %ax,%ax
+    12bb:	74 13                	je     12d0 <ide_disk_setup+0x13c>
+    12bd:	66 d1 e8             	shr    %ax
+    12c0:	0f b7 c0             	movzwl %ax,%eax
+    12c3:	50                   	push   %eax
+    12c4:	68 73 02 00 00       	push   $0x273
+			12c5: R_386_32	.rodata.str1.1
+    12c9:	e8 fc ff ff ff       	call   12ca <ide_disk_setup+0x136>
+			12ca: R_386_PC32	printk
+    12ce:	58                   	pop    %eax
+    12cf:	5a                   	pop    %edx
+    12d0:	0f b6 43 4f          	movzbl 0x4f(%ebx),%eax
+    12d4:	50                   	push   %eax
+    12d5:	0f b6 43 4e          	movzbl 0x4e(%ebx),%eax
+    12d9:	50                   	push   %eax
+    12da:	ff 73 54             	pushl  0x54(%ebx)
+    12dd:	68 85 02 00 00       	push   $0x285
+			12de: R_386_32	.rodata.str1.1
+    12e2:	e8 fc ff ff ff       	call   12e3 <ide_disk_setup+0x14f>
+			12e3: R_386_PC32	printk
+    12e7:	83 c4 10             	add    $0x10,%esp
+    12ea:	f6 85 02 01 00 00 01 	testb  $0x1,0x102(%ebp)
+    12f1:	75 1c                	jne    130f <ide_disk_setup+0x17b>
+    12f3:	0f b7 85 ae 00 00 00 	movzwl 0xae(%ebp),%eax
+    12fa:	25 00 c0 00 00       	and    $0xc000,%eax
+    12ff:	3d 00 40 00 00       	cmp    $0x4000,%eax
+    1304:	75 10                	jne    1316 <ide_disk_setup+0x182>
+    1306:	f6 85 aa 00 00 00 20 	testb  $0x20,0xaa(%ebp)
+    130d:	74 07                	je     1316 <ide_disk_setup+0x182>
+    130f:	81 4b 30 00 00 40 00 	orl    $0x400000,0x30(%ebx)
+    1316:	ba 01 00 00 00       	mov    $0x1,%edx
+    131b:	89 d8                	mov    %ebx,%eax
+    131d:	e8 ed fc ff ff       	call   100f <set_wcache>
+    1322:	8b 43 30             	mov    0x30(%ebx),%eax
+    1325:	a9 00 00 00 02       	test   $0x2000000,%eax
+    132a:	75 26                	jne    1352 <ide_disk_setup+0x1be>
+    132c:	8a 53 4c             	mov    0x4c(%ebx),%dl
+    132f:	8d 4a ff             	lea    -0x1(%edx),%ecx
+    1332:	80 f9 0f             	cmp    $0xf,%cl
+    1335:	76 1b                	jbe    1352 <ide_disk_setup+0x1be>
+    1337:	0f b6 d2             	movzbl %dl,%edx
+    133a:	52                   	push   %edx
+    133b:	53                   	push   %ebx
+    133c:	68 98 02 00 00       	push   $0x298
+			133d: R_386_32	.rodata.str1.1
+    1341:	e8 fc ff ff ff       	call   1342 <ide_disk_setup+0x1ae>
+			1342: R_386_PC32	printk
+    1346:	81 63 30 ff f7 ff ff 	andl   $0xfffff7ff,0x30(%ebx)
+    134d:	83 c4 0c             	add    $0xc,%esp
+    1350:	eb 06                	jmp    1358 <ide_disk_setup+0x1c4>
+    1352:	80 cc 08             	or     $0x8,%ah
+    1355:	89 43 30             	mov    %eax,0x30(%ebx)
+    1358:	5b                   	pop    %ebx
+    1359:	5e                   	pop    %esi
+    135a:	5f                   	pop    %edi
+    135b:	5d                   	pop    %ebp
+    135c:	c3                   	ret    
+
+0000135d <set_multcount>:
+    135d:	57                   	push   %edi
+    135e:	85 d2                	test   %edx,%edx
+    1360:	56                   	push   %esi
+    1361:	89 d7                	mov    %edx,%edi
+    1363:	53                   	push   %ebx
+    1364:	89 c3                	mov    %eax,%ebx
+    1366:	78 5f                	js     13c7 <set_multcount+0x6a>
+    1368:	8b 40 1c             	mov    0x1c(%eax),%eax
+    136b:	0f b6 40 5e          	movzbl 0x5e(%eax),%eax
+    136f:	39 c2                	cmp    %eax,%edx
+    1371:	7f 54                	jg     13c7 <set_multcount+0x6a>
+    1373:	f6 43 3c 04          	testb  $0x4,0x3c(%ebx)
+    1377:	b8 f0 ff ff ff       	mov    $0xfffffff0,%eax
+    137c:	75 4e                	jne    13cc <set_multcount+0x6f>
+    137e:	8b 43 10             	mov    0x10(%ebx),%eax
+    1381:	31 d2                	xor    %edx,%edx
+    1383:	b9 10 00 00 00       	mov    $0x10,%ecx
+    1388:	e8 fc ff ff ff       	call   1389 <set_multcount+0x2c>
+			1389: R_386_PC32	blk_get_request
+    138d:	31 d2                	xor    %edx,%edx
+    138f:	c7 40 28 09 00 00 00 	movl   $0x9,0x28(%eax)
+    1396:	89 c6                	mov    %eax,%esi
+    1398:	89 f8                	mov    %edi,%eax
+    139a:	88 43 49             	mov    %al,0x49(%ebx)
+    139d:	8b 43 10             	mov    0x10(%ebx),%eax
+    13a0:	89 f1                	mov    %esi,%ecx
+    13a2:	80 4b 3c 04          	orb    $0x4,0x3c(%ebx)
+    13a6:	6a 00                	push   $0x0
+    13a8:	e8 fc ff ff ff       	call   13a9 <set_multcount+0x4c>
+			13a9: R_386_PC32	blk_execute_rq
+    13ad:	89 f0                	mov    %esi,%eax
+    13af:	e8 fc ff ff ff       	call   13b0 <set_multcount+0x53>
+			13b0: R_386_PC32	blk_put_request
+    13b4:	0f b6 43 48          	movzbl 0x48(%ebx),%eax
+    13b8:	59                   	pop    %ecx
+    13b9:	39 f8                	cmp    %edi,%eax
+    13bb:	0f 94 c0             	sete   %al
+    13be:	0f b6 c0             	movzbl %al,%eax
+    13c1:	8d 44 80 fb          	lea    -0x5(%eax,%eax,4),%eax
+    13c5:	eb 05                	jmp    13cc <set_multcount+0x6f>
+    13c7:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+    13cc:	5b                   	pop    %ebx
+    13cd:	5e                   	pop    %esi
+    13ce:	5f                   	pop    %edi
+    13cf:	c3                   	ret    
+
+000013d0 <idedisk_prepare_flush>:
+    13d0:	55                   	push   %ebp
+    13d1:	57                   	push   %edi
+    13d2:	56                   	push   %esi
+    13d3:	53                   	push   %ebx
+    13d4:	83 ec 04             	sub    $0x4,%esp
+    13d7:	89 14 24             	mov    %edx,(%esp)
+    13da:	ba 20 00 00 00       	mov    $0x20,%edx
+    13df:	8b a8 a8 01 00 00    	mov    0x1a8(%eax),%ebp
+    13e5:	b8 18 06 00 00       	mov    $0x618,%eax
+			13e6: R_386_32	kmalloc_caches
+    13ea:	e8 fc ff ff ff       	call   13eb <idedisk_prepare_flush+0x1b>
+			13eb: R_386_PC32	kmem_cache_alloc
+    13ef:	8b 3d 1c 06 00 00    	mov    0x61c,%edi
+			13f1: R_386_32	kmalloc_caches
+    13f5:	83 3d 04 00 00 00 00 	cmpl   $0x0,0x4
+			13f7: R_386_32	__tracepoint_kmalloc
+    13fc:	89 c3                	mov    %eax,%ebx
+    13fe:	74 25                	je     1425 <idedisk_prepare_flush+0x55>
+    1400:	8b 35 10 00 00 00    	mov    0x10,%esi
+			1402: R_386_32	__tracepoint_kmalloc
+    1406:	85 f6                	test   %esi,%esi
+    1408:	74 1b                	je     1425 <idedisk_prepare_flush+0x55>
+    140a:	6a 20                	push   $0x20
+    140c:	89 da                	mov    %ebx,%edx
+    140e:	b8 d0 13 00 00       	mov    $0x13d0,%eax
+			140f: R_386_32	.text
+    1413:	b9 40 00 00 00       	mov    $0x40,%ecx
+    1418:	57                   	push   %edi
+    1419:	ff 16                	call   *(%esi)
+    141b:	83 c6 04             	add    $0x4,%esi
+    141e:	83 3e 00             	cmpl   $0x0,(%esi)
+    1421:	58                   	pop    %eax
+    1422:	5a                   	pop    %edx
+    1423:	eb e3                	jmp    1408 <idedisk_prepare_flush+0x38>
+    1425:	85 db                	test   %ebx,%ebx
+    1427:	75 04                	jne    142d <idedisk_prepare_flush+0x5d>
+    1429:	0f 0b                	ud2a   
+    142b:	eb fe                	jmp    142b <idedisk_prepare_flush+0x5b>
+    142d:	b9 10 00 00 00       	mov    $0x10,%ecx
+    1432:	89 df                	mov    %ebx,%edi
+    1434:	31 c0                	xor    %eax,%eax
+    1436:	f3 ab                	rep stos %eax,%es:(%edi)
+    1438:	8b 45 1c             	mov    0x1c(%ebp),%eax
+    143b:	0f b7 90 a6 00 00 00 	movzwl 0xa6(%eax),%edx
+    1442:	89 d1                	mov    %edx,%ecx
+    1444:	81 e1 00 c0 00 00    	and    $0xc000,%ecx
+    144a:	81 f9 00 40 00 00    	cmp    $0x4000,%ecx
+    1450:	75 42                	jne    1494 <idedisk_prepare_flush+0xc4>
+    1452:	80 e6 20             	and    $0x20,%dh
+    1455:	74 3d                	je     1494 <idedisk_prepare_flush+0xc4>
+    1457:	0f b7 90 ae 00 00 00 	movzwl 0xae(%eax),%edx
+    145e:	81 e2 00 c0 00 00    	and    $0xc000,%edx
+    1464:	81 fa 00 40 00 00    	cmp    $0x4000,%edx
+    146a:	75 28                	jne    1494 <idedisk_prepare_flush+0xc4>
+    146c:	0f b7 80 ac 00 00 00 	movzwl 0xac(%eax),%eax
+    1473:	25 00 24 00 00       	and    $0x2400,%eax
+    1478:	3d 00 24 00 00       	cmp    $0x2400,%eax
+    147d:	75 15                	jne    1494 <idedisk_prepare_flush+0xc4>
+    147f:	83 7d 74 00          	cmpl   $0x0,0x74(%ebp)
+    1483:	77 09                	ja     148e <idedisk_prepare_flush+0xbe>
+    1485:	81 7d 70 ff ff ff 0f 	cmpl   $0xfffffff,0x70(%ebp)
+    148c:	76 06                	jbe    1494 <idedisk_prepare_flush+0xc4>
+    148e:	c6 43 07 ea          	movb   $0xea,0x7(%ebx)
+    1492:	eb 04                	jmp    1498 <idedisk_prepare_flush+0xc8>
+    1494:	c6 43 07 e7          	movb   $0xe7,0x7(%ebx)
+    1498:	c6 43 10 7e          	movb   $0x7e,0x10(%ebx)
+    149c:	66 c7 43 14 20 00    	movw   $0x20,0x14(%ebx)
+    14a2:	c7 43 18 01 00 00 00 	movl   $0x1,0x18(%ebx)
+    14a9:	8b 04 24             	mov    (%esp),%eax
+    14ac:	c7 40 28 09 00 00 00 	movl   $0x9,0x28(%eax)
+    14b3:	89 58 6c             	mov    %ebx,0x6c(%eax)
+    14b6:	89 43 3c             	mov    %eax,0x3c(%ebx)
+    14b9:	5b                   	pop    %ebx
+    14ba:	5b                   	pop    %ebx
+    14bb:	5e                   	pop    %esi
+    14bc:	5f                   	pop    %edi
+    14bd:	5d                   	pop    %ebp
+    14be:	c3                   	ret    
+    14bf:	90                   	nop
+
+000014c0 <ide_disk_ioctl>:
+    14c0:	55                   	push   %ebp
+    14c1:	57                   	push   %edi
+    14c2:	56                   	push   %esi
+    14c3:	89 c6                	mov    %eax,%esi
+    14c5:	53                   	push   %ebx
+    14c6:	8b 6c 24 14          	mov    0x14(%esp),%ebp
+    14ca:	89 d3                	mov    %edx,%ebx
+    14cc:	8b 7c 24 18          	mov    0x18(%esp),%edi
+    14d0:	68 5c 03 00 00       	push   $0x35c
+			14d1: R_386_32	.rodata
+    14d5:	89 e9                	mov    %ebp,%ecx
+    14d7:	57                   	push   %edi
+    14d8:	e8 fc ff ff ff       	call   14d9 <ide_disk_ioctl+0x19>
+			14d9: R_386_PC32	ide_setting_ioctl
+    14dd:	5a                   	pop    %edx
+    14de:	59                   	pop    %ecx
+    14df:	83 f8 a1             	cmp    $0xffffffa1,%eax
+    14e2:	75 13                	jne    14f7 <ide_disk_ioctl+0x37>
+    14e4:	89 7c 24 14          	mov    %edi,0x14(%esp)
+    14e8:	89 e9                	mov    %ebp,%ecx
+    14ea:	89 da                	mov    %ebx,%edx
+    14ec:	89 f0                	mov    %esi,%eax
+    14ee:	5b                   	pop    %ebx
+    14ef:	5e                   	pop    %esi
+    14f0:	5f                   	pop    %edi
+    14f1:	5d                   	pop    %ebp
+    14f2:	e9 fc ff ff ff       	jmp    14f3 <ide_disk_ioctl+0x33>
+			14f3: R_386_PC32	generic_ide_ioctl
+    14f7:	5b                   	pop    %ebx
+    14f8:	5e                   	pop    %esi
+    14f9:	5f                   	pop    %edi
+    14fa:	5d                   	pop    %ebp
+    14fb:	c3                   	ret    
+
+000014fc <get_bios_cyl>:
+    14fc:	8b 40 54             	mov    0x54(%eax),%eax
+    14ff:	c3                   	ret    
+
+00001500 <set_bios_cyl>:
+    1500:	89 50 54             	mov    %edx,0x54(%eax)
+    1503:	31 c0                	xor    %eax,%eax
+    1505:	c3                   	ret    
+
+00001506 <get_bios_head>:
+    1506:	0f b6 40 4e          	movzbl 0x4e(%eax),%eax
+    150a:	c3                   	ret    
+
+0000150b <set_bios_head>:
+    150b:	88 50 4e             	mov    %dl,0x4e(%eax)
+    150e:	31 c0                	xor    %eax,%eax
+    1510:	c3                   	ret    
+
+00001511 <get_bios_sect>:
+    1511:	0f b6 40 4f          	movzbl 0x4f(%eax),%eax
+    1515:	c3                   	ret    
+
+00001516 <set_bios_sect>:
+    1516:	88 50 4f             	mov    %dl,0x4f(%eax)
+    1519:	31 c0                	xor    %eax,%eax
+    151b:	c3                   	ret    
+
+0000151c <get_failures>:
+    151c:	8b 40 60             	mov    0x60(%eax),%eax
+    151f:	c3                   	ret    
+
+00001520 <set_failures>:
+    1520:	89 50 60             	mov    %edx,0x60(%eax)
+    1523:	31 c0                	xor    %eax,%eax
+    1525:	c3                   	ret    
+
+00001526 <get_lun>:
+    1526:	8b 40 78             	mov    0x78(%eax),%eax
+    1529:	c3                   	ret    
+
+0000152a <set_lun>:
+    152a:	89 50 78             	mov    %edx,0x78(%eax)
+    152d:	31 c0                	xor    %eax,%eax
+    152f:	c3                   	ret    
+
+00001530 <get_max_failures>:
+    1530:	8b 40 64             	mov    0x64(%eax),%eax
+    1533:	c3                   	ret    
+
+00001534 <set_max_failures>:
+    1534:	89 50 64             	mov    %edx,0x64(%eax)
+    1537:	31 c0                	xor    %eax,%eax
+    1539:	c3                   	ret    
+
+0000153a <idedisk_st_proc_open>:
+    153a:	89 c1                	mov    %eax,%ecx
+    153c:	89 d0                	mov    %edx,%eax
+    153e:	8b 51 f4             	mov    -0xc(%ecx),%edx
+    1541:	8b 4a 34             	mov    0x34(%edx),%ecx
+    1544:	ba 16 17 00 00       	mov    $0x1716,%edx
+			1545: R_386_32	.text
+    1549:	e9 fc ff ff ff       	jmp    154a <idedisk_st_proc_open+0x10>
+			154a: R_386_PC32	single_open
+
+0000154e <idedisk_sv_proc_open>:
+    154e:	89 c1                	mov    %eax,%ecx
+    1550:	89 d0                	mov    %edx,%eax
+    1552:	8b 51 f4             	mov    -0xc(%ecx),%edx
+    1555:	8b 4a 34             	mov    0x34(%edx),%ecx
+    1558:	ba 23 17 00 00       	mov    $0x1723,%edx
+			1559: R_386_32	.text
+    155d:	e9 fc ff ff ff       	jmp    155e <idedisk_sv_proc_open+0x10>
+			155e: R_386_PC32	single_open
+
+00001562 <idedisk_capacity_proc_open>:
+    1562:	89 c1                	mov    %eax,%ecx
+    1564:	89 d0                	mov    %edx,%eax
+    1566:	8b 51 f4             	mov    -0xc(%ecx),%edx
+    1569:	8b 4a 34             	mov    0x34(%edx),%ecx
+    156c:	ba c1 15 00 00       	mov    $0x15c1,%edx
+			156d: R_386_32	.text
+    1571:	e9 fc ff ff ff       	jmp    1572 <idedisk_capacity_proc_open+0x10>
+			1572: R_386_PC32	single_open
+
+00001576 <idedisk_cache_proc_open>:
+    1576:	89 c1                	mov    %eax,%ecx
+    1578:	89 d0                	mov    %edx,%eax
+    157a:	8b 51 f4             	mov    -0xc(%ecx),%edx
+    157d:	8b 4a 34             	mov    0x34(%edx),%ecx
+    1580:	ba 8a 15 00 00       	mov    $0x158a,%edx
+			1581: R_386_32	.text
+    1585:	e9 fc ff ff ff       	jmp    1586 <idedisk_cache_proc_open+0x10>
+			1586: R_386_PC32	single_open
+
+0000158a <idedisk_cache_proc_show>:
+    158a:	8b 50 40             	mov    0x40(%eax),%edx
+    158d:	f6 42 31 01          	testb  $0x1,0x31(%edx)
+    1591:	74 1e                	je     15b1 <idedisk_cache_proc_show+0x27>
+    1593:	8b 52 1c             	mov    0x1c(%edx),%edx
+    1596:	66 8b 52 2a          	mov    0x2a(%edx),%dx
+    159a:	66 d1 ea             	shr    %dx
+    159d:	0f b7 d2             	movzwl %dx,%edx
+    15a0:	52                   	push   %edx
+    15a1:	68 e3 02 00 00       	push   $0x2e3
+			15a2: R_386_32	.rodata.str1.1
+    15a6:	50                   	push   %eax
+    15a7:	e8 fc ff ff ff       	call   15a8 <idedisk_cache_proc_show+0x1e>
+			15a8: R_386_PC32	seq_printf
+    15ac:	83 c4 0c             	add    $0xc,%esp
+    15af:	eb 0d                	jmp    15be <idedisk_cache_proc_show+0x34>
+    15b1:	68 e7 02 00 00       	push   $0x2e7
+			15b2: R_386_32	.rodata.str1.1
+    15b6:	50                   	push   %eax
+    15b7:	e8 fc ff ff ff       	call   15b8 <idedisk_cache_proc_show+0x2e>
+			15b8: R_386_PC32	seq_printf
+    15bc:	58                   	pop    %eax
+    15bd:	5a                   	pop    %edx
+    15be:	31 c0                	xor    %eax,%eax
+    15c0:	c3                   	ret    
+
+000015c1 <idedisk_capacity_proc_show>:
+    15c1:	53                   	push   %ebx
+    15c2:	89 c3                	mov    %eax,%ebx
+    15c4:	8b 40 40             	mov    0x40(%eax),%eax
+    15c7:	e8 fc ff ff ff       	call   15c8 <idedisk_capacity_proc_show+0x7>
+			15c8: R_386_PC32	ide_gd_capacity
+    15cc:	52                   	push   %edx
+    15cd:	50                   	push   %eax
+    15ce:	68 ef 02 00 00       	push   $0x2ef
+			15cf: R_386_32	.rodata.str1.1
+    15d3:	53                   	push   %ebx
+    15d4:	e8 fc ff ff ff       	call   15d5 <idedisk_capacity_proc_show+0x14>
+			15d5: R_386_PC32	seq_printf
+    15d9:	31 c0                	xor    %eax,%eax
+    15db:	83 c4 10             	add    $0x10,%esp
+    15de:	5b                   	pop    %ebx
+    15df:	c3                   	ret    
+
+000015e0 <__idedisk_proc_show>:
+    15e0:	55                   	push   %ebp
+    15e1:	89 cd                	mov    %ecx,%ebp
+    15e3:	57                   	push   %edi
+    15e4:	56                   	push   %esi
+    15e5:	53                   	push   %ebx
+    15e6:	81 ec 88 00 00 00    	sub    $0x88,%esp
+    15ec:	89 44 24 04          	mov    %eax,0x4(%esp)
+    15f0:	b8 24 09 00 00       	mov    $0x924,%eax
+			15f1: R_386_32	kmalloc_caches
+    15f5:	89 14 24             	mov    %edx,(%esp)
+    15f8:	ba d0 00 00 00       	mov    $0xd0,%edx
+    15fd:	e8 fc ff ff ff       	call   15fe <__idedisk_proc_show+0x1e>
+			15fe: R_386_PC32	kmem_cache_alloc
+    1602:	8b 3d 28 09 00 00    	mov    0x928,%edi
+			1604: R_386_32	kmalloc_caches
+    1608:	83 3d 04 00 00 00 00 	cmpl   $0x0,0x4
+			160a: R_386_32	__tracepoint_kmalloc
+    160f:	89 c6                	mov    %eax,%esi
+    1611:	74 28                	je     163b <__idedisk_proc_show+0x5b>
+    1613:	8b 1d 10 00 00 00    	mov    0x10,%ebx
+			1615: R_386_32	__tracepoint_kmalloc
+    1619:	85 db                	test   %ebx,%ebx
+    161b:	74 1e                	je     163b <__idedisk_proc_show+0x5b>
+    161d:	68 d0 00 00 00       	push   $0xd0
+    1622:	89 f2                	mov    %esi,%edx
+    1624:	b8 e0 15 00 00       	mov    $0x15e0,%eax
+			1625: R_386_32	.text
+    1629:	b9 00 02 00 00       	mov    $0x200,%ecx
+    162e:	57                   	push   %edi
+    162f:	ff 13                	call   *(%ebx)
+    1631:	83 c3 04             	add    $0x4,%ebx
+    1634:	83 3b 00             	cmpl   $0x0,(%ebx)
+    1637:	58                   	pop    %eax
+    1638:	5a                   	pop    %edx
+    1639:	eb e0                	jmp    161b <__idedisk_proc_show+0x3b>
+    163b:	85 f6                	test   %esi,%esi
+    163d:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
+    1642:	0f 84 c3 00 00 00    	je     170b <__idedisk_proc_show+0x12b>
+    1648:	8d 54 24 48          	lea    0x48(%esp),%edx
+    164c:	bb 10 00 00 00       	mov    $0x10,%ebx
+    1651:	89 d9                	mov    %ebx,%ecx
+    1653:	89 d7                	mov    %edx,%edi
+    1655:	31 c0                	xor    %eax,%eax
+    1657:	f3 ab                	rep stos %eax,%es:(%edi)
+    1659:	8b 04 24             	mov    (%esp),%eax
+    165c:	c6 44 24 49 d8       	movb   $0xd8,0x49(%esp)
+    1661:	c6 44 24 4c 4f       	movb   $0x4f,0x4c(%esp)
+    1666:	c6 44 24 4d c2       	movb   $0xc2,0x4d(%esp)
+    166b:	c6 44 24 4f b0       	movb   $0xb0,0x4f(%esp)
+    1670:	c6 44 24 58 7e       	movb   $0x7e,0x58(%esp)
+    1675:	c6 44 24 5a 7c       	movb   $0x7c,0x5a(%esp)
+    167a:	e8 fc ff ff ff       	call   167b <__idedisk_proc_show+0x9b>
+			167b: R_386_PC32	ide_no_data_taskfile
+    167f:	89 d9                	mov    %ebx,%ecx
+    1681:	31 c0                	xor    %eax,%eax
+    1683:	8d 54 24 08          	lea    0x8(%esp),%edx
+    1687:	89 d7                	mov    %edx,%edi
+    1689:	f3 ab                	rep stos %eax,%es:(%edi)
+    168b:	89 e8                	mov    %ebp,%eax
+    168d:	89 f1                	mov    %esi,%ecx
+    168f:	88 44 24 09          	mov    %al,0x9(%esp)
+    1693:	c6 44 24 0a 01       	movb   $0x1,0xa(%esp)
+    1698:	c6 44 24 0c 4f       	movb   $0x4f,0xc(%esp)
+    169d:	c6 44 24 0d c2       	movb   $0xc2,0xd(%esp)
+    16a2:	c6 44 24 0f b0       	movb   $0xb0,0xf(%esp)
+    16a7:	c6 44 24 18 7e       	movb   $0x7e,0x18(%esp)
+    16ac:	c6 44 24 1a 7c       	movb   $0x7c,0x1a(%esp)
+    16b1:	c7 44 24 20 02 00 00 	movl   $0x2,0x20(%esp)
+    16b8:	00 
+    16b9:	6a 01                	push   $0x1
+    16bb:	8b 44 24 04          	mov    0x4(%esp),%eax
+    16bf:	e8 fc ff ff ff       	call   16c0 <__idedisk_proc_show+0xe0>
+			16c0: R_386_PC32	ide_raw_taskfile
+    16c4:	59                   	pop    %ecx
+    16c5:	85 c0                	test   %eax,%eax
+    16c7:	75 39                	jne    1702 <__idedisk_proc_show+0x122>
+    16c9:	30 db                	xor    %bl,%bl
+    16cb:	bd 0a 00 00 00       	mov    $0xa,%ebp
+    16d0:	bf 20 00 00 00       	mov    $0x20,%edi
+    16d5:	89 d8                	mov    %ebx,%eax
+    16d7:	83 e0 07             	and    $0x7,%eax
+    16da:	83 f8 07             	cmp    $0x7,%eax
+    16dd:	89 f8                	mov    %edi,%eax
+    16df:	0f 44 c5             	cmove  %ebp,%eax
+    16e2:	50                   	push   %eax
+    16e3:	0f b7 04 5e          	movzwl (%esi,%ebx,2),%eax
+    16e7:	43                   	inc    %ebx
+    16e8:	50                   	push   %eax
+    16e9:	68 f5 02 00 00       	push   $0x2f5
+			16ea: R_386_32	.rodata.str1.1
+    16ee:	ff 74 24 10          	pushl  0x10(%esp)
+    16f2:	e8 fc ff ff ff       	call   16f3 <__idedisk_proc_show+0x113>
+			16f3: R_386_PC32	seq_printf
+    16f7:	83 c4 10             	add    $0x10,%esp
+    16fa:	81 fb 00 01 00 00    	cmp    $0x100,%ebx
+    1700:	75 d3                	jne    16d5 <__idedisk_proc_show+0xf5>
+    1702:	89 f0                	mov    %esi,%eax
+    1704:	e8 fc ff ff ff       	call   1705 <__idedisk_proc_show+0x125>
+			1705: R_386_PC32	kfree
+    1709:	31 c0                	xor    %eax,%eax
+    170b:	81 c4 88 00 00 00    	add    $0x88,%esp
+    1711:	5b                   	pop    %ebx
+    1712:	5e                   	pop    %esi
+    1713:	5f                   	pop    %edi
+    1714:	5d                   	pop    %ebp
+    1715:	c3                   	ret    
+
+00001716 <idedisk_st_proc_show>:
+    1716:	8b 50 40             	mov    0x40(%eax),%edx
+    1719:	b9 d1 00 00 00       	mov    $0xd1,%ecx
+    171e:	e9 bd fe ff ff       	jmp    15e0 <__idedisk_proc_show>
+
+00001723 <idedisk_sv_proc_show>:
+    1723:	8b 50 40             	mov    0x40(%eax),%edx
+    1726:	b9 d0 00 00 00       	mov    $0xd0,%ecx
+    172b:	e9 b0 fe ff ff       	jmp    15e0 <__idedisk_proc_show>
+
+00001730 <ide_floppy_flush>:
+    1730:	c3                   	ret    
+
+00001731 <ide_floppy_create_read_capacity_cmd>:
+    1731:	53                   	push   %ebx
+    1732:	89 c3                	mov    %eax,%ebx
+    1734:	e8 fc ff ff ff       	call   1735 <ide_floppy_create_read_capacity_cmd+0x4>
+			1735: R_386_PC32	ide_init_pc
+    1739:	c6 03 23             	movb   $0x23,(%ebx)
+    173c:	c6 43 07 ff          	movb   $0xff,0x7(%ebx)
+    1740:	c6 43 08 ff          	movb   $0xff,0x8(%ebx)
+    1744:	c7 43 14 ff 00 00 00 	movl   $0xff,0x14(%ebx)
+    174b:	5b                   	pop    %ebx
+    174c:	c3                   	ret    
+
+0000174d <ide_floppy_create_mode_sense_cmd>:
+    174d:	53                   	push   %ebx
+    174e:	89 c3                	mov    %eax,%ebx
+    1750:	83 ec 08             	sub    $0x8,%esp
+    1753:	89 14 24             	mov    %edx,(%esp)
+    1756:	88 54 24 04          	mov    %dl,0x4(%esp)
+    175a:	e8 fc ff ff ff       	call   175b <ide_floppy_create_mode_sense_cmd+0xe>
+			175b: R_386_PC32	ide_init_pc
+    175f:	b8 28 00 00 00       	mov    $0x28,%eax
+    1764:	c6 03 5a             	movb   $0x5a,(%ebx)
+    1767:	c6 43 01 00          	movb   $0x0,0x1(%ebx)
+    176b:	8a 4c 24 04          	mov    0x4(%esp),%cl
+    176f:	8b 14 24             	mov    (%esp),%edx
+    1772:	80 f9 05             	cmp    $0x5,%cl
+    1775:	88 53 02             	mov    %dl,0x2(%ebx)
+    1778:	74 1d                	je     1797 <ide_floppy_create_mode_sense_cmd+0x4a>
+    177a:	80 f9 1b             	cmp    $0x1b,%cl
+    177d:	b0 14                	mov    $0x14,%al
+    177f:	74 16                	je     1797 <ide_floppy_create_mode_sense_cmd+0x4a>
+    1781:	68 d0 06 00 00       	push   $0x6d0
+			1782: R_386_32	.rodata
+    1786:	68 92 03 00 00       	push   $0x392
+			1787: R_386_32	.rodata.str1.1
+    178b:	e8 fc ff ff ff       	call   178c <ide_floppy_create_mode_sense_cmd+0x3f>
+			178c: R_386_PC32	printk
+    1790:	b8 08 00 00 00       	mov    $0x8,%eax
+    1795:	59                   	pop    %ecx
+    1796:	5a                   	pop    %edx
+    1797:	0f b7 c0             	movzwl %ax,%eax
+    179a:	89 c2                	mov    %eax,%edx
+    179c:	c1 e2 08             	shl    $0x8,%edx
+    179f:	66 89 53 07          	mov    %dx,0x7(%ebx)
+    17a3:	89 43 14             	mov    %eax,0x14(%ebx)
+    17a6:	58                   	pop    %eax
+    17a7:	5a                   	pop    %edx
+    17a8:	5b                   	pop    %ebx
+    17a9:	c3                   	ret    
+
+000017aa <ide_floppy_do_request>:
+    17aa:	55                   	push   %ebp
+    17ab:	57                   	push   %edi
+    17ac:	56                   	push   %esi
+    17ad:	53                   	push   %ebx
+    17ae:	89 d3                	mov    %edx,%ebx
+    17b0:	83 ec 50             	sub    $0x50,%esp
+    17b3:	89 04 24             	mov    %eax,(%esp)
+    17b6:	8b 74 24 64          	mov    0x64(%esp),%esi
+    17ba:	f6 80 80 00 00 00 08 	testb  $0x8,0x80(%eax)
+    17c1:	8b 68 18             	mov    0x18(%eax),%ebp
+    17c4:	74 17                	je     17dd <ide_floppy_do_request+0x33>
+    17c6:	8b 42 60             	mov    0x60(%edx),%eax
+    17c9:	ba ba 03 00 00       	mov    $0x3ba,%edx
+			17ca: R_386_32	.rodata.str1.1
+    17ce:	8d 48 0c             	lea    0xc(%eax),%ecx
+    17d1:	85 c0                	test   %eax,%eax
+    17d3:	0f 45 d1             	cmovne %ecx,%edx
+    17d6:	89 d8                	mov    %ebx,%eax
+    17d8:	e8 fc ff ff ff       	call   17d9 <ide_floppy_do_request+0x2f>
+			17d9: R_386_PC32	blk_dump_rq_flags
+    17dd:	83 7b 78 07          	cmpl   $0x7,0x78(%ebx)
+    17e1:	0f 8e 84 00 00 00    	jle    186b <ide_floppy_do_request+0xc1>
+    17e7:	8b 04 24             	mov    (%esp),%eax
+    17ea:	8b 90 c0 01 00 00    	mov    0x1c0(%eax),%edx
+    17f0:	85 d2                	test   %edx,%edx
+    17f2:	74 4d                	je     1841 <ide_floppy_do_request+0x97>
+    17f4:	8b 85 54 01 00 00    	mov    0x154(%ebp),%eax
+    17fa:	25 ff ff ff 00       	and    $0xffffff,%eax
+    17ff:	3d 02 3a 00 00       	cmp    $0x3a02,%eax
+    1804:	74 2c                	je     1832 <ide_floppy_do_request+0x88>
+    1806:	0f b6 85 56 01 00 00 	movzbl 0x156(%ebp),%eax
+    180d:	50                   	push   %eax
+    180e:	0f b6 85 55 01 00 00 	movzbl 0x155(%ebp),%eax
+    1815:	50                   	push   %eax
+    1816:	0f b6 85 54 01 00 00 	movzbl 0x154(%ebp),%eax
+    181d:	50                   	push   %eax
+    181e:	0f b6 02             	movzbl (%edx),%eax
+    1821:	50                   	push   %eax
+    1822:	ff 75 00             	pushl  0x0(%ebp)
+    1825:	68 bf 03 00 00       	push   $0x3bf
+			1826: R_386_32	.rodata.str1.1
+    182a:	e8 fc ff ff ff       	call   182b <ide_floppy_do_request+0x81>
+			182b: R_386_PC32	printk
+    182f:	83 c4 18             	add    $0x18,%esp
+    1832:	8b 14 24             	mov    (%esp),%edx
+    1835:	c7 82 c0 01 00 00 00 	movl   $0x0,0x1c0(%edx)
+    183c:	00 00 00 
+    183f:	eb 0f                	jmp    1850 <ide_floppy_do_request+0xa6>
+    1841:	ff 34 24             	pushl  (%esp)
+    1844:	68 05 04 00 00       	push   $0x405
+			1845: R_386_32	.rodata.str1.1
+    1849:	e8 fc ff ff ff       	call   184a <ide_floppy_do_request+0xa0>
+			184a: R_386_PC32	printk
+    184e:	5f                   	pop    %edi
+    184f:	5d                   	pop    %ebp
+    1850:	83 7b 28 07          	cmpl   $0x7,0x28(%ebx)
+    1854:	0f 85 59 02 00 00    	jne    1ab3 <ide_floppy_do_request+0x309>
+    185a:	c7 43 78 00 00 00 00 	movl   $0x0,0x78(%ebx)
+    1861:	8b 4b 38             	mov    0x38(%ebx),%ecx
+    1864:	31 d2                	xor    %edx,%edx
+    1866:	e9 70 02 00 00       	jmp    1adb <ide_floppy_do_request+0x331>
+    186b:	8b 43 28             	mov    0x28(%ebx),%eax
+    186e:	83 f8 01             	cmp    $0x1,%eax
+    1871:	0f 85 b8 00 00 00    	jne    192f <ide_floppy_do_request+0x185>
+    1877:	8b 43 30             	mov    0x30(%ebx),%eax
+    187a:	8b 8d 64 01 00 00    	mov    0x164(%ebp),%ecx
+    1880:	99                   	cltd   
+    1881:	f7 f9                	idiv   %ecx
+    1883:	85 d2                	test   %edx,%edx
+    1885:	75 12                	jne    1899 <ide_floppy_do_request+0xef>
+    1887:	8b 43 38             	mov    0x38(%ebx),%eax
+    188a:	31 d2                	xor    %edx,%edx
+    188c:	c1 e8 09             	shr    $0x9,%eax
+    188f:	89 44 24 08          	mov    %eax,0x8(%esp)
+    1893:	f7 f1                	div    %ecx
+    1895:	85 d2                	test   %edx,%edx
+    1897:	74 14                	je     18ad <ide_floppy_do_request+0x103>
+    1899:	ff 34 24             	pushl  (%esp)
+    189c:	68 1f 04 00 00       	push   $0x41f
+			189d: R_386_32	.rodata.str1.1
+    18a1:	e8 fc ff ff ff       	call   18a2 <ide_floppy_do_request+0xf8>
+			18a2: R_386_PC32	printk
+    18a6:	59                   	pop    %ecx
+    18a7:	5e                   	pop    %esi
+    18a8:	e9 06 02 00 00       	jmp    1ab3 <ide_floppy_do_request+0x309>
+    18ad:	8b 0c 24             	mov    (%esp),%ecx
+    18b0:	8d 95 30 01 00 00    	lea    0x130(%ebp),%edx
+    18b6:	89 54 24 04          	mov    %edx,0x4(%esp)
+    18ba:	31 d2                	xor    %edx,%edx
+    18bc:	8b 41 18             	mov    0x18(%ecx),%eax
+    18bf:	8b b8 64 01 00 00    	mov    0x164(%eax),%edi
+    18c5:	89 f0                	mov    %esi,%eax
+    18c7:	f7 f7                	div    %edi
+    18c9:	89 44 24 0c          	mov    %eax,0xc(%esp)
+    18cd:	8b 73 24             	mov    0x24(%ebx),%esi
+    18d0:	8b 44 24 04          	mov    0x4(%esp),%eax
+    18d4:	83 e6 01             	and    $0x1,%esi
+    18d7:	e8 fc ff ff ff       	call   18d8 <ide_floppy_do_request+0x12e>
+			18d8: R_386_PC32	ide_init_pc
+    18dc:	83 fe 01             	cmp    $0x1,%esi
+    18df:	19 c0                	sbb    %eax,%eax
+    18e1:	31 d2                	xor    %edx,%edx
+    18e3:	83 e0 fe             	and    $0xfffffffe,%eax
+    18e6:	83 c0 2a             	add    $0x2a,%eax
+    18e9:	88 85 30 01 00 00    	mov    %al,0x130(%ebp)
+    18ef:	8b 44 24 08          	mov    0x8(%esp),%eax
+    18f3:	f7 f7                	div    %edi
+    18f5:	8b 54 24 04          	mov    0x4(%esp),%edx
+    18f9:	86 e0                	xchg   %ah,%al
+    18fb:	66 89 42 07          	mov    %ax,0x7(%edx)
+    18ff:	8b 74 24 0c          	mov    0xc(%esp),%esi
+    1903:	0f ce                	bswap  %esi
+    1905:	89 72 02             	mov    %esi,0x2(%edx)
+    1908:	89 d6                	mov    %edx,%esi
+    190a:	8b bb 94 00 00 00    	mov    0x94(%ebx),%edi
+    1910:	a5                   	movsl  %ds:(%esi),%es:(%edi)
+    1911:	a5                   	movsl  %ds:(%esi),%es:(%edi)
+    1912:	a5                   	movsl  %ds:(%esi),%es:(%edi)
+    1913:	89 9d 48 01 00 00    	mov    %ebx,0x148(%ebp)
+    1919:	f6 43 24 01          	testb  $0x1,0x24(%ebx)
+    191d:	74 07                	je     1926 <ide_floppy_do_request+0x17c>
+    191f:	83 8d 4c 01 00 00 40 	orl    $0x40,0x14c(%ebp)
+    1926:	83 8d 4c 01 00 00 08 	orl    $0x8,0x14c(%ebp)
+    192d:	eb 66                	jmp    1995 <ide_floppy_do_request+0x1eb>
+    192f:	83 f8 03             	cmp    $0x3,%eax
+    1932:	74 05                	je     1939 <ide_floppy_do_request+0x18f>
+    1934:	83 f8 07             	cmp    $0x7,%eax
+    1937:	75 09                	jne    1942 <ide_floppy_do_request+0x198>
+    1939:	8b 4b 6c             	mov    0x6c(%ebx),%ecx
+    193c:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+    1940:	eb 53                	jmp    1995 <ide_floppy_do_request+0x1eb>
+    1942:	83 f8 02             	cmp    $0x2,%eax
+    1945:	75 4a                	jne    1991 <ide_floppy_do_request+0x1e7>
+    1947:	8d 85 30 01 00 00    	lea    0x130(%ebp),%eax
+    194d:	89 44 24 04          	mov    %eax,0x4(%esp)
+    1951:	e8 fc ff ff ff       	call   1952 <ide_floppy_do_request+0x1a8>
+			1952: R_386_PC32	ide_init_pc
+    1956:	8b b3 94 00 00 00    	mov    0x94(%ebx),%esi
+    195c:	8b 7c 24 04          	mov    0x4(%esp),%edi
+    1960:	a5                   	movsl  %ds:(%esi),%es:(%edi)
+    1961:	a5                   	movsl  %ds:(%esi),%es:(%edi)
+    1962:	a5                   	movsl  %ds:(%esi),%es:(%edi)
+    1963:	89 9d 48 01 00 00    	mov    %ebx,0x148(%ebp)
+    1969:	83 7b 38 00          	cmpl   $0x0,0x38(%ebx)
+    196d:	74 26                	je     1995 <ide_floppy_do_request+0x1eb>
+    196f:	8b 85 4c 01 00 00    	mov    0x14c(%ebp),%eax
+    1975:	89 c2                	mov    %eax,%edx
+    1977:	83 ca 08             	or     $0x8,%edx
+    197a:	89 95 4c 01 00 00    	mov    %edx,0x14c(%ebp)
+    1980:	f6 43 24 01          	testb  $0x1,0x24(%ebx)
+    1984:	74 0f                	je     1995 <ide_floppy_do_request+0x1eb>
+    1986:	83 c8 48             	or     $0x48,%eax
+    1989:	89 85 4c 01 00 00    	mov    %eax,0x14c(%ebp)
+    198f:	eb 04                	jmp    1995 <ide_floppy_do_request+0x1eb>
+    1991:	0f 0b                	ud2a   
+    1993:	eb fe                	jmp    1993 <ide_floppy_do_request+0x1e9>
+    1995:	8b 04 24             	mov    (%esp),%eax
+    1998:	89 da                	mov    %ebx,%edx
+    199a:	e8 fc ff ff ff       	call   199b <ide_floppy_do_request+0x1f1>
+			199b: R_386_PC32	ide_prep_sense
+    199f:	b9 10 00 00 00       	mov    $0x10,%ecx
+    19a4:	31 c0                	xor    %eax,%eax
+    19a6:	8d 7c 24 10          	lea    0x10(%esp),%edi
+    19aa:	f3 ab                	rep stos %eax,%es:(%edi)
+    19ac:	f6 43 24 01          	testb  $0x1,0x24(%ebx)
+    19b0:	74 06                	je     19b8 <ide_floppy_do_request+0x20e>
+    19b2:	66 83 4c 24 24 02    	orw    $0x2,0x24(%esp)
+    19b8:	89 5c 24 4c          	mov    %ebx,0x4c(%esp)
+    19bc:	83 7b 28 01          	cmpl   $0x1,0x28(%ebx)
+    19c0:	74 06                	je     19c8 <ide_floppy_do_request+0x21e>
+    19c2:	83 7b 38 00          	cmpl   $0x0,0x38(%ebx)
+    19c6:	74 18                	je     19e0 <ide_floppy_do_request+0x236>
+    19c8:	8b 53 38             	mov    0x38(%ebx),%edx
+    19cb:	8d 74 24 10          	lea    0x10(%esp),%esi
+    19cf:	89 f0                	mov    %esi,%eax
+    19d1:	e8 fc ff ff ff       	call   19d2 <ide_floppy_do_request+0x228>
+			19d2: R_386_PC32	ide_init_sg_cmd
+    19d6:	89 f2                	mov    %esi,%edx
+    19d8:	8b 04 24             	mov    (%esp),%eax
+    19db:	e8 fc ff ff ff       	call   19dc <ide_floppy_do_request+0x232>
+			19dc: R_386_PC32	ide_map_sg
+    19e0:	8b 54 24 04          	mov    0x4(%esp),%edx
+    19e4:	89 5a 18             	mov    %ebx,0x18(%edx)
+    19e7:	8b 0c 24             	mov    (%esp),%ecx
+    19ea:	83 b9 c0 01 00 00 00 	cmpl   $0x0,0x1c0(%ecx)
+    19f1:	8b 41 18             	mov    0x18(%ecx),%eax
+    19f4:	75 0b                	jne    1a01 <ide_floppy_do_request+0x257>
+    19f6:	80 3a 03             	cmpb   $0x3,(%edx)
+    19f9:	74 06                	je     1a01 <ide_floppy_do_request+0x257>
+    19fb:	89 91 c0 01 00 00    	mov    %edx,0x1c0(%ecx)
+    1a01:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+    1a05:	8b 14 24             	mov    (%esp),%edx
+    1a08:	89 8a bc 01 00 00    	mov    %ecx,0x1bc(%edx)
+    1a0e:	8b 51 0c             	mov    0xc(%ecx),%edx
+    1a11:	83 fa 03             	cmp    $0x3,%edx
+    1a14:	0f 8e 83 00 00 00    	jle    1a9d <ide_floppy_do_request+0x2f3>
+    1a1a:	8b 0c 24             	mov    (%esp),%ecx
+    1a1d:	8b 51 28             	mov    0x28(%ecx),%edx
+    1a20:	8b 92 38 02 00 00    	mov    0x238(%edx),%edx
+    1a26:	8b 5a 38             	mov    0x38(%edx),%ebx
+    1a29:	8b 54 24 04          	mov    0x4(%esp),%edx
+    1a2d:	f6 42 1c 02          	testb  $0x2,0x1c(%edx)
+    1a31:	75 43                	jne    1a76 <ide_floppy_do_request+0x2cc>
+    1a33:	8b 90 54 01 00 00    	mov    0x154(%eax),%edx
+    1a39:	81 e2 ff ff ff 00    	and    $0xffffff,%edx
+    1a3f:	81 fa 02 3a 00 00    	cmp    $0x3a02,%edx
+    1a45:	74 2f                	je     1a76 <ide_floppy_do_request+0x2cc>
+    1a47:	0f b6 90 56 01 00 00 	movzbl 0x156(%eax),%edx
+    1a4e:	52                   	push   %edx
+    1a4f:	0f b6 90 55 01 00 00 	movzbl 0x155(%eax),%edx
+    1a56:	52                   	push   %edx
+    1a57:	0f b6 90 54 01 00 00 	movzbl 0x154(%eax),%edx
+    1a5e:	52                   	push   %edx
+    1a5f:	8b 4c 24 10          	mov    0x10(%esp),%ecx
+    1a63:	0f b6 11             	movzbl (%ecx),%edx
+    1a66:	52                   	push   %edx
+    1a67:	ff 30                	pushl  (%eax)
+    1a69:	68 bf 03 00 00       	push   $0x3bf
+			1a6a: R_386_32	.rodata.str1.1
+    1a6e:	e8 fc ff ff ff       	call   1a6f <ide_floppy_do_request+0x2c5>
+			1a6f: R_386_PC32	printk
+    1a73:	83 c4 18             	add    $0x18,%esp
+    1a76:	8b 44 24 04          	mov    0x4(%esp),%eax
+    1a7a:	c7 40 10 65 00 00 00 	movl   $0x65,0x10(%eax)
+    1a81:	8b 14 24             	mov    (%esp),%edx
+    1a84:	c7 82 c0 01 00 00 00 	movl   $0x0,0x1c0(%edx)
+    1a8b:	00 00 00 
+    1a8e:	8b 04 24             	mov    (%esp),%eax
+    1a91:	31 d2                	xor    %edx,%edx
+    1a93:	ff 90 c4 01 00 00    	call   *0x1c4(%eax)
+    1a99:	89 d9                	mov    %ebx,%ecx
+    1a9b:	eb 39                	jmp    1ad6 <ide_floppy_do_request+0x32c>
+    1a9d:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+    1aa1:	42                   	inc    %edx
+    1aa2:	89 51 0c             	mov    %edx,0xc(%ecx)
+    1aa5:	8b 04 24             	mov    (%esp),%eax
+    1aa8:	8d 54 24 10          	lea    0x10(%esp),%edx
+    1aac:	e8 fc ff ff ff       	call   1aad <ide_floppy_do_request+0x303>
+			1aad: R_386_PC32	ide_issue_pc
+    1ab1:	eb 32                	jmp    1ae5 <ide_floppy_do_request+0x33b>
+    1ab3:	8b 04 24             	mov    (%esp),%eax
+    1ab6:	c7 80 c0 01 00 00 00 	movl   $0x0,0x1c0(%eax)
+    1abd:	00 00 00 
+    1ac0:	83 7b 28 01          	cmpl   $0x1,0x28(%ebx)
+    1ac4:	74 0d                	je     1ad3 <ide_floppy_do_request+0x329>
+    1ac6:	83 7b 78 00          	cmpl   $0x0,0x78(%ebx)
+    1aca:	75 07                	jne    1ad3 <ide_floppy_do_request+0x329>
+    1acc:	c7 43 78 fb ff ff ff 	movl   $0xfffffffb,0x78(%ebx)
+    1ad3:	8b 4b 38             	mov    0x38(%ebx),%ecx
+    1ad6:	ba fb ff ff ff       	mov    $0xfffffffb,%edx
+    1adb:	8b 04 24             	mov    (%esp),%eax
+    1ade:	e8 fc ff ff ff       	call   1adf <ide_floppy_do_request+0x335>
+			1adf: R_386_PC32	ide_complete_rq
+    1ae3:	31 c0                	xor    %eax,%eax
+    1ae5:	83 c4 50             	add    $0x50,%esp
+    1ae8:	5b                   	pop    %ebx
+    1ae9:	5e                   	pop    %esi
+    1aea:	5f                   	pop    %edi
+    1aeb:	5d                   	pop    %ebp
+    1aec:	c3                   	ret    
+
+00001aed <ide_floppy_callback>:
+    1aed:	55                   	push   %ebp
+    1aee:	31 d2                	xor    %edx,%edx
+    1af0:	57                   	push   %edi
+    1af1:	56                   	push   %esi
+    1af2:	53                   	push   %ebx
+    1af3:	83 ec 04             	sub    $0x4,%esp
+    1af6:	8b b0 bc 01 00 00    	mov    0x1bc(%eax),%esi
+    1afc:	8b 68 18             	mov    0x18(%eax),%ebp
+    1aff:	83 7e 10 00          	cmpl   $0x0,0x10(%esi)
+    1b03:	8b 5e 18             	mov    0x18(%esi),%ebx
+    1b06:	0f 94 c2             	sete   %dl
+    1b09:	89 14 24             	mov    %edx,(%esp)
+    1b0c:	39 b0 c0 01 00 00    	cmp    %esi,0x1c0(%eax)
+    1b12:	75 0a                	jne    1b1e <ide_floppy_callback+0x31>
+    1b14:	c7 80 c0 01 00 00 00 	movl   $0x0,0x1c0(%eax)
+    1b1b:	00 00 00 
+    1b1e:	8a 06                	mov    (%esi),%al
+    1b20:	3c 2a                	cmp    $0x2a,%al
+    1b22:	0f 84 8a 00 00 00    	je     1bb2 <ide_floppy_callback+0xc5>
+    1b28:	3c 28                	cmp    $0x28,%al
+    1b2a:	0f 84 82 00 00 00    	je     1bb2 <ide_floppy_callback+0xc5>
+    1b30:	85 db                	test   %ebx,%ebx
+    1b32:	74 06                	je     1b3a <ide_floppy_callback+0x4d>
+    1b34:	83 7b 28 02          	cmpl   $0x2,0x28(%ebx)
+    1b38:	74 78                	je     1bb2 <ide_floppy_callback+0xc5>
+    1b3a:	3c 03                	cmp    $0x3,%al
+    1b3c:	75 7b                	jne    1bb9 <ide_floppy_callback+0xcc>
+    1b3e:	8b 7b 3c             	mov    0x3c(%ebx),%edi
+    1b41:	31 c0                	xor    %eax,%eax
+    1b43:	66 83 7f 18 00       	cmpw   $0x0,0x18(%edi)
+    1b48:	74 20                	je     1b6a <ide_floppy_callback+0x7d>
+    1b4a:	0f b7 57 1a          	movzwl 0x1a(%edi),%edx
+    1b4e:	8b 47 38             	mov    0x38(%edi),%eax
+    1b51:	6b d2 0c             	imul   $0xc,%edx,%edx
+    1b54:	8b 04 02             	mov    (%edx,%eax,1),%eax
+    1b57:	e8 fc ff ff ff       	call   1b58 <ide_floppy_callback+0x6b>
+			1b58: R_386_PC32	page_address
+    1b5c:	0f b7 57 1a          	movzwl 0x1a(%edi),%edx
+    1b60:	8b 4f 38             	mov    0x38(%edi),%ecx
+    1b63:	6b d2 0c             	imul   $0xc,%edx,%edx
+    1b66:	03 44 0a 08          	add    0x8(%edx,%ecx,1),%eax
+    1b6a:	83 7e 10 00          	cmpl   $0x0,0x10(%esi)
+    1b6e:	75 35                	jne    1ba5 <ide_floppy_callback+0xb8>
+    1b70:	8a 50 02             	mov    0x2(%eax),%dl
+    1b73:	83 e2 0f             	and    $0xf,%edx
+    1b76:	88 95 54 01 00 00    	mov    %dl,0x154(%ebp)
+    1b7c:	8a 50 0c             	mov    0xc(%eax),%dl
+    1b7f:	88 95 55 01 00 00    	mov    %dl,0x155(%ebp)
+    1b85:	8a 50 0d             	mov    0xd(%eax),%dl
+    1b88:	88 95 56 01 00 00    	mov    %dl,0x156(%ebp)
+    1b8e:	ba 00 00 01 00       	mov    $0x10000,%edx
+    1b93:	80 78 0f 00          	cmpb   $0x0,0xf(%eax)
+    1b97:	79 04                	jns    1b9d <ide_floppy_callback+0xb0>
+    1b99:	0f b7 50 10          	movzwl 0x10(%eax),%edx
+    1b9d:	89 95 58 01 00 00    	mov    %edx,0x158(%ebp)
+    1ba3:	eb 14                	jmp    1bb9 <ide_floppy_callback+0xcc>
+    1ba5:	68 60 04 00 00       	push   $0x460
+			1ba6: R_386_32	.rodata.str1.1
+    1baa:	e8 fc ff ff ff       	call   1bab <ide_floppy_callback+0xbe>
+			1bab: R_386_PC32	printk
+    1baf:	59                   	pop    %ecx
+    1bb0:	eb 07                	jmp    1bb9 <ide_floppy_callback+0xcc>
+    1bb2:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
+    1bb9:	83 7b 28 07          	cmpl   $0x7,0x28(%ebx)
+    1bbd:	75 0c                	jne    1bcb <ide_floppy_callback+0xde>
+    1bbf:	83 3c 24 01          	cmpl   $0x1,(%esp)
+    1bc3:	19 c0                	sbb    %eax,%eax
+    1bc5:	83 e0 65             	and    $0x65,%eax
+    1bc8:	89 43 78             	mov    %eax,0x78(%ebx)
+    1bcb:	8b 04 24             	mov    (%esp),%eax
+    1bce:	5a                   	pop    %edx
+    1bcf:	5b                   	pop    %ebx
+    1bd0:	5e                   	pop    %esi
+    1bd1:	5f                   	pop    %edi
+    1bd2:	5d                   	pop    %ebp
+    1bd3:	c3                   	ret    
+
+00001bd4 <ide_floppy_get_capacity>:
+    1bd4:	55                   	push   %ebp
+    1bd5:	57                   	push   %edi
+    1bd6:	56                   	push   %esi
+    1bd7:	53                   	push   %ebx
+    1bd8:	89 c3                	mov    %eax,%ebx
+    1bda:	81 ec 78 01 00 00    	sub    $0x178,%esp
+    1be0:	65 a1 14 00 00 00    	mov    %gs:0x14,%eax
+    1be6:	89 84 24 74 01 00 00 	mov    %eax,0x174(%esp)
+    1bed:	31 c0                	xor    %eax,%eax
+    1bef:	8d 8c 24 50 01 00 00 	lea    0x150(%esp),%ecx
+    1bf6:	89 c8                	mov    %ecx,%eax
+    1bf8:	8b 73 18             	mov    0x18(%ebx),%esi
+    1bfb:	8b 6e 08             	mov    0x8(%esi),%ebp
+    1bfe:	c7 43 54 00 00 00 00 	movl   $0x0,0x54(%ebx)
+    1c05:	c6 43 4f 00          	movb   $0x0,0x4f(%ebx)
+    1c09:	c6 43 4e 00          	movb   $0x0,0x4e(%ebx)
+    1c0d:	c7 86 5c 01 00 00 00 	movl   $0x0,0x15c(%esi)
+    1c14:	00 00 00 
+    1c17:	c7 86 64 01 00 00 01 	movl   $0x1,0x164(%esi)
+    1c1e:	00 00 00 
+    1c21:	c7 43 70 00 00 00 00 	movl   $0x0,0x70(%ebx)
+    1c28:	c7 43 74 00 00 00 00 	movl   $0x0,0x74(%ebx)
+    1c2f:	89 0c 24             	mov    %ecx,(%esp)
+    1c32:	e8 fc ff ff ff       	call   1c33 <ide_floppy_get_capacity+0x5f>
+			1c33: R_386_PC32	ide_floppy_create_read_capacity_cmd
+    1c37:	89 ea                	mov    %ebp,%edx
+    1c39:	89 d8                	mov    %ebx,%eax
+    1c3b:	ff b4 24 64 01 00 00 	pushl  0x164(%esp)
+    1c42:	8d 7c 24 2c          	lea    0x2c(%esp),%edi
+    1c46:	57                   	push   %edi
+    1c47:	8b 4c 24 08          	mov    0x8(%esp),%ecx
+    1c4b:	e8 fc ff ff ff       	call   1c4c <ide_floppy_get_capacity+0x78>
+			1c4c: R_386_PC32	ide_queue_pc_tail
+    1c50:	5a                   	pop    %edx
+    1c51:	59                   	pop    %ecx
+    1c52:	85 c0                	test   %eax,%eax
+    1c54:	74 17                	je     1c6d <ide_floppy_get_capacity+0x99>
+    1c56:	68 9e 04 00 00       	push   $0x49e
+			1c57: R_386_32	.rodata.str1.1
+    1c5b:	e8 fc ff ff ff       	call   1c5c <ide_floppy_get_capacity+0x88>
+			1c5c: R_386_PC32	printk
+    1c60:	c7 44 24 18 01 00 00 	movl   $0x1,0x18(%esp)
+    1c67:	00 
+    1c68:	e9 a0 01 00 00       	jmp    1e0d <ide_floppy_get_capacity+0x239>
+    1c6d:	8a 44 24 2b          	mov    0x2b(%esp),%al
+    1c71:	8d 96 68 01 00 00    	lea    0x168(%esi),%edx
+    1c77:	8d 8e 6c 01 00 00    	lea    0x16c(%esi),%ecx
+    1c7d:	89 54 24 08          	mov    %edx,0x8(%esp)
+    1c81:	89 4c 24 0c          	mov    %ecx,0xc(%esp)
+    1c85:	c0 e8 03             	shr    $0x3,%al
+    1c88:	0f b6 c0             	movzbl %al,%eax
+    1c8b:	c7 44 24 14 01 00 00 	movl   $0x1,0x14(%esp)
+    1c92:	00 
+    1c93:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+    1c9a:	00 
+    1c9b:	89 44 24 10          	mov    %eax,0x10(%esp)
+    1c9f:	e9 0a 01 00 00       	jmp    1dae <ide_floppy_get_capacity+0x1da>
+    1ca4:	8b 44 24 04          	mov    0x4(%esp),%eax
+    1ca8:	66 8b 7c c4 32       	mov    0x32(%esp,%eax,8),%di
+    1cad:	8b 6c c4 2c          	mov    0x2c(%esp,%eax,8),%ebp
+    1cb1:	0f cd                	bswap  %ebp
+    1cb3:	66 c1 c7 08          	rol    $0x8,%di
+    1cb7:	85 c0                	test   %eax,%eax
+    1cb9:	0f 85 eb 00 00 00    	jne    1daa <ide_floppy_get_capacity+0x1d6>
+    1cbf:	0f b6 44 24 30       	movzbl 0x30(%esp),%eax
+    1cc4:	83 e0 03             	and    $0x3,%eax
+    1cc7:	83 f8 02             	cmp    $0x2,%eax
+    1cca:	74 1e                	je     1cea <ide_floppy_get_capacity+0x116>
+    1ccc:	83 f8 03             	cmp    $0x3,%eax
+    1ccf:	0f 84 c0 00 00 00    	je     1d95 <ide_floppy_get_capacity+0x1c1>
+    1cd5:	48                   	dec    %eax
+    1cd6:	0f 85 c1 00 00 00    	jne    1d9d <ide_floppy_get_capacity+0x1c9>
+    1cdc:	66 83 bb cc 01 00 00 	cmpw   $0x0,0x1cc(%ebx)
+    1ce3:	00 
+    1ce4:	0f 89 c0 00 00 00    	jns    1daa <ide_floppy_get_capacity+0x1d6>
+    1cea:	8b 54 24 08          	mov    0x8(%esp),%edx
+    1cee:	b9 08 00 00 00       	mov    $0x8,%ecx
+    1cf3:	0f b7 ff             	movzwl %di,%edi
+    1cf6:	8d 44 24 2c          	lea    0x2c(%esp),%eax
+    1cfa:	e8 fc ff ff ff       	call   1cfb <ide_floppy_get_capacity+0x127>
+			1cfb: R_386_PC32	memcmp
+    1cff:	85 c0                	test   %eax,%eax
+    1d01:	74 1e                	je     1d21 <ide_floppy_get_capacity+0x14d>
+    1d03:	89 f8                	mov    %edi,%eax
+    1d05:	b9 00 04 00 00       	mov    $0x400,%ecx
+    1d0a:	0f af c5             	imul   %ebp,%eax
+    1d0d:	57                   	push   %edi
+    1d0e:	55                   	push   %ebp
+    1d0f:	99                   	cltd   
+    1d10:	f7 f9                	idiv   %ecx
+    1d12:	50                   	push   %eax
+    1d13:	53                   	push   %ebx
+    1d14:	68 c6 04 00 00       	push   $0x4c6
+			1d15: R_386_32	.rodata.str1.1
+    1d19:	e8 fc ff ff ff       	call   1d1a <ide_floppy_get_capacity+0x146>
+			1d1a: R_386_PC32	printk
+    1d1e:	83 c4 14             	add    $0x14,%esp
+    1d21:	8b 44 24 2c          	mov    0x2c(%esp),%eax
+    1d25:	85 ff                	test   %edi,%edi
+    1d27:	8b 54 24 08          	mov    0x8(%esp),%edx
+    1d2b:	89 02                	mov    %eax,(%edx)
+    1d2d:	8b 44 24 30          	mov    0x30(%esp),%eax
+    1d31:	8b 4c 24 0c          	mov    0xc(%esp),%ecx
+    1d35:	89 01                	mov    %eax,(%ecx)
+    1d37:	74 08                	je     1d41 <ide_floppy_get_capacity+0x16d>
+    1d39:	f7 c7 ff 01 00 00    	test   $0x1ff,%edi
+    1d3f:	74 11                	je     1d52 <ide_floppy_get_capacity+0x17e>
+    1d41:	57                   	push   %edi
+    1d42:	53                   	push   %ebx
+    1d43:	68 f6 04 00 00       	push   $0x4f6
+			1d44: R_386_32	.rodata.str1.1
+    1d48:	e8 fc ff ff ff       	call   1d49 <ide_floppy_get_capacity+0x175>
+			1d49: R_386_PC32	printk
+    1d4d:	83 c4 0c             	add    $0xc,%esp
+    1d50:	eb 58                	jmp    1daa <ide_floppy_get_capacity+0x1d6>
+    1d52:	89 be 60 01 00 00    	mov    %edi,0x160(%esi)
+    1d58:	c1 ff 09             	sar    $0x9,%edi
+    1d5b:	89 be 64 01 00 00    	mov    %edi,0x164(%esi)
+    1d61:	4f                   	dec    %edi
+    1d62:	89 ae 5c 01 00 00    	mov    %ebp,0x15c(%esi)
+    1d68:	74 0d                	je     1d77 <ide_floppy_get_capacity+0x1a3>
+    1d6a:	53                   	push   %ebx
+    1d6b:	68 28 05 00 00       	push   $0x528
+			1d6c: R_386_32	.rodata.str1.1
+    1d70:	e8 fc ff ff ff       	call   1d71 <ide_floppy_get_capacity+0x19d>
+			1d71: R_386_PC32	printk
+    1d75:	5d                   	pop    %ebp
+    1d76:	58                   	pop    %eax
+    1d77:	8b 86 64 01 00 00    	mov    0x164(%esi),%eax
+    1d7d:	0f af 86 5c 01 00 00 	imul   0x15c(%esi),%eax
+    1d84:	99                   	cltd   
+    1d85:	89 43 70             	mov    %eax,0x70(%ebx)
+    1d88:	89 53 74             	mov    %edx,0x74(%ebx)
+    1d8b:	c7 44 24 14 00 00 00 	movl   $0x0,0x14(%esp)
+    1d92:	00 
+    1d93:	eb 15                	jmp    1daa <ide_floppy_get_capacity+0x1d6>
+    1d95:	53                   	push   %ebx
+    1d96:	68 6e 05 00 00       	push   $0x56e
+			1d97: R_386_32	.rodata.str1.1
+    1d9b:	eb 06                	jmp    1da3 <ide_floppy_get_capacity+0x1cf>
+    1d9d:	53                   	push   %ebx
+    1d9e:	68 8f 05 00 00       	push   $0x58f
+			1d9f: R_386_32	.rodata.str1.1
+    1da3:	e8 fc ff ff ff       	call   1da4 <ide_floppy_get_capacity+0x1d0>
+			1da4: R_386_PC32	printk
+    1da8:	59                   	pop    %ecx
+    1da9:	5f                   	pop    %edi
+    1daa:	ff 44 24 04          	incl   0x4(%esp)
+    1dae:	8b 4c 24 10          	mov    0x10(%esp),%ecx
+    1db2:	39 4c 24 04          	cmp    %ecx,0x4(%esp)
+    1db6:	0f 8c e8 fe ff ff    	jl     1ca4 <ide_floppy_get_capacity+0xd0>
+    1dbc:	66 83 bb cc 01 00 00 	cmpw   $0x0,0x1cc(%ebx)
+    1dc3:	00 
+    1dc4:	0f 88 b2 01 00 00    	js     1f7c <ide_floppy_get_capacity+0x3a8>
+    1dca:	8b 6b 18             	mov    0x18(%ebx),%ebp
+    1dcd:	8d b4 24 50 01 00 00 	lea    0x150(%esp),%esi
+    1dd4:	ba 05 00 00 00       	mov    $0x5,%edx
+    1dd9:	89 f0                	mov    %esi,%eax
+    1ddb:	8b 7d 08             	mov    0x8(%ebp),%edi
+    1dde:	e8 fc ff ff ff       	call   1ddf <ide_floppy_get_capacity+0x20b>
+			1ddf: R_386_PC32	ide_floppy_create_mode_sense_cmd
+    1de3:	89 f1                	mov    %esi,%ecx
+    1de5:	ff b4 24 64 01 00 00 	pushl  0x164(%esp)
+    1dec:	89 fa                	mov    %edi,%edx
+    1dee:	8d 84 24 2c 01 00 00 	lea    0x12c(%esp),%eax
+    1df5:	50                   	push   %eax
+    1df6:	89 d8                	mov    %ebx,%eax
+    1df8:	e8 fc ff ff ff       	call   1df9 <ide_floppy_get_capacity+0x225>
+			1df9: R_386_PC32	ide_queue_pc_tail
+    1dfd:	5e                   	pop    %esi
+    1dfe:	5a                   	pop    %edx
+    1dff:	85 c0                	test   %eax,%eax
+    1e01:	74 10                	je     1e13 <ide_floppy_get_capacity+0x23f>
+    1e03:	68 c2 05 00 00       	push   $0x5c2
+			1e04: R_386_32	.rodata.str1.1
+    1e08:	e8 fc ff ff ff       	call   1e09 <ide_floppy_get_capacity+0x235>
+			1e09: R_386_PC32	printk
+    1e0d:	5b                   	pop    %ebx
+    1e0e:	e9 69 01 00 00       	jmp    1f7c <ide_floppy_get_capacity+0x3a8>
+    1e13:	80 bc 24 2b 01 00 00 	cmpb   $0x0,0x12b(%esp)
+    1e1a:	00 
+    1e1b:	79 09                	jns    1e26 <ide_floppy_get_capacity+0x252>
+    1e1d:	81 4b 30 00 00 00 20 	orl    $0x20000000,0x30(%ebx)
+    1e24:	eb 07                	jmp    1e2d <ide_floppy_get_capacity+0x259>
+    1e26:	81 63 30 ff ff ff df 	andl   $0xdfffffff,0x30(%ebx)
+    1e2d:	8b 53 30             	mov    0x30(%ebx),%edx
+    1e30:	89 f8                	mov    %edi,%eax
+    1e32:	c1 ea 1d             	shr    $0x1d,%edx
+    1e35:	83 e2 01             	and    $0x1,%edx
+    1e38:	e8 fc ff ff ff       	call   1e39 <ide_floppy_get_capacity+0x265>
+			1e39: R_386_PC32	set_disk_ro
+    1e3d:	66 8b 84 24 32 01 00 	mov    0x132(%esp),%ax
+    1e44:	00 
+    1e45:	66 8b bc 24 36 01 00 	mov    0x136(%esp),%di
+    1e4c:	00 
+    1e4d:	8a 8c 24 34 01 00 00 	mov    0x134(%esp),%cl
+    1e54:	8b 94 24 38 01 00 00 	mov    0x138(%esp),%edx
+    1e5b:	86 e0                	xchg   %ah,%al
+    1e5d:	8b b4 24 4c 01 00 00 	mov    0x14c(%esp),%esi
+    1e64:	66 c1 c7 08          	rol    $0x8,%di
+    1e68:	88 4c 24 26          	mov    %cl,0x26(%esp)
+    1e6c:	0f b6 c9             	movzbl %cl,%ecx
+    1e6f:	86 f2                	xchg   %dh,%dl
+    1e71:	89 4c 24 18          	mov    %ecx,0x18(%esp)
+    1e75:	66 c1 c6 08          	rol    $0x8,%si
+    1e79:	66 89 44 24 0c       	mov    %ax,0xc(%esp)
+    1e7e:	8a 84 24 35 01 00 00 	mov    0x135(%esp),%al
+    1e85:	0f b7 ff             	movzwl %di,%edi
+    1e88:	66 89 54 24 08       	mov    %dx,0x8(%esp)
+    1e8d:	0f b7 d2             	movzwl %dx,%edx
+    1e90:	88 44 24 27          	mov    %al,0x27(%esp)
+    1e94:	0f b6 c0             	movzbl %al,%eax
+    1e97:	89 44 24 1c          	mov    %eax,0x1c(%esp)
+    1e9b:	0f af c1             	imul   %ecx,%eax
+    1e9e:	b9 20 00 00 00       	mov    $0x20,%ecx
+    1ea3:	89 54 24 10          	mov    %edx,0x10(%esp)
+    1ea7:	0f af c7             	imul   %edi,%eax
+    1eaa:	0f af c2             	imul   %edx,%eax
+    1ead:	8d 95 70 01 00 00    	lea    0x170(%ebp),%edx
+    1eb3:	89 54 24 20          	mov    %edx,0x20(%esp)
+    1eb7:	89 44 24 04          	mov    %eax,0x4(%esp)
+    1ebb:	8d 84 24 30 01 00 00 	lea    0x130(%esp),%eax
+    1ec2:	e8 fc ff ff ff       	call   1ec3 <ide_floppy_get_capacity+0x2ef>
+			1ec3: R_386_PC32	memcmp
+    1ec7:	85 c0                	test   %eax,%eax
+    1ec9:	74 38                	je     1f03 <ide_floppy_get_capacity+0x32f>
+    1ecb:	0f b7 f6             	movzwl %si,%esi
+    1ece:	b9 00 04 00 00       	mov    $0x400,%ecx
+    1ed3:	56                   	push   %esi
+    1ed4:	57                   	push   %edi
+    1ed5:	8b 44 24 14          	mov    0x14(%esp),%eax
+    1ed9:	66 c1 e8 03          	shr    $0x3,%ax
+    1edd:	0f b7 c0             	movzwl %ax,%eax
+    1ee0:	50                   	push   %eax
+    1ee1:	ff 74 24 28          	pushl  0x28(%esp)
+    1ee5:	ff 74 24 28          	pushl  0x28(%esp)
+    1ee9:	ff 74 24 24          	pushl  0x24(%esp)
+    1eed:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+    1ef1:	99                   	cltd   
+    1ef2:	f7 f9                	idiv   %ecx
+    1ef4:	50                   	push   %eax
+    1ef5:	53                   	push   %ebx
+    1ef6:	68 f2 05 00 00       	push   $0x5f2
+			1ef7: R_386_32	.rodata.str1.1
+    1efb:	e8 fc ff ff ff       	call   1efc <ide_floppy_get_capacity+0x328>
+			1efc: R_386_PC32	printk
+    1f00:	83 c4 24             	add    $0x24,%esp
+    1f03:	8b 7c 24 20          	mov    0x20(%esp),%edi
+    1f07:	8d b4 24 30 01 00 00 	lea    0x130(%esp),%esi
+    1f0e:	b9 08 00 00 00       	mov    $0x8,%ecx
+    1f13:	f3 a5                	rep movsl %ds:(%esi),%es:(%edi)
+    1f15:	0f b7 44 24 08       	movzwl 0x8(%esp),%eax
+    1f1a:	89 43 54             	mov    %eax,0x54(%ebx)
+    1f1d:	8a 54 24 26          	mov    0x26(%esp),%dl
+    1f21:	88 53 4e             	mov    %dl,0x4e(%ebx)
+    1f24:	8a 4c 24 27          	mov    0x27(%esp),%cl
+    1f28:	88 4b 4f             	mov    %cl,0x4f(%ebx)
+    1f2b:	8b 85 60 01 00 00    	mov    0x160(%ebp),%eax
+    1f31:	0f af 85 5c 01 00 00 	imul   0x15c(%ebp),%eax
+    1f38:	39 44 24 04          	cmp    %eax,0x4(%esp)
+    1f3c:	7d 3e                	jge    1f7c <ide_floppy_get_capacity+0x3a8>
+    1f3e:	ff 74 24 04          	pushl  0x4(%esp)
+    1f42:	31 f6                	xor    %esi,%esi
+    1f44:	50                   	push   %eax
+    1f45:	53                   	push   %ebx
+    1f46:	68 36 06 00 00       	push   $0x636
+			1f47: R_386_32	.rodata.str1.1
+    1f4b:	e8 fc ff ff ff       	call   1f4c <ide_floppy_get_capacity+0x378>
+			1f4c: R_386_PC32	printk
+    1f50:	8b 8d 60 01 00 00    	mov    0x160(%ebp),%ecx
+    1f56:	83 c4 10             	add    $0x10,%esp
+    1f59:	85 c9                	test   %ecx,%ecx
+    1f5b:	74 09                	je     1f66 <ide_floppy_get_capacity+0x392>
+    1f5d:	8b 44 24 04          	mov    0x4(%esp),%eax
+    1f61:	99                   	cltd   
+    1f62:	f7 f9                	idiv   %ecx
+    1f64:	89 c6                	mov    %eax,%esi
+    1f66:	8b 85 64 01 00 00    	mov    0x164(%ebp),%eax
+    1f6c:	89 b5 5c 01 00 00    	mov    %esi,0x15c(%ebp)
+    1f72:	0f af c6             	imul   %esi,%eax
+    1f75:	99                   	cltd   
+    1f76:	89 43 70             	mov    %eax,0x70(%ebx)
+    1f79:	89 53 74             	mov    %edx,0x74(%ebx)
+    1f7c:	8b 8c 24 74 01 00 00 	mov    0x174(%esp),%ecx
+    1f83:	65 33 0d 14 00 00 00 	xor    %gs:0x14,%ecx
+    1f8a:	8b 44 24 14          	mov    0x14(%esp),%eax
+    1f8e:	74 05                	je     1f95 <ide_floppy_get_capacity+0x3c1>
+    1f90:	e8 fc ff ff ff       	call   1f91 <ide_floppy_get_capacity+0x3bd>
+			1f91: R_386_PC32	__stack_chk_fail
+    1f95:	81 c4 78 01 00 00    	add    $0x178,%esp
+    1f9b:	5b                   	pop    %ebx
+    1f9c:	5e                   	pop    %esi
+    1f9d:	5f                   	pop    %edi
+    1f9e:	5d                   	pop    %ebp
+    1f9f:	c3                   	ret    
+
+00001fa0 <ide_floppy_init_media>:
+    1fa0:	57                   	push   %edi
+    1fa1:	56                   	push   %esi
+    1fa2:	89 d6                	mov    %edx,%esi
+    1fa4:	53                   	push   %ebx
+    1fa5:	89 c3                	mov    %eax,%ebx
+    1fa7:	e8 fc ff ff ff       	call   1fa8 <ide_floppy_init_media+0x8>
+			1fa8: R_386_PC32	ide_do_test_unit_ready
+    1fac:	85 c0                	test   %eax,%eax
+    1fae:	74 0e                	je     1fbe <ide_floppy_init_media+0x1e>
+    1fb0:	b9 01 00 00 00       	mov    $0x1,%ecx
+    1fb5:	89 f2                	mov    %esi,%edx
+    1fb7:	89 d8                	mov    %ebx,%eax
+    1fb9:	e8 fc ff ff ff       	call   1fba <ide_floppy_init_media+0x1a>
+			1fba: R_386_PC32	ide_do_start_stop
+    1fbe:	89 d8                	mov    %ebx,%eax
+    1fc0:	e8 0f fc ff ff       	call   1bd4 <ide_floppy_get_capacity>
+    1fc5:	89 c7                	mov    %eax,%edi
+    1fc7:	89 d8                	mov    %ebx,%eax
+    1fc9:	e8 fc ff ff ff       	call   1fca <ide_floppy_init_media+0x2a>
+			1fca: R_386_PC32	ide_gd_capacity
+    1fce:	5b                   	pop    %ebx
+    1fcf:	89 46 3c             	mov    %eax,0x3c(%esi)
+    1fd2:	89 f8                	mov    %edi,%eax
+    1fd4:	89 56 40             	mov    %edx,0x40(%esi)
+    1fd7:	5e                   	pop    %esi
+    1fd8:	5f                   	pop    %edi
+    1fd9:	c3                   	ret    
+
+00001fda <ide_floppy_setup>:
+    1fda:	57                   	push   %edi
+    1fdb:	b9 14 00 00 00       	mov    $0x14,%ecx
+    1fe0:	56                   	push   %esi
+    1fe1:	ba 8d 06 00 00       	mov    $0x68d,%edx
+			1fe2: R_386_32	.rodata.str1.1
+    1fe6:	53                   	push   %ebx
+    1fe7:	8b 78 1c             	mov    0x1c(%eax),%edi
+    1fea:	89 c3                	mov    %eax,%ebx
+    1fec:	8b 70 18             	mov    0x18(%eax),%esi
+    1fef:	c7 80 c4 01 00 00 ed 	movl   $0x1aed,0x1c4(%eax)
+    1ff6:	1a 00 00 
+			1ff5: R_386_32	.text
+    1ff9:	83 c7 36             	add    $0x36,%edi
+    1ffc:	89 f8                	mov    %edi,%eax
+    1ffe:	e8 fc ff ff ff       	call   1fff <ide_floppy_setup+0x25>
+			1fff: R_386_PC32	strncmp
+    2003:	85 c0                	test   %eax,%eax
+    2005:	75 1b                	jne    2022 <ide_floppy_setup+0x48>
+    2007:	81 8b cc 01 00 00 00 	orl    $0x10000,0x1cc(%ebx)
+    200e:	00 01 00 
+    2011:	ba 40 00 00 00       	mov    $0x40,%edx
+    2016:	8b 43 10             	mov    0x10(%ebx),%eax
+    2019:	c6 43 50 0c          	movb   $0xc,0x50(%ebx)
+    201d:	e8 fc ff ff ff       	call   201e <ide_floppy_setup+0x44>
+			201e: R_386_PC32	blk_queue_max_sectors
+    2022:	b9 0b 00 00 00       	mov    $0xb,%ecx
+    2027:	ba a2 06 00 00       	mov    $0x6a2,%edx
+			2028: R_386_32	.rodata.str1.1
+    202c:	89 f8                	mov    %edi,%eax
+    202e:	e8 fc ff ff ff       	call   202f <ide_floppy_setup+0x55>
+			202f: R_386_PC32	strncmp
+    2033:	85 c0                	test   %eax,%eax
+    2035:	75 1e                	jne    2055 <ide_floppy_setup+0x7b>
+    2037:	8b 43 10             	mov    0x10(%ebx),%eax
+    203a:	ba 40 00 00 00       	mov    $0x40,%edx
+    203f:	e8 fc ff ff ff       	call   2040 <ide_floppy_setup+0x66>
+			2040: R_386_PC32	blk_queue_max_sectors
+    2044:	81 8b cc 01 00 00 00 	orl    $0x8000,0x1cc(%ebx)
+    204b:	80 00 00 
+    204e:	81 63 30 ff 7f ff ff 	andl   $0xffff7fff,0x30(%ebx)
+    2055:	89 d8                	mov    %ebx,%eax
+    2057:	e8 78 fb ff ff       	call   1bd4 <ide_floppy_get_capacity>
+    205c:	8b 56 04             	mov    0x4(%esi),%edx
+    205f:	89 d8                	mov    %ebx,%eax
+    2061:	e8 fc ff ff ff       	call   2062 <ide_floppy_setup+0x88>
+			2062: R_386_PC32	ide_proc_register_driver
+    2066:	81 4b 30 00 08 00 00 	orl    $0x800,0x30(%ebx)
+    206d:	5b                   	pop    %ebx
+    206e:	5e                   	pop    %esi
+    206f:	5f                   	pop    %edi
+    2070:	c3                   	ret    
+    2071:	90                   	nop
+    2072:	90                   	nop
+    2073:	90                   	nop
+
+00002074 <ide_floppy_get_format_capacities>:
+    2074:	55                   	push   %ebp
+    2075:	57                   	push   %edi
+    2076:	89 c7                	mov    %eax,%edi
+    2078:	56                   	push   %esi
+    2079:	89 d6                	mov    %edx,%esi
+    207b:	53                   	push   %ebx
+    207c:	81 ec 14 01 00 00    	sub    $0x114,%esp
+    2082:	65 a1 14 00 00 00    	mov    %gs:0x14,%eax
+    2088:	89 84 24 10 01 00 00 	mov    %eax,0x110(%esp)
+    208f:	31 c0                	xor    %eax,%eax
+    2091:	89 0c 24             	mov    %ecx,(%esp)
+    2094:	8b 5f 18             	mov    0x18(%edi),%ebx
+    2097:	e8 fc ff ff ff       	call   2098 <ide_floppy_get_format_capacities+0x24>
+			2098: R_386_PC32	_cond_resched
+    209c:	8b 04 24             	mov    (%esp),%eax
+    209f:	e8 fc ff ff ff       	call   20a0 <ide_floppy_get_format_capacities+0x2c>
+			20a0: R_386_PC32	__get_user_4
+    20a4:	85 c0                	test   %eax,%eax
+    20a6:	89 54 24 04          	mov    %edx,0x4(%esp)
+    20aa:	0f 85 c6 00 00 00    	jne    2176 <ide_floppy_get_format_capacities+0x102>
+    20b0:	83 7c 24 04 00       	cmpl   $0x0,0x4(%esp)
+    20b5:	ba ea ff ff ff       	mov    $0xffffffea,%edx
+    20ba:	0f 8e bb 00 00 00    	jle    217b <ide_floppy_get_format_capacities+0x107>
+    20c0:	89 f0                	mov    %esi,%eax
+    20c2:	e8 fc ff ff ff       	call   20c3 <ide_floppy_get_format_capacities+0x4f>
+			20c3: R_386_PC32	ide_floppy_create_read_capacity_cmd
+    20c7:	8b 53 08             	mov    0x8(%ebx),%edx
+    20ca:	89 f1                	mov    %esi,%ecx
+    20cc:	89 f8                	mov    %edi,%eax
+    20ce:	ff 76 14             	pushl  0x14(%esi)
+    20d1:	8d 5c 24 14          	lea    0x14(%esp),%ebx
+    20d5:	53                   	push   %ebx
+    20d6:	e8 fc ff ff ff       	call   20d7 <ide_floppy_get_format_capacities+0x63>
+			20d7: R_386_PC32	ide_queue_pc_tail
+    20db:	5a                   	pop    %edx
+    20dc:	59                   	pop    %ecx
+    20dd:	85 c0                	test   %eax,%eax
+    20df:	74 15                	je     20f6 <ide_floppy_get_format_capacities+0x82>
+    20e1:	68 af 06 00 00       	push   $0x6af
+			20e2: R_386_32	.rodata.str1.1
+    20e6:	e8 fc ff ff ff       	call   20e7 <ide_floppy_get_format_capacities+0x73>
+			20e7: R_386_PC32	printk
+    20eb:	ba fb ff ff ff       	mov    $0xfffffffb,%edx
+    20f0:	58                   	pop    %eax
+    20f1:	e9 85 00 00 00       	jmp    217b <ide_floppy_get_format_capacities+0x107>
+    20f6:	8a 44 24 13          	mov    0x13(%esp),%al
+    20fa:	31 ff                	xor    %edi,%edi
+    20fc:	89 de                	mov    %ebx,%esi
+    20fe:	8b 2c 24             	mov    (%esp),%ebp
+    2101:	c0 e8 03             	shr    $0x3,%al
+    2104:	0f b6 c0             	movzbl %al,%eax
+    2107:	83 c5 04             	add    $0x4,%ebp
+    210a:	89 44 24 0c          	mov    %eax,0xc(%esp)
+    210e:	eb 42                	jmp    2152 <ide_floppy_get_format_capacities+0xde>
+    2110:	3b 7c 24 04          	cmp    0x4(%esp),%edi
+    2114:	7d 4b                	jge    2161 <ide_floppy_get_format_capacities+0xed>
+    2116:	8b 5c fe 0c          	mov    0xc(%esi,%edi,8),%ebx
+    211a:	66 8b 7c fe 12       	mov    0x12(%esi,%edi,8),%di
+    211f:	0f cb                	bswap  %ebx
+    2121:	e8 fc ff ff ff       	call   2122 <ide_floppy_get_format_capacities+0xae>
+			2122: R_386_PC32	_cond_resched
+    2126:	89 d8                	mov    %ebx,%eax
+    2128:	89 e9                	mov    %ebp,%ecx
+    212a:	66 c1 c7 08          	rol    $0x8,%di
+    212e:	e8 fc ff ff ff       	call   212f <ide_floppy_get_format_capacities+0xbb>
+			212f: R_386_PC32	__put_user_4
+    2133:	85 c0                	test   %eax,%eax
+    2135:	75 3f                	jne    2176 <ide_floppy_get_format_capacities+0x102>
+    2137:	e8 fc ff ff ff       	call   2138 <ide_floppy_get_format_capacities+0xc4>
+			2138: R_386_PC32	_cond_resched
+    213c:	0f b7 c7             	movzwl %di,%eax
+    213f:	8d 4d 04             	lea    0x4(%ebp),%ecx
+    2142:	e8 fc ff ff ff       	call   2143 <ide_floppy_get_format_capacities+0xcf>
+			2143: R_386_PC32	__put_user_4
+    2147:	85 c0                	test   %eax,%eax
+    2149:	75 2b                	jne    2176 <ide_floppy_get_format_capacities+0x102>
+    214b:	8b 7c 24 08          	mov    0x8(%esp),%edi
+    214f:	83 c5 08             	add    $0x8,%ebp
+    2152:	8b 54 24 0c          	mov    0xc(%esp),%edx
+    2156:	8d 47 01             	lea    0x1(%edi),%eax
+    2159:	89 44 24 08          	mov    %eax,0x8(%esp)
+    215d:	39 d0                	cmp    %edx,%eax
+    215f:	7c af                	jl     2110 <ide_floppy_get_format_capacities+0x9c>
+    2161:	e8 fc ff ff ff       	call   2162 <ide_floppy_get_format_capacities+0xee>
+			2162: R_386_PC32	_cond_resched
+    2166:	89 f8                	mov    %edi,%eax
+    2168:	8b 0c 24             	mov    (%esp),%ecx
+    216b:	e8 fc ff ff ff       	call   216c <ide_floppy_get_format_capacities+0xf8>
+			216c: R_386_PC32	__put_user_4
+    2170:	31 d2                	xor    %edx,%edx
+    2172:	85 c0                	test   %eax,%eax
+    2174:	74 05                	je     217b <ide_floppy_get_format_capacities+0x107>
+    2176:	ba f2 ff ff ff       	mov    $0xfffffff2,%edx
+    217b:	89 d0                	mov    %edx,%eax
+    217d:	8b 94 24 10 01 00 00 	mov    0x110(%esp),%edx
+    2184:	65 33 15 14 00 00 00 	xor    %gs:0x14,%edx
+    218b:	74 05                	je     2192 <ide_floppy_get_format_capacities+0x11e>
+    218d:	e8 fc ff ff ff       	call   218e <ide_floppy_get_format_capacities+0x11a>
+			218e: R_386_PC32	__stack_chk_fail
+    2192:	81 c4 14 01 00 00    	add    $0x114,%esp
+    2198:	5b                   	pop    %ebx
+    2199:	5e                   	pop    %esi
+    219a:	5f                   	pop    %edi
+    219b:	5d                   	pop    %ebp
+    219c:	c3                   	ret    
+
+0000219d <ide_floppy_ioctl>:
+    219d:	55                   	push   %ebp
+    219e:	89 d5                	mov    %edx,%ebp
+    21a0:	57                   	push   %edi
+    21a1:	56                   	push   %esi
+    21a2:	53                   	push   %ebx
+    21a3:	89 c3                	mov    %eax,%ebx
+    21a5:	83 ec 5c             	sub    $0x5c,%esp
+    21a8:	8b 74 24 70          	mov    0x70(%esp),%esi
+    21ac:	65 a1 14 00 00 00    	mov    %gs:0x14,%eax
+    21b2:	89 44 24 58          	mov    %eax,0x58(%esp)
+    21b6:	31 c0                	xor    %eax,%eax
+    21b8:	8b 7c 24 74          	mov    0x74(%esp),%edi
+    21bc:	89 0c 24             	mov    %ecx,(%esp)
+    21bf:	81 fe 09 53 00 00    	cmp    $0x5309,%esi
+    21c5:	0f 94 44 24 04       	sete   0x4(%esp)
+    21ca:	81 fe 29 53 00 00    	cmp    $0x5329,%esi
+    21d0:	74 07                	je     21d9 <ide_floppy_ioctl+0x3c>
+    21d2:	80 7c 24 04 00       	cmpb   $0x0,0x4(%esp)
+    21d7:	74 53                	je     222c <ide_floppy_ioctl+0x8f>
+    21d9:	8b 53 18             	mov    0x18(%ebx),%edx
+    21dc:	b8 f0 ff ff ff       	mov    $0xfffffff0,%eax
+    21e1:	83 ba 2c 01 00 00 01 	cmpl   $0x1,0x12c(%edx)
+    21e8:	8b 6a 08             	mov    0x8(%edx),%ebp
+    21eb:	0f 87 b5 02 00 00    	ja     24a6 <ide_floppy_ioctl+0x309>
+    21f1:	85 ff                	test   %edi,%edi
+    21f3:	89 ea                	mov    %ebp,%edx
+    21f5:	0f 95 c0             	setne  %al
+    21f8:	31 c9                	xor    %ecx,%ecx
+    21fa:	81 fe 09 53 00 00    	cmp    $0x5309,%esi
+    2200:	0f 95 c1             	setne  %cl
+    2203:	21 c1                	and    %eax,%ecx
+    2205:	89 d8                	mov    %ebx,%eax
+    2207:	e8 fc ff ff ff       	call   2208 <ide_floppy_ioctl+0x6b>
+			2208: R_386_PC32	ide_set_media_lock
+    220c:	31 c0                	xor    %eax,%eax
+    220e:	80 7c 24 04 00       	cmpb   $0x0,0x4(%esp)
+    2213:	0f 84 8d 02 00 00    	je     24a6 <ide_floppy_ioctl+0x309>
+    2219:	b9 02 00 00 00       	mov    $0x2,%ecx
+    221e:	89 ea                	mov    %ebp,%edx
+    2220:	89 d8                	mov    %ebx,%eax
+    2222:	e8 fc ff ff ff       	call   2223 <ide_floppy_ioctl+0x86>
+			2223: R_386_PC32	ide_do_start_stop
+    2227:	e9 89 02 00 00       	jmp    24b5 <ide_floppy_ioctl+0x318>
+    222c:	81 fe 01 46 00 00    	cmp    $0x4601,%esi
+    2232:	74 2c                	je     2260 <ide_floppy_ioctl+0xc3>
+    2234:	77 11                	ja     2247 <ide_floppy_ioctl+0xaa>
+    2236:	81 fe 00 46 00 00    	cmp    $0x4600,%esi
+    223c:	0f 85 2f 02 00 00    	jne    2471 <ide_floppy_ioctl+0x2d4>
+    2242:	e9 6e 02 00 00       	jmp    24b5 <ide_floppy_ioctl+0x318>
+    2247:	81 fe 02 46 00 00    	cmp    $0x4602,%esi
+    224d:	74 2c                	je     227b <ide_floppy_ioctl+0xde>
+    224f:	81 fe 03 46 00 00    	cmp    $0x4603,%esi
+    2255:	0f 85 16 02 00 00    	jne    2471 <ide_floppy_ioctl+0x2d4>
+    225b:	e9 6e 01 00 00       	jmp    23ce <ide_floppy_ioctl+0x231>
+    2260:	8d 54 24 0c          	lea    0xc(%esp),%edx
+    2264:	89 f9                	mov    %edi,%ecx
+    2266:	89 d8                	mov    %ebx,%eax
+    2268:	e8 07 fe ff ff       	call   2074 <ide_floppy_get_format_capacities>
+    226d:	83 f8 e7             	cmp    $0xffffffe7,%eax
+    2270:	0f 84 08 02 00 00    	je     247e <ide_floppy_ioctl+0x2e1>
+    2276:	e9 2b 02 00 00       	jmp    24a6 <ide_floppy_ioctl+0x309>
+    227b:	83 c8 ff             	or     $0xffffffff,%eax
+    227e:	f6 04 24 02          	testb  $0x2,(%esp)
+    2282:	0f 84 1e 02 00 00    	je     24a6 <ide_floppy_ioctl+0x309>
+    2288:	8b 6b 18             	mov    0x18(%ebx),%ebp
+    228b:	83 bd 2c 01 00 00 01 	cmpl   $0x1,0x12c(%ebp)
+    2292:	76 0e                	jbe    22a2 <ide_floppy_ioctl+0x105>
+    2294:	81 63 30 ff ff ff bf 	andl   $0xbfffffff,0x30(%ebx)
+    229b:	b0 f0                	mov    $0xf0,%al
+    229d:	e9 04 02 00 00       	jmp    24a6 <ide_floppy_ioctl+0x309>
+    22a2:	81 4b 30 00 00 00 40 	orl    $0x40000000,0x30(%ebx)
+    22a9:	e8 fc ff ff ff       	call   22aa <ide_floppy_ioctl+0x10d>
+			22aa: R_386_PC32	_cond_resched
+    22ae:	89 f8                	mov    %edi,%eax
+    22b0:	e8 fc ff ff ff       	call   22b1 <ide_floppy_ioctl+0x114>
+			22b1: R_386_PC32	__get_user_4
+    22b5:	85 c0                	test   %eax,%eax
+    22b7:	89 14 24             	mov    %edx,(%esp)
+    22ba:	0f 85 fd 00 00 00    	jne    23bd <ide_floppy_ioctl+0x220>
+    22c0:	e8 fc ff ff ff       	call   22c1 <ide_floppy_ioctl+0x124>
+			22c1: R_386_PC32	_cond_resched
+    22c5:	8d 47 04             	lea    0x4(%edi),%eax
+    22c8:	e8 fc ff ff ff       	call   22c9 <ide_floppy_ioctl+0x12c>
+			22c9: R_386_PC32	__get_user_4
+    22cd:	85 c0                	test   %eax,%eax
+    22cf:	89 54 24 04          	mov    %edx,0x4(%esp)
+    22d3:	0f 85 e4 00 00 00    	jne    23bd <ide_floppy_ioctl+0x220>
+    22d9:	e8 fc ff ff ff       	call   22da <ide_floppy_ioctl+0x13d>
+			22da: R_386_PC32	_cond_resched
+    22de:	8d 47 08             	lea    0x8(%edi),%eax
+    22e1:	e8 fc ff ff ff       	call   22e2 <ide_floppy_ioctl+0x145>
+			22e2: R_386_PC32	__get_user_4
+    22e6:	85 c0                	test   %eax,%eax
+    22e8:	89 54 24 08          	mov    %edx,0x8(%esp)
+    22ec:	0f 85 cb 00 00 00    	jne    23bd <ide_floppy_ioctl+0x220>
+    22f2:	81 a3 cc 01 00 00 ff 	andl   $0xfffdffff,0x1cc(%ebx)
+    22f9:	ff fd ff 
+    22fc:	ba 1b 00 00 00       	mov    $0x1b,%edx
+    2301:	8d 74 24 0c          	lea    0xc(%esp),%esi
+    2305:	8b 7b 18             	mov    0x18(%ebx),%edi
+    2308:	89 f0                	mov    %esi,%eax
+    230a:	e8 fc ff ff ff       	call   230b <ide_floppy_ioctl+0x16e>
+			230b: R_386_PC32	ide_floppy_create_mode_sense_cmd
+    230f:	89 f1                	mov    %esi,%ecx
+    2311:	83 4c 24 28 02       	orl    $0x2,0x28(%esp)
+    2316:	8b 57 08             	mov    0x8(%edi),%edx
+    2319:	ff 74 24 20          	pushl  0x20(%esp)
+    231d:	8d 44 24 36          	lea    0x36(%esp),%eax
+    2321:	50                   	push   %eax
+    2322:	89 d8                	mov    %ebx,%eax
+    2324:	e8 fc ff ff ff       	call   2325 <ide_floppy_ioctl+0x188>
+			2325: R_386_PC32	ide_queue_pc_tail
+    2329:	5e                   	pop    %esi
+    232a:	5f                   	pop    %edi
+    232b:	85 c0                	test   %eax,%eax
+    232d:	75 11                	jne    2340 <ide_floppy_ioctl+0x1a3>
+    232f:	f6 44 24 3c 40       	testb  $0x40,0x3c(%esp)
+    2334:	74 0a                	je     2340 <ide_floppy_ioctl+0x1a3>
+    2336:	81 8b cc 01 00 00 00 	orl    $0x20000,0x1cc(%ebx)
+    233d:	00 02 00 
+    2340:	8d 44 24 0c          	lea    0xc(%esp),%eax
+    2344:	e8 fc ff ff ff       	call   2345 <ide_floppy_ioctl+0x1a8>
+			2345: R_386_PC32	ide_init_pc
+    2349:	b9 03 00 00 00       	mov    $0x3,%ecx
+    234e:	31 c0                	xor    %eax,%eax
+    2350:	c6 44 24 0c 04       	movb   $0x4,0xc(%esp)
+    2355:	8d 7c 24 46          	lea    0x46(%esp),%edi
+    2359:	c6 44 24 0d 17       	movb   $0x17,0xd(%esp)
+    235e:	f3 ab                	rep stos %eax,%es:(%edi)
+    2360:	f6 44 24 08 01       	testb  $0x1,0x8(%esp)
+    2365:	c6 44 24 47 a2       	movb   $0xa2,0x47(%esp)
+    236a:	74 05                	je     2371 <ide_floppy_ioctl+0x1d4>
+    236c:	c6 44 24 47 82       	movb   $0x82,0x47(%esp)
+    2371:	83 4c 24 28 40       	orl    $0x40,0x28(%esp)
+    2376:	8b 14 24             	mov    (%esp),%edx
+    2379:	8d 4c 24 0c          	lea    0xc(%esp),%ecx
+    237d:	8b 44 24 04          	mov    0x4(%esp),%eax
+    2381:	8d 74 24 46          	lea    0x46(%esp),%esi
+    2385:	c6 44 24 49 08       	movb   $0x8,0x49(%esp)
+    238a:	c7 44 24 20 0c 00 00 	movl   $0xc,0x20(%esp)
+    2391:	00 
+    2392:	0f ca                	bswap  %edx
+    2394:	0f c8                	bswap  %eax
+    2396:	89 54 24 4a          	mov    %edx,0x4a(%esp)
+    239a:	89 44 24 4e          	mov    %eax,0x4e(%esp)
+    239e:	8b 55 08             	mov    0x8(%ebp),%edx
+    23a1:	89 d8                	mov    %ebx,%eax
+    23a3:	6a 0c                	push   $0xc
+    23a5:	56                   	push   %esi
+    23a6:	e8 fc ff ff ff       	call   23a7 <ide_floppy_ioctl+0x20a>
+			23a7: R_386_PC32	ide_queue_pc_tail
+    23ab:	89 c2                	mov    %eax,%edx
+    23ad:	85 d2                	test   %edx,%edx
+    23af:	58                   	pop    %eax
+    23b0:	b8 fb ff ff ff       	mov    $0xfffffffb,%eax
+    23b5:	59                   	pop    %ecx
+    23b6:	75 0a                	jne    23c2 <ide_floppy_ioctl+0x225>
+    23b8:	e9 f8 00 00 00       	jmp    24b5 <ide_floppy_ioctl+0x318>
+    23bd:	b8 f2 ff ff ff       	mov    $0xfffffff2,%eax
+    23c2:	81 63 30 ff ff ff bf 	andl   $0xbfffffff,0x30(%ebx)
+    23c9:	e9 d8 00 00 00       	jmp    24a6 <ide_floppy_ioctl+0x309>
+    23ce:	f6 83 ce 01 00 00 02 	testb  $0x2,0x1ce(%ebx)
+    23d5:	8b 73 18             	mov    0x18(%ebx),%esi
+    23d8:	74 4d                	je     2427 <ide_floppy_ioctl+0x28a>
+    23da:	8d 6c 24 0c          	lea    0xc(%esp),%ebp
+    23de:	89 d8                	mov    %ebx,%eax
+    23e0:	89 ea                	mov    %ebp,%edx
+    23e2:	e8 fc ff ff ff       	call   23e3 <ide_floppy_ioctl+0x246>
+			23e3: R_386_PC32	ide_create_request_sense_cmd
+    23e7:	8b 56 08             	mov    0x8(%esi),%edx
+    23ea:	89 e9                	mov    %ebp,%ecx
+    23ec:	ff 74 24 20          	pushl  0x20(%esp)
+    23f0:	8d 44 24 4a          	lea    0x4a(%esp),%eax
+    23f4:	50                   	push   %eax
+    23f5:	89 d8                	mov    %ebx,%eax
+    23f7:	e8 fc ff ff ff       	call   23f8 <ide_floppy_ioctl+0x25b>
+			23f8: R_386_PC32	ide_queue_pc_tail
+    23fc:	5b                   	pop    %ebx
+    23fd:	5d                   	pop    %ebp
+    23fe:	89 c2                	mov    %eax,%edx
+    2400:	b8 fb ff ff ff       	mov    $0xfffffffb,%eax
+    2405:	85 d2                	test   %edx,%edx
+    2407:	0f 85 99 00 00 00    	jne    24a6 <ide_floppy_ioctl+0x309>
+    240d:	8b 86 54 01 00 00    	mov    0x154(%esi),%eax
+    2413:	25 ff ff ff 00       	and    $0xffffff,%eax
+    2418:	3d 02 04 04 00       	cmp    $0x40402,%eax
+    241d:	75 32                	jne    2451 <ide_floppy_ioctl+0x2b4>
+    241f:	8b 9e 58 01 00 00    	mov    0x158(%esi),%ebx
+    2425:	eb 2f                	jmp    2456 <ide_floppy_ioctl+0x2b9>
+    2427:	8b 4b 28             	mov    0x28(%ebx),%ecx
+    242a:	ff 15 00 00 00 00    	call   *0x0
+			242c: R_386_32	pv_irq_ops
+    2430:	89 c3                	mov    %eax,%ebx
+    2432:	ff 15 08 00 00 00    	call   *0x8
+			2434: R_386_32	pv_irq_ops
+    2438:	8b 51 70             	mov    0x70(%ecx),%edx
+    243b:	89 c8                	mov    %ecx,%eax
+    243d:	ff 52 04             	call   *0x4(%edx)
+    2440:	88 c1                	mov    %al,%cl
+    2442:	89 d8                	mov    %ebx,%eax
+    2444:	ff 15 04 00 00 00    	call   *0x4
+			2446: R_386_32	pv_irq_ops
+    244a:	31 db                	xor    %ebx,%ebx
+    244c:	80 e1 10             	and    $0x10,%cl
+    244f:	74 05                	je     2456 <ide_floppy_ioctl+0x2b9>
+    2451:	bb 00 00 01 00       	mov    $0x10000,%ebx
+    2456:	e8 fc ff ff ff       	call   2457 <ide_floppy_ioctl+0x2ba>
+			2457: R_386_PC32	_cond_resched
+    245b:	89 d8                	mov    %ebx,%eax
+    245d:	89 f9                	mov    %edi,%ecx
+    245f:	e8 fc ff ff ff       	call   2460 <ide_floppy_ioctl+0x2c3>
+			2460: R_386_PC32	__put_user_4
+    2464:	89 c2                	mov    %eax,%edx
+    2466:	b8 f2 ff ff ff       	mov    $0xfffffff2,%eax
+    246b:	85 d2                	test   %edx,%edx
+    246d:	74 46                	je     24b5 <ide_floppy_ioctl+0x318>
+    246f:	eb 35                	jmp    24a6 <ide_floppy_ioctl+0x309>
+    2471:	83 fe 01             	cmp    $0x1,%esi
+    2474:	74 23                	je     2499 <ide_floppy_ioctl+0x2fc>
+    2476:	81 fe 93 53 00 00    	cmp    $0x5393,%esi
+    247c:	74 1b                	je     2499 <ide_floppy_ioctl+0x2fc>
+    247e:	8b 55 50             	mov    0x50(%ebp),%edx
+    2481:	8b 82 94 01 00 00    	mov    0x194(%edx),%eax
+    2487:	57                   	push   %edi
+    2488:	56                   	push   %esi
+    2489:	8b 4c 24 08          	mov    0x8(%esp),%ecx
+    248d:	e8 fc ff ff ff       	call   248e <ide_floppy_ioctl+0x2f1>
+			248e: R_386_PC32	scsi_cmd_ioctl
+    2492:	5a                   	pop    %edx
+    2493:	59                   	pop    %ecx
+    2494:	83 f8 e7             	cmp    $0xffffffe7,%eax
+    2497:	75 0d                	jne    24a6 <ide_floppy_ioctl+0x309>
+    2499:	89 d8                	mov    %ebx,%eax
+    249b:	89 f1                	mov    %esi,%ecx
+    249d:	57                   	push   %edi
+    249e:	89 ea                	mov    %ebp,%edx
+    24a0:	e8 fc ff ff ff       	call   24a1 <ide_floppy_ioctl+0x304>
+			24a1: R_386_PC32	generic_ide_ioctl
+    24a5:	5b                   	pop    %ebx
+    24a6:	8b 54 24 58          	mov    0x58(%esp),%edx
+    24aa:	65 33 15 14 00 00 00 	xor    %gs:0x14,%edx
+    24b1:	74 0b                	je     24be <ide_floppy_ioctl+0x321>
+    24b3:	eb 04                	jmp    24b9 <ide_floppy_ioctl+0x31c>
+    24b5:	31 c0                	xor    %eax,%eax
+    24b7:	eb ed                	jmp    24a6 <ide_floppy_ioctl+0x309>
+    24b9:	e8 fc ff ff ff       	call   24ba <ide_floppy_ioctl+0x31d>
+			24ba: R_386_PC32	__stack_chk_fail
+    24be:	83 c4 5c             	add    $0x5c,%esp
+    24c1:	5b                   	pop    %ebx
+    24c2:	5e                   	pop    %esi
+    24c3:	5f                   	pop    %edi
+    24c4:	5d                   	pop    %ebp
+    24c5:	c3                   	ret    
+    24c6:	90                   	nop
+    24c7:	90                   	nop
+
+000024c8 <get_bios_cyl>:
+    24c8:	8b 40 54             	mov    0x54(%eax),%eax
+    24cb:	c3                   	ret    
+
+000024cc <set_bios_cyl>:
+    24cc:	89 50 54             	mov    %edx,0x54(%eax)
+    24cf:	31 c0                	xor    %eax,%eax
+    24d1:	c3                   	ret    
+
+000024d2 <get_bios_head>:
+    24d2:	0f b6 40 4e          	movzbl 0x4e(%eax),%eax
+    24d6:	c3                   	ret    
+
+000024d7 <set_bios_head>:
+    24d7:	88 50 4e             	mov    %dl,0x4e(%eax)
+    24da:	31 c0                	xor    %eax,%eax
+    24dc:	c3                   	ret    
+
+000024dd <get_bios_sect>:
+    24dd:	0f b6 40 4f          	movzbl 0x4f(%eax),%eax
+    24e1:	c3                   	ret    
+
+000024e2 <set_bios_sect>:
+    24e2:	88 50 4f             	mov    %dl,0x4f(%eax)
+    24e5:	31 c0                	xor    %eax,%eax
+    24e7:	c3                   	ret    
+
+000024e8 <get_ticks>:
+    24e8:	0f b6 40 50          	movzbl 0x50(%eax),%eax
+    24ec:	c3                   	ret    
+
+000024ed <set_ticks>:
+    24ed:	88 50 50             	mov    %dl,0x50(%eax)
+    24f0:	31 c0                	xor    %eax,%eax
+    24f2:	c3                   	ret    
+
+000024f3 <idefloppy_capacity_proc_open>:
+    24f3:	89 c1                	mov    %eax,%ecx
+    24f5:	89 d0                	mov    %edx,%eax
+    24f7:	8b 51 f4             	mov    -0xc(%ecx),%edx
+    24fa:	8b 4a 34             	mov    0x34(%edx),%ecx
+    24fd:	ba 07 25 00 00       	mov    $0x2507,%edx
+			24fe: R_386_32	.text
+    2502:	e9 fc ff ff ff       	jmp    2503 <idefloppy_capacity_proc_open+0x10>
+			2503: R_386_PC32	single_open
+
+00002507 <idefloppy_capacity_proc_show>:
+    2507:	53                   	push   %ebx
+    2508:	89 c3                	mov    %eax,%ebx
+    250a:	8b 40 40             	mov    0x40(%eax),%eax
+    250d:	e8 fc ff ff ff       	call   250e <idefloppy_capacity_proc_show+0x7>
+			250e: R_386_PC32	ide_gd_capacity
+    2512:	52                   	push   %edx
+    2513:	50                   	push   %eax
+    2514:	68 db 06 00 00       	push   $0x6db
+			2515: R_386_32	.rodata.str1.1
+    2519:	53                   	push   %ebx
+    251a:	e8 fc ff ff ff       	call   251b <idefloppy_capacity_proc_show+0x14>
+			251b: R_386_PC32	seq_printf
+    251f:	31 c0                	xor    %eax,%eax
+    2521:	83 c4 10             	add    $0x10,%esp
+    2524:	5b                   	pop    %ebx
+    2525:	c3                   	ret    
+	...
+
+Disassembly of section .exit.text:
+
+00000000 <cleanup_module>:
+   0:	b8 08 00 00 00       	mov    $0x8,%eax
+			1: R_386_32	.data
+   5:	e9 fc ff ff ff       	jmp    6 <cleanup_module+0x6>
+			6: R_386_PC32	driver_unregister
+
+Disassembly of section .init.text:
+
+00000000 <init_module>:
+   0:	68 11 00 00 00       	push   $0x11
+			1: R_386_32	.rodata.str1.1
+   5:	e8 fc ff ff ff       	call   6 <init_module+0x6>
+			6: R_386_PC32	printk
+   a:	58                   	pop    %eax
+   b:	b8 08 00 00 00       	mov    $0x8,%eax
+			c: R_386_32	.data
+  10:	e9 fc ff ff ff       	jmp    11 <init_module+0x11>
+			11: R_386_PC32	driver_register

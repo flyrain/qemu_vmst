@@ -1812,7 +1812,7 @@ static int get_patch_addrs(char * module_name, target_ulong * addrs, int * addrs
     memcpy(filename, path, strlen(path));
     memcpy(filename + strlen(path), module_name, strlen(module_name));
     memcpy(filename + strlen(path) + strlen(module_name), suffix, strlen(suffix));
-    qemu_log(" filename: %s ", filename);
+    //qemu_log(" filename: %s ", filename);
     
     struct stat fstat;
     if (stat(filename, &fstat) != 0) {
@@ -1845,43 +1845,47 @@ static int get_patch_addrs(char * module_name, target_ulong * addrs, int * addrs
     return ret;
 }
 
-// patch/unpatch module, if is_patch is 1, then patch it, else unpatch it.
-static int patch_module(char * module_name, int is_patch)
-{
-    target_ulong addrs[1000];
-    int i ;
-    for (i =0; i < 1000; i++ ) 
-        addrs[i] = 0;
-    int addrs_idx = 0;
-    get_patch_addrs(module_name, addrs,  &addrs_idx);
+//invalidate module's translate block
+static int module_tb_invalidate(CPUState *env, struct module_info * module){
+    target_ulong start_page = (module -> start_addr + module -> offset) & TARGET_PAGE_MASK;
+    target_ulong end_page = (module -> start_addr + module -> size + module -> offset)  & TARGET_PAGE_MASK;
 
-    qemu_log(" addrs_idx %d ", addrs_idx);
-    struct module_info *module_item = 0;
-    
-    for (i =0 ; i < module_info_idx; i ++){
-        if (memcmp(module_infos[i].name, module_name, strlen(module_name)) == 0){
-            module_item = &module_infos[i];
-        }
+    target_ulong page = start_page;
+    for(;page<= end_page; page += TARGET_PAGE_SIZE){
+        target_ulong phys_page = cpu_get_phys_page_debug(env, page);
+        tb_invalidate_phys_page_range(phys_page, phys_page + (TARGET_PAGE_SIZE -1) , 0);
     }
-    
-    if( module_item == 0 ) 
+    return 0;
+}
+
+// patch/unpatch module, if is_patch is 1, then patch it, else unpatch it.
+static int patch_module(CPUState *env, struct module_info * module, int is_patch)
+{
+    target_ulong addrs[1000]= {};
+    int i ;
+    int addrs_idx = 0;
+    int ret = get_patch_addrs(module -> name, addrs,  &addrs_idx);
+    if(ret != 0)
         return -1;
     
+    qemu_log(" addrs_idx %d ", addrs_idx);
+
+    module_tb_invalidate(env, module);
+
     for (i =0; i< addrs_idx; i++){
         //R_386_32 and value in some modules
-        target_ulong addr =  module_item -> start_addr + module_item -> offset  + addrs[i];
+        target_ulong addr =  module -> start_addr + module -> offset  + addrs[i];
         //read value of memory 
         uint32_t value = 0;
         cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 0);
-
             
-        if (value >= module_item -> start_addr + module_item -> offset 
-            && value < module_item -> start_addr + module_item -> size + module_item -> offset){
+        if (value >= module -> start_addr + module -> offset 
+            && value < module -> start_addr + module -> size + module -> offset){
             //apply offset
             if (is_patch)
-                value = value - module_item -> offset;
+                value = value - module -> offset;
             else 
-                value = value + module_item -> offset;
+                value = value + module -> offset;
             //write into memory
             cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 1);
         }
@@ -1890,9 +1894,8 @@ static int patch_module(char * module_name, int is_patch)
 }
 
 //patch all modules
-int patch_modules()
+int patch_modules(CPUState *env)
 {
-    //    return;
     static int is_patched = 0;
 
     if(vmmi_profile != 1)
@@ -1907,6 +1910,19 @@ int patch_modules()
 
     qemu_log("Patch modules\n");
 
+    int i;
+    for (i =0 ; i < module_info_idx; i ++){
+        struct module_info module = module_infos[i];
+        int ret = -1;
+        ret = patch_module(env, &module, is_patched);
+        if (ret != 0 ){
+            //qemu_log("Patch module %s %d failed.\n", module.name, is_patched);
+        }
+        else
+            qemu_log("Patch module %s %d success.\n", module.name, is_patched);
+    }
+
+    /*
     char * modules[] = {"ext3", "dm_mod", "dm_crypt", "ide_core", "ide_gd_mod"};
 
     int i; 
@@ -1918,6 +1934,7 @@ int patch_modules()
         else
             qemu_log("Patch module %s %d success.\n", modules[i], is_patched);
     }
+    */
 }
 
 static int read_module_offset(Monitor *mon, const char * filename)
@@ -5916,4 +5933,3 @@ int monitor_read_bdrv_key_start(Monitor *mon, BlockDriverState *bs,
 
     return err;
 }
-

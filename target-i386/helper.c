@@ -761,6 +761,80 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 		}
 #endif			
 
+
+	if( 
+        //	vmmi_main_start
+        vmmi_mode
+		&&!vmmi_start
+        //   &&vmmi_process_cr3 == cpu_single_env->cr[3]
+        //	&&vmmi_process_cr3 != new_cr3
+        )
+    {
+        int i=0;
+        uint32_t stack= env->regs[R_ESP]&0xffffe000;
+        uint32_t task;
+        uint32_t pid;
+        uint32_t mm;
+        uint32_t pgd;
+        uint32_t next;
+        uint32_t list;
+        char comm[16];
+		
+        cpu_memory_rw_debug(env, stack, &task, 4,0);
+        next=task;
+
+        do{
+            cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
+            comm[15]='\0';
+
+            //	cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
+            if(strcmp(comm, vmmi_process_name)==0)
+            {
+                cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
+                //print the task
+                if(mm!=0){
+                    cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
+                    vmmi_process_cr3 = pgd +0x40000000;
+                    vmmi_start = 1;
+#ifdef DEBUG_VMMI
+                    if(qemu_log_enabled())
+                        qemu_log("vmmi_process is 0x%08x\n", new_cr3);
+                    printf("start monitor\n");
+                    printf("find process %x %s %x\n", next, comm, pgd+0x40000000);
+#endif
+                }
+            }
+            cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
+            next=list-0xe4;
+            i++;
+            if(i>100)
+                break;
+        }while(next!=task);
+    }
+
+    env->cr[3] = new_cr3;
+//yang.end
+
+    if (env->cr[0] & CR0_PG_MASK) {
+#if defined(DEBUG_MMU)
+        printf("CR3 update: CR3=" TARGET_FMT_lx "\n", new_cr3);
+#endif
+
+        tlb_flush(env, 0);
+    }
+}
+
+
+void cpu_x86_update_cr3_old(CPUX86State *env, target_ulong new_cr3)
+{
+//yang.begin
+#ifdef DEBUG_VMMI
+	if(vmmi_mode)
+		if(qemu_log_enabled()){
+		  	qemu_log("process is 0x%08x, 0x%08x, 0x%08x\n", vmmi_process_cr3, new_cr3,cpu_single_env->cr[3] );
+		}
+#endif			
+
 #ifdef DEBUG_VMMI_CONTEXT_SWITCH
 	
 	if( 
@@ -1754,10 +1828,6 @@ void do_cpu_sipi(CPUState *env)
 #endif
 
 
-void my_fun(){
-    qemu_log("my_fun");
-}
-
 //zlin.begin
 
 /* XXX: This value should match the one returned by CPUID
@@ -1845,11 +1915,9 @@ int vmmi_cpu_x86_handle_mmu_fault(CPUX86State *env, target_ulong addr,
             virt_addr = addr & ~0xfff;
         }
 
-        int greater = 0;
+
 	//yang.begin
 	if(pte>=snapshot_size){
-        my_fun();
-        greater = 1;
 		if(qemu_log_enabled())
 			qemu_log("io address %x\n", addr);
 		//return -1;
@@ -1883,12 +1951,7 @@ int vmmi_cpu_x86_handle_mmu_fault(CPUX86State *env, target_ulong addr,
     paddr = (pte & TARGET_PAGE_MASK) + page_offset;
     vaddr = virt_addr + page_offset;
     
-    if(greater)
-        qemu_log("before vmmi_tlb_set_page\n");
     vmmi_tlb_set_page(env, vaddr, paddr, prot, mmu_idx, page_size);
-    if(greater)
-        qemu_log("after vmmi_tlb_set_page\n");
-    greater = 0;
     return 0;
 
  do_fault_protect:

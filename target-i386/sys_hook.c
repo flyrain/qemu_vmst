@@ -175,7 +175,7 @@ void pit_send();
 extern char inst_buff[];
 char inst_buff2[16];
 char inst_buff3[16];
-extern int patch_modules(); //yufei
+extern int patch_modules(CPUState *env); //yufei
 extern target_ulong current_task; //yufei
 extern int is_insert_work;
 
@@ -202,7 +202,7 @@ void syscall_hook(uint32_t syscall_op)
 #endif
         //yufei.begin
         if (sys_need_red ==1)  
-           patch_modules(); 
+           patch_modules(cpu_single_env); 
         //yufei.end
 
         set_sys_need_red(0);
@@ -258,7 +258,7 @@ void syscall_hook(uint32_t syscall_op)
         {
             file_flag = 1;
             set_sys_need_red(1);
-            patch_modules(); //yufei
+            patch_modules(cpu_single_env); //yufei
             
             vmac_memory_read(0xc1801454, &current_task, 4);//yufei
         }
@@ -288,12 +288,14 @@ void syscall_hook(uint32_t syscall_op)
         break;
     case 11: // sys_execve
     {
+        set_sys_need_red(0);
+        break;
         char buf[1024];
         char fname[1024];
 
         memset(buf,0,1024);
         file_flag=0;
-        set_sys_need_red(0);
+        
         if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 1024, 0)!=0)
             break;
 

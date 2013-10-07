@@ -1,0 +1,2161 @@
+
+/lib/modules/2.6.32.8/kernel/drivers/md/dm-crypt.ko:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <crypt_iv_benbi_dtr>:
+       0:	c3                   	ret    
+
+00000001 <crypt_postsuspend>:
+       1:	8b 40 24             	mov    0x24(%eax),%eax
+       4:	f0 80 88 d0 00 00 00 	lock orb $0x1,0xd0(%eax)
+       b:	01 
+       c:	c3                   	ret    
+
+0000000d <crypt_resume>:
+       d:	8b 40 24             	mov    0x24(%eax),%eax
+      10:	f0 80 a0 d0 00 00 00 	lock andb $0xfe,0xd0(%eax)
+      17:	fe 
+      18:	c3                   	ret    
+
+00000019 <crypt_merge>:
+      19:	55                   	push   %ebp
+      1a:	57                   	push   %edi
+      1b:	56                   	push   %esi
+      1c:	53                   	push   %ebx
+      1d:	8b 68 24             	mov    0x24(%eax),%ebp
+      20:	8b 5d 00             	mov    0x0(%ebp),%ebx
+      23:	8b 33                	mov    (%ebx),%esi
+      25:	8b 5e 50             	mov    0x50(%esi),%ebx
+      28:	8b 9b 94 01 00 00    	mov    0x194(%ebx),%ebx
+      2e:	83 7b 50 00          	cmpl   $0x0,0x50(%ebx)
+      32:	74 2c                	je     60 <crypt_merge+0x47>
+      34:	89 32                	mov    %esi,(%edx)
+      36:	8b 7a 08             	mov    0x8(%edx),%edi
+      39:	8b 72 04             	mov    0x4(%edx),%esi
+      3c:	03 75 04             	add    0x4(%ebp),%esi
+      3f:	13 7d 08             	adc    0x8(%ebp),%edi
+      42:	2b 70 08             	sub    0x8(%eax),%esi
+      45:	1b 78 0c             	sbb    0xc(%eax),%edi
+      48:	89 d8                	mov    %ebx,%eax
+      4a:	89 72 04             	mov    %esi,0x4(%edx)
+      4d:	89 7a 08             	mov    %edi,0x8(%edx)
+      50:	ff 53 50             	call   *0x50(%ebx)
+      53:	39 44 24 14          	cmp    %eax,0x14(%esp)
+      57:	0f 4e 44 24 14       	cmovle 0x14(%esp),%eax
+      5c:	89 44 24 14          	mov    %eax,0x14(%esp)
+      60:	8b 44 24 14          	mov    0x14(%esp),%eax
+      64:	5b                   	pop    %ebx
+      65:	5e                   	pop    %esi
+      66:	5f                   	pop    %edi
+      67:	5d                   	pop    %ebp
+      68:	c3                   	ret    
+
+00000069 <crypt_iterate_devices>:
+      69:	53                   	push   %ebx
+      6a:	89 d3                	mov    %edx,%ebx
+      6c:	8b 50 24             	mov    0x24(%eax),%edx
+      6f:	51                   	push   %ecx
+      70:	ff 70 14             	pushl  0x14(%eax)
+      73:	ff 70 10             	pushl  0x10(%eax)
+      76:	ff 72 08             	pushl  0x8(%edx)
+      79:	ff 72 04             	pushl  0x4(%edx)
+      7c:	8b 12                	mov    (%edx),%edx
+      7e:	ff d3                	call   *%ebx
+      80:	83 c4 14             	add    $0x14,%esp
+      83:	5b                   	pop    %ebx
+      84:	c3                   	ret    
+
+00000085 <crypt_preresume>:
+      85:	8b 50 24             	mov    0x24(%eax),%edx
+      88:	31 c0                	xor    %eax,%eax
+      8a:	f6 82 d0 00 00 00 02 	testb  $0x2,0xd0(%edx)
+      91:	75 10                	jne    a3 <crypt_preresume+0x1e>
+      93:	68 00 00 00 00       	push   $0x0
+			94: R_386_32	.rodata.str1.1
+      98:	e8 fc ff ff ff       	call   99 <crypt_preresume+0x14>
+			99: R_386_PC32	printk
+      9d:	b8 f5 ff ff ff       	mov    $0xfffffff5,%eax
+      a2:	5a                   	pop    %edx
+      a3:	c3                   	ret    
+
+000000a4 <crypt_set_key>:
+      a4:	55                   	push   %ebp
+      a5:	57                   	push   %edi
+      a6:	56                   	push   %esi
+      a7:	89 c6                	mov    %eax,%esi
+      a9:	53                   	push   %ebx
+      aa:	89 d0                	mov    %edx,%eax
+      ac:	83 ec 0c             	sub    $0xc,%esp
+      af:	89 d3                	mov    %edx,%ebx
+      b1:	e8 fc ff ff ff       	call   b2 <crypt_set_key+0xe>
+			b2: R_386_PC32	strlen
+      b6:	89 c7                	mov    %eax,%edi
+      b8:	8b 86 d4 00 00 00    	mov    0xd4(%esi),%eax
+      be:	d1 ef                	shr    %edi
+      c0:	85 c0                	test   %eax,%eax
+      c2:	74 04                	je     c8 <crypt_set_key+0x24>
+      c4:	39 f8                	cmp    %edi,%eax
+      c6:	75 70                	jne    138 <crypt_set_key+0x94>
+      c8:	85 ff                	test   %edi,%edi
+      ca:	89 be d4 00 00 00    	mov    %edi,0xd4(%esi)
+      d0:	75 10                	jne    e2 <crypt_set_key+0x3e>
+      d2:	ba 42 00 00 00       	mov    $0x42,%edx
+			d3: R_386_32	.rodata.str1.1
+      d7:	89 d8                	mov    %ebx,%eax
+      d9:	e8 fc ff ff ff       	call   da <crypt_set_key+0x36>
+			da: R_386_PC32	strcmp
+      de:	85 c0                	test   %eax,%eax
+      e0:	eb 48                	jmp    12a <crypt_set_key+0x86>
+      e2:	8d 44 24 0b          	lea    0xb(%esp),%eax
+      e6:	31 ed                	xor    %ebp,%ebp
+      e8:	c6 44 24 0b 00       	movb   $0x0,0xb(%esp)
+      ed:	89 04 24             	mov    %eax,(%esp)
+      f0:	8a 03                	mov    (%ebx),%al
+      f2:	b9 10 00 00 00       	mov    $0x10,%ecx
+      f7:	8d 54 24 04          	lea    0x4(%esp),%edx
+      fb:	88 44 24 09          	mov    %al,0x9(%esp)
+      ff:	8a 43 01             	mov    0x1(%ebx),%al
+     102:	88 44 24 0a          	mov    %al,0xa(%esp)
+     106:	8d 44 24 09          	lea    0x9(%esp),%eax
+     10a:	e8 fc ff ff ff       	call   10b <crypt_set_key+0x67>
+			10b: R_386_PC32	simple_strtoul
+     10f:	88 84 2e d8 00 00 00 	mov    %al,0xd8(%esi,%ebp,1)
+     116:	8b 04 24             	mov    (%esp),%eax
+     119:	39 44 24 04          	cmp    %eax,0x4(%esp)
+     11d:	75 19                	jne    138 <crypt_set_key+0x94>
+     11f:	45                   	inc    %ebp
+     120:	83 c3 02             	add    $0x2,%ebx
+     123:	39 fd                	cmp    %edi,%ebp
+     125:	72 c9                	jb     f0 <crypt_set_key+0x4c>
+     127:	80 3b 00             	cmpb   $0x0,(%ebx)
+     12a:	75 0c                	jne    138 <crypt_set_key+0x94>
+     12c:	f0 80 8e d0 00 00 00 	lock orb $0x2,0xd0(%esi)
+     133:	02 
+     134:	31 c0                	xor    %eax,%eax
+     136:	eb 05                	jmp    13d <crypt_set_key+0x99>
+     138:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+     13d:	83 c4 0c             	add    $0xc,%esp
+     140:	5b                   	pop    %ebx
+     141:	5e                   	pop    %esi
+     142:	5f                   	pop    %edi
+     143:	5d                   	pop    %ebp
+     144:	c3                   	ret    
+
+00000145 <crypt_message>:
+     145:	57                   	push   %edi
+     146:	83 fa 01             	cmp    $0x1,%edx
+     149:	56                   	push   %esi
+     14a:	89 d6                	mov    %edx,%esi
+     14c:	53                   	push   %ebx
+     14d:	89 cb                	mov    %ecx,%ebx
+     14f:	8b 78 24             	mov    0x24(%eax),%edi
+     152:	0f 86 ce 00 00 00    	jbe    226 <crypt_message+0xe1>
+     158:	8b 03                	mov    (%ebx),%eax
+     15a:	b9 04 00 00 00       	mov    $0x4,%ecx
+     15f:	ba 44 00 00 00       	mov    $0x44,%edx
+			160: R_386_32	.rodata.str1.1
+     164:	e8 fc ff ff ff       	call   165 <crypt_message+0x20>
+			165: R_386_PC32	strnicmp
+     169:	85 c0                	test   %eax,%eax
+     16b:	0f 85 b5 00 00 00    	jne    226 <crypt_message+0xe1>
+     171:	f6 87 d0 00 00 00 01 	testb  $0x1,0xd0(%edi)
+     178:	75 0a                	jne    184 <crypt_message+0x3f>
+     17a:	68 48 00 00 00       	push   $0x48
+			17b: R_386_32	.rodata.str1.1
+     17f:	e9 a7 00 00 00       	jmp    22b <crypt_message+0xe6>
+     184:	83 fe 03             	cmp    $0x3,%esi
+     187:	75 40                	jne    1c9 <crypt_message+0x84>
+     189:	8b 43 04             	mov    0x4(%ebx),%eax
+     18c:	b9 04 00 00 00       	mov    $0x4,%ecx
+     191:	ba 89 00 00 00       	mov    $0x89,%edx
+			192: R_386_32	.rodata.str1.1
+     196:	e8 fc ff ff ff       	call   197 <crypt_message+0x52>
+			197: R_386_PC32	strnicmp
+     19b:	85 c0                	test   %eax,%eax
+     19d:	0f 85 83 00 00 00    	jne    226 <crypt_message+0xe1>
+     1a3:	8b 53 08             	mov    0x8(%ebx),%edx
+     1a6:	89 f8                	mov    %edi,%eax
+     1a8:	e8 f7 fe ff ff       	call   a4 <crypt_set_key>
+     1ad:	85 c0                	test   %eax,%eax
+     1af:	0f 85 81 00 00 00    	jne    236 <crypt_message+0xf1>
+     1b5:	8b 57 24             	mov    0x24(%edi),%edx
+     1b8:	85 d2                	test   %edx,%edx
+     1ba:	74 7a                	je     236 <crypt_message+0xf1>
+     1bc:	8b 52 08             	mov    0x8(%edx),%edx
+     1bf:	85 d2                	test   %edx,%edx
+     1c1:	74 73                	je     236 <crypt_message+0xf1>
+     1c3:	89 f8                	mov    %edi,%eax
+     1c5:	ff d2                	call   *%edx
+     1c7:	eb 6d                	jmp    236 <crypt_message+0xf1>
+     1c9:	83 fe 02             	cmp    $0x2,%esi
+     1cc:	75 58                	jne    226 <crypt_message+0xe1>
+     1ce:	8b 43 04             	mov    0x4(%ebx),%eax
+     1d1:	b9 05 00 00 00       	mov    $0x5,%ecx
+     1d6:	ba 8d 00 00 00       	mov    $0x8d,%edx
+			1d7: R_386_32	.rodata.str1.1
+     1db:	e8 fc ff ff ff       	call   1dc <crypt_message+0x97>
+			1dc: R_386_PC32	strnicmp
+     1e0:	85 c0                	test   %eax,%eax
+     1e2:	75 42                	jne    226 <crypt_message+0xe1>
+     1e4:	8b 47 24             	mov    0x24(%edi),%eax
+     1e7:	85 c0                	test   %eax,%eax
+     1e9:	74 0f                	je     1fa <crypt_message+0xb5>
+     1eb:	8b 50 0c             	mov    0xc(%eax),%edx
+     1ee:	85 d2                	test   %edx,%edx
+     1f0:	74 08                	je     1fa <crypt_message+0xb5>
+     1f2:	89 f8                	mov    %edi,%eax
+     1f4:	ff d2                	call   *%edx
+     1f6:	85 c0                	test   %eax,%eax
+     1f8:	75 3c                	jne    236 <crypt_message+0xf1>
+     1fa:	f0 80 a7 d0 00 00 00 	lock andb $0xfd,0xd0(%edi)
+     201:	fd 
+     202:	8b 97 d4 00 00 00    	mov    0xd4(%edi),%edx
+     208:	31 c0                	xor    %eax,%eax
+     20a:	81 c7 d8 00 00 00    	add    $0xd8,%edi
+     210:	89 d1                	mov    %edx,%ecx
+     212:	c1 e9 02             	shr    $0x2,%ecx
+     215:	f3 ab                	rep stos %eax,%es:(%edi)
+     217:	f6 c2 02             	test   $0x2,%dl
+     21a:	74 02                	je     21e <crypt_message+0xd9>
+     21c:	66 ab                	stos   %ax,%es:(%edi)
+     21e:	f6 c2 01             	test   $0x1,%dl
+     221:	74 01                	je     224 <crypt_message+0xdf>
+     223:	aa                   	stos   %al,%es:(%edi)
+     224:	eb 10                	jmp    236 <crypt_message+0xf1>
+     226:	68 92 00 00 00       	push   $0x92
+			227: R_386_32	.rodata.str1.1
+     22b:	e8 fc ff ff ff       	call   22c <crypt_message+0xe7>
+			22c: R_386_PC32	printk
+     230:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+     235:	59                   	pop    %ecx
+     236:	5b                   	pop    %ebx
+     237:	5e                   	pop    %esi
+     238:	5f                   	pop    %edi
+     239:	c3                   	ret    
+
+0000023a <crypt_iv_null_gen>:
+     23a:	57                   	push   %edi
+     23b:	89 d7                	mov    %edx,%edi
+     23d:	53                   	push   %ebx
+     23e:	8b 58 40             	mov    0x40(%eax),%ebx
+     241:	31 c0                	xor    %eax,%eax
+     243:	89 d9                	mov    %ebx,%ecx
+     245:	c1 e9 02             	shr    $0x2,%ecx
+     248:	f3 ab                	rep stos %eax,%es:(%edi)
+     24a:	f6 c3 02             	test   $0x2,%bl
+     24d:	74 02                	je     251 <crypt_iv_null_gen+0x17>
+     24f:	66 ab                	stos   %ax,%es:(%edi)
+     251:	f6 c3 01             	test   $0x1,%bl
+     254:	74 01                	je     257 <crypt_iv_null_gen+0x1d>
+     256:	aa                   	stos   %al,%es:(%edi)
+     257:	5b                   	pop    %ebx
+     258:	5f                   	pop    %edi
+     259:	c3                   	ret    
+
+0000025a <crypt_iv_benbi_gen>:
+     25a:	55                   	push   %ebp
+     25b:	31 ed                	xor    %ebp,%ebp
+     25d:	57                   	push   %edi
+     25e:	89 d7                	mov    %edx,%edi
+     260:	56                   	push   %esi
+     261:	53                   	push   %ebx
+     262:	89 c3                	mov    %eax,%ebx
+     264:	83 ec 08             	sub    $0x8,%esp
+     267:	89 14 24             	mov    %edx,(%esp)
+     26a:	8b 70 40             	mov    0x40(%eax),%esi
+     26d:	89 e8                	mov    %ebp,%eax
+     26f:	83 ee 08             	sub    $0x8,%esi
+     272:	89 f1                	mov    %esi,%ecx
+     274:	89 f2                	mov    %esi,%edx
+     276:	c1 e9 02             	shr    $0x2,%ecx
+     279:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+     27d:	f3 ab                	rep stos %eax,%es:(%edi)
+     27f:	f6 c2 02             	test   $0x2,%dl
+     282:	74 02                	je     286 <crypt_iv_benbi_gen+0x2c>
+     284:	66 ab                	stos   %ax,%es:(%edi)
+     286:	f6 c2 01             	test   $0x1,%dl
+     289:	74 01                	je     28c <crypt_iv_benbi_gen+0x32>
+     28b:	aa                   	stos   %al,%es:(%edi)
+     28c:	8b 4b 2c             	mov    0x2c(%ebx),%ecx
+     28f:	31 ed                	xor    %ebp,%ebp
+     291:	8b 74 24 1c          	mov    0x1c(%esp),%esi
+     295:	8b 7c 24 20          	mov    0x20(%esp),%edi
+     299:	0f a5 f7             	shld   %cl,%esi,%edi
+     29c:	d3 e6                	shl    %cl,%esi
+     29e:	f6 c1 20             	test   $0x20,%cl
+     2a1:	0f 45 fe             	cmovne %esi,%edi
+     2a4:	0f 45 f5             	cmovne %ebp,%esi
+     2a7:	89 74 24 1c          	mov    %esi,0x1c(%esp)
+     2ab:	83 44 24 1c 01       	addl   $0x1,0x1c(%esp)
+     2b0:	8b 4c 24 1c          	mov    0x1c(%esp),%ecx
+     2b4:	89 7c 24 20          	mov    %edi,0x20(%esp)
+     2b8:	8b 3c 24             	mov    (%esp),%edi
+     2bb:	83 54 24 20 00       	adcl   $0x0,0x20(%esp)
+     2c0:	8b 5b 40             	mov    0x40(%ebx),%ebx
+     2c3:	8b 44 24 20          	mov    0x20(%esp),%eax
+     2c7:	0f c9                	bswap  %ecx
+     2c9:	0f c8                	bswap  %eax
+     2cb:	91                   	xchg   %eax,%ecx
+     2cc:	89 44 1f fc          	mov    %eax,-0x4(%edi,%ebx,1)
+     2d0:	31 c0                	xor    %eax,%eax
+     2d2:	89 4c 1f f8          	mov    %ecx,-0x8(%edi,%ebx,1)
+     2d6:	5b                   	pop    %ebx
+     2d7:	5e                   	pop    %esi
+     2d8:	5b                   	pop    %ebx
+     2d9:	5e                   	pop    %esi
+     2da:	5f                   	pop    %edi
+     2db:	5d                   	pop    %ebp
+     2dc:	c3                   	ret    
+
+000002dd <crypt_iv_essiv_gen>:
+     2dd:	55                   	push   %ebp
+     2de:	31 ed                	xor    %ebp,%ebp
+     2e0:	57                   	push   %edi
+     2e1:	89 d7                	mov    %edx,%edi
+     2e3:	56                   	push   %esi
+     2e4:	53                   	push   %ebx
+     2e5:	83 ec 08             	sub    $0x8,%esp
+     2e8:	89 04 24             	mov    %eax,(%esp)
+     2eb:	8b 70 40             	mov    0x40(%eax),%esi
+     2ee:	89 e8                	mov    %ebp,%eax
+     2f0:	89 f1                	mov    %esi,%ecx
+     2f2:	89 f3                	mov    %esi,%ebx
+     2f4:	c1 e9 02             	shr    $0x2,%ecx
+     2f7:	89 4c 24 04          	mov    %ecx,0x4(%esp)
+     2fb:	f3 ab                	rep stos %eax,%es:(%edi)
+     2fd:	f6 c3 02             	test   $0x2,%bl
+     300:	74 02                	je     304 <crypt_iv_essiv_gen+0x27>
+     302:	66 ab                	stos   %ax,%es:(%edi)
+     304:	f6 c3 01             	test   $0x1,%bl
+     307:	74 01                	je     30a <crypt_iv_essiv_gen+0x2d>
+     309:	aa                   	stos   %al,%es:(%edi)
+     30a:	8b 74 24 1c          	mov    0x1c(%esp),%esi
+     30e:	89 d1                	mov    %edx,%ecx
+     310:	8b 7c 24 20          	mov    0x20(%esp),%edi
+     314:	89 32                	mov    %esi,(%edx)
+     316:	89 7a 04             	mov    %edi,0x4(%edx)
+     319:	8b 04 24             	mov    (%esp),%eax
+     31c:	8b 58 2c             	mov    0x2c(%eax),%ebx
+     31f:	89 d8                	mov    %ebx,%eax
+     321:	ff 53 08             	call   *0x8(%ebx)
+     324:	31 c0                	xor    %eax,%eax
+     326:	5a                   	pop    %edx
+     327:	59                   	pop    %ecx
+     328:	5b                   	pop    %ebx
+     329:	5e                   	pop    %esi
+     32a:	5f                   	pop    %edi
+     32b:	5d                   	pop    %ebp
+     32c:	c3                   	ret    
+
+0000032d <crypt_iv_essiv_wipe>:
+     32d:	57                   	push   %edi
+     32e:	89 c2                	mov    %eax,%edx
+     330:	56                   	push   %esi
+     331:	53                   	push   %ebx
+     332:	8b 40 30             	mov    0x30(%eax),%eax
+     335:	8b 7a 34             	mov    0x34(%edx),%edi
+     338:	8b 58 18             	mov    0x18(%eax),%ebx
+     33b:	31 c0                	xor    %eax,%eax
+     33d:	89 d9                	mov    %ebx,%ecx
+     33f:	c1 e9 02             	shr    $0x2,%ecx
+     342:	f3 ab                	rep stos %eax,%es:(%edi)
+     344:	f6 c3 02             	test   $0x2,%bl
+     347:	74 02                	je     34b <crypt_iv_essiv_wipe+0x1e>
+     349:	66 ab                	stos   %ax,%es:(%edi)
+     34b:	f6 c3 01             	test   $0x1,%bl
+     34e:	74 01                	je     351 <crypt_iv_essiv_wipe+0x24>
+     350:	aa                   	stos   %al,%es:(%edi)
+     351:	8b 72 2c             	mov    0x2c(%edx),%esi
+     354:	89 d9                	mov    %ebx,%ecx
+     356:	8b 52 34             	mov    0x34(%edx),%edx
+     359:	89 f0                	mov    %esi,%eax
+     35b:	ff 56 04             	call   *0x4(%esi)
+     35e:	5b                   	pop    %ebx
+     35f:	5e                   	pop    %esi
+     360:	5f                   	pop    %edi
+     361:	c3                   	ret    
+
+00000362 <crypt_iv_plain_gen>:
+     362:	57                   	push   %edi
+     363:	89 d7                	mov    %edx,%edi
+     365:	56                   	push   %esi
+     366:	53                   	push   %ebx
+     367:	8b 58 40             	mov    0x40(%eax),%ebx
+     36a:	31 c0                	xor    %eax,%eax
+     36c:	8b 74 24 10          	mov    0x10(%esp),%esi
+     370:	89 d9                	mov    %ebx,%ecx
+     372:	c1 e9 02             	shr    $0x2,%ecx
+     375:	f3 ab                	rep stos %eax,%es:(%edi)
+     377:	f6 c3 02             	test   $0x2,%bl
+     37a:	74 02                	je     37e <crypt_iv_plain_gen+0x1c>
+     37c:	66 ab                	stos   %ax,%es:(%edi)
+     37e:	f6 c3 01             	test   $0x1,%bl
+     381:	74 01                	je     384 <crypt_iv_plain_gen+0x22>
+     383:	aa                   	stos   %al,%es:(%edi)
+     384:	89 32                	mov    %esi,(%edx)
+     386:	5b                   	pop    %ebx
+     387:	5e                   	pop    %esi
+     388:	5f                   	pop    %edi
+     389:	c3                   	ret    
+
+0000038a <crypt_status>:
+     38a:	55                   	push   %ebp
+     38b:	89 cd                	mov    %ecx,%ebp
+     38d:	57                   	push   %edi
+     38e:	56                   	push   %esi
+     38f:	53                   	push   %ebx
+     390:	83 ec 14             	sub    $0x14,%esp
+     393:	85 d2                	test   %edx,%edx
+     395:	8b 58 24             	mov    0x24(%eax),%ebx
+     398:	8b 74 24 28          	mov    0x28(%esp),%esi
+     39c:	74 09                	je     3a7 <crypt_status+0x1d>
+     39e:	4a                   	dec    %edx
+     39f:	0f 85 03 01 00 00    	jne    4a8 <crypt_status+0x11e>
+     3a5:	eb 08                	jmp    3af <crypt_status+0x25>
+     3a7:	c6 01 00             	movb   $0x0,(%ecx)
+     3aa:	e9 f9 00 00 00       	jmp    4a8 <crypt_status+0x11e>
+     3af:	8b 43 28             	mov    0x28(%ebx),%eax
+     3b2:	85 c0                	test   %eax,%eax
+     3b4:	74 23                	je     3d9 <crypt_status+0x4f>
+     3b6:	85 f6                	test   %esi,%esi
+     3b8:	74 41                	je     3fb <crypt_status+0x71>
+     3ba:	50                   	push   %eax
+     3bb:	8d 83 8c 00 00 00    	lea    0x8c(%ebx),%eax
+     3c1:	50                   	push   %eax
+     3c2:	8d 43 4c             	lea    0x4c(%ebx),%eax
+     3c5:	50                   	push   %eax
+     3c6:	68 cb 00 00 00       	push   $0xcb
+			3c7: R_386_32	.rodata.str1.1
+     3cb:	56                   	push   %esi
+     3cc:	51                   	push   %ecx
+     3cd:	e8 fc ff ff ff       	call   3ce <crypt_status+0x44>
+			3ce: R_386_PC32	scnprintf
+     3d2:	89 c7                	mov    %eax,%edi
+     3d4:	83 c4 18             	add    $0x18,%esp
+     3d7:	eb 24                	jmp    3fd <crypt_status+0x73>
+     3d9:	85 f6                	test   %esi,%esi
+     3db:	74 1e                	je     3fb <crypt_status+0x71>
+     3dd:	8d 83 8c 00 00 00    	lea    0x8c(%ebx),%eax
+     3e3:	50                   	push   %eax
+     3e4:	8d 43 4c             	lea    0x4c(%ebx),%eax
+     3e7:	50                   	push   %eax
+     3e8:	68 d5 00 00 00       	push   $0xd5
+			3e9: R_386_32	.rodata.str1.1
+     3ed:	56                   	push   %esi
+     3ee:	51                   	push   %ecx
+     3ef:	e8 fc ff ff ff       	call   3f0 <crypt_status+0x66>
+			3f0: R_386_PC32	scnprintf
+     3f4:	89 c7                	mov    %eax,%edi
+     3f6:	83 c4 14             	add    $0x14,%esp
+     3f9:	eb 02                	jmp    3fd <crypt_status+0x73>
+     3fb:	31 ff                	xor    %edi,%edi
+     3fd:	8b 93 d4 00 00 00    	mov    0xd4(%ebx),%edx
+     403:	85 d2                	test   %edx,%edx
+     405:	74 61                	je     468 <crypt_status+0xde>
+     407:	89 f1                	mov    %esi,%ecx
+     409:	29 f9                	sub    %edi,%ecx
+     40b:	8d 44 12 01          	lea    0x1(%edx,%edx,1),%eax
+     40f:	39 c1                	cmp    %eax,%ecx
+     411:	0f 82 8a 00 00 00    	jb     4a1 <crypt_status+0x117>
+     417:	8d 83 d8 00 00 00    	lea    0xd8(%ebx),%eax
+     41d:	31 c9                	xor    %ecx,%ecx
+     41f:	89 44 24 10          	mov    %eax,0x10(%esp)
+     423:	8d 44 3d 00          	lea    0x0(%ebp,%edi,1),%eax
+     427:	89 44 24 0c          	mov    %eax,0xc(%esp)
+     42b:	89 14 24             	mov    %edx,(%esp)
+     42e:	eb 28                	jmp    458 <crypt_status+0xce>
+     430:	8b 54 24 10          	mov    0x10(%esp),%edx
+     434:	0f b6 04 0a          	movzbl (%edx,%ecx,1),%eax
+     438:	50                   	push   %eax
+     439:	68 dc 00 00 00       	push   $0xdc
+			43a: R_386_32	.rodata.str1.1
+     43e:	ff 74 24 14          	pushl  0x14(%esp)
+     442:	89 4c 24 14          	mov    %ecx,0x14(%esp)
+     446:	e8 fc ff ff ff       	call   447 <crypt_status+0xbd>
+			447: R_386_PC32	sprintf
+     44b:	8b 4c 24 14          	mov    0x14(%esp),%ecx
+     44f:	83 44 24 18 02       	addl   $0x2,0x18(%esp)
+     454:	83 c4 0c             	add    $0xc,%esp
+     457:	41                   	inc    %ecx
+     458:	3b 0c 24             	cmp    (%esp),%ecx
+     45b:	72 d3                	jb     430 <crypt_status+0xa6>
+     45d:	8b 83 d4 00 00 00    	mov    0xd4(%ebx),%eax
+     463:	8d 3c 47             	lea    (%edi,%eax,2),%edi
+     466:	eb 0a                	jmp    472 <crypt_status+0xe8>
+     468:	39 f7                	cmp    %esi,%edi
+     46a:	73 35                	jae    4a1 <crypt_status+0x117>
+     46c:	c6 44 3d 00 2d       	movb   $0x2d,0x0(%ebp,%edi,1)
+     471:	47                   	inc    %edi
+     472:	39 f7                	cmp    %esi,%edi
+     474:	73 32                	jae    4a8 <crypt_status+0x11e>
+     476:	ff 73 08             	pushl  0x8(%ebx)
+     479:	29 fe                	sub    %edi,%esi
+     47b:	ff 73 04             	pushl  0x4(%ebx)
+     47e:	8b 03                	mov    (%ebx),%eax
+     480:	8d 7c 3d 00          	lea    0x0(%ebp,%edi,1),%edi
+     484:	83 c0 08             	add    $0x8,%eax
+     487:	50                   	push   %eax
+     488:	ff 73 3c             	pushl  0x3c(%ebx)
+     48b:	ff 73 38             	pushl  0x38(%ebx)
+     48e:	68 e1 00 00 00       	push   $0xe1
+			48f: R_386_32	.rodata.str1.1
+     493:	56                   	push   %esi
+     494:	57                   	push   %edi
+     495:	e8 fc ff ff ff       	call   496 <crypt_status+0x10c>
+			496: R_386_PC32	scnprintf
+     49a:	31 c0                	xor    %eax,%eax
+     49c:	83 c4 20             	add    $0x20,%esp
+     49f:	eb 09                	jmp    4aa <crypt_status+0x120>
+     4a1:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
+     4a6:	eb 02                	jmp    4aa <crypt_status+0x120>
+     4a8:	31 c0                	xor    %eax,%eax
+     4aa:	83 c4 14             	add    $0x14,%esp
+     4ad:	5b                   	pop    %ebx
+     4ae:	5e                   	pop    %esi
+     4af:	5f                   	pop    %edi
+     4b0:	5d                   	pop    %ebp
+     4b1:	c3                   	ret    
+
+000004b2 <trace_kmalloc>:
+     4b2:	55                   	push   %ebp
+     4b3:	89 c5                	mov    %eax,%ebp
+     4b5:	83 3d 04 00 00 00 00 	cmpl   $0x0,0x4
+			4b7: R_386_32	__tracepoint_kmalloc
+     4bc:	57                   	push   %edi
+     4bd:	89 d7                	mov    %edx,%edi
+     4bf:	56                   	push   %esi
+     4c0:	89 ce                	mov    %ecx,%esi
+     4c2:	53                   	push   %ebx
+     4c3:	74 24                	je     4e9 <trace_kmalloc+0x37>
+     4c5:	8b 1d 10 00 00 00    	mov    0x10,%ebx
+			4c7: R_386_32	__tracepoint_kmalloc
+     4cb:	85 db                	test   %ebx,%ebx
+     4cd:	74 1a                	je     4e9 <trace_kmalloc+0x37>
+     4cf:	ff 74 24 18          	pushl  0x18(%esp)
+     4d3:	89 fa                	mov    %edi,%edx
+     4d5:	ff 74 24 18          	pushl  0x18(%esp)
+     4d9:	89 e8                	mov    %ebp,%eax
+     4db:	89 f1                	mov    %esi,%ecx
+     4dd:	ff 13                	call   *(%ebx)
+     4df:	83 c3 04             	add    $0x4,%ebx
+     4e2:	83 3b 00             	cmpl   $0x0,(%ebx)
+     4e5:	58                   	pop    %eax
+     4e6:	5a                   	pop    %edx
+     4e7:	eb e4                	jmp    4cd <trace_kmalloc+0x1b>
+     4e9:	5b                   	pop    %ebx
+     4ea:	5e                   	pop    %esi
+     4eb:	5f                   	pop    %edi
+     4ec:	5d                   	pop    %ebp
+     4ed:	c3                   	ret    
+
+000004ee <crypt_map>:
+     4ee:	55                   	push   %ebp
+     4ef:	57                   	push   %edi
+     4f0:	56                   	push   %esi
+     4f1:	89 c6                	mov    %eax,%esi
+     4f3:	53                   	push   %ebx
+     4f4:	8b 42 14             	mov    0x14(%edx),%eax
+     4f7:	89 d3                	mov    %edx,%ebx
+     4f9:	a8 20                	test   $0x20,%al
+     4fb:	74 23                	je     520 <crypt_map+0x32>
+     4fd:	85 d2                	test   %edx,%edx
+     4ff:	74 06                	je     507 <crypt_map+0x19>
+     501:	83 7a 38 00          	cmpl   $0x0,0x38(%edx)
+     505:	75 19                	jne    520 <crypt_map+0x32>
+     507:	f6 c4 02             	test   $0x2,%ah
+     50a:	75 14                	jne    520 <crypt_map+0x32>
+     50c:	8b 46 24             	mov    0x24(%esi),%eax
+     50f:	8b 00                	mov    (%eax),%eax
+     511:	8b 00                	mov    (%eax),%eax
+     513:	89 43 0c             	mov    %eax,0xc(%ebx)
+     516:	b8 01 00 00 00       	mov    $0x1,%eax
+     51b:	e9 81 00 00 00       	jmp    5a1 <crypt_map+0xb3>
+     520:	8b 46 24             	mov    0x24(%esi),%eax
+     523:	ba 10 00 00 00       	mov    $0x10,%edx
+     528:	8b 3b                	mov    (%ebx),%edi
+     52a:	8b 6b 04             	mov    0x4(%ebx),%ebp
+     52d:	2b 7e 08             	sub    0x8(%esi),%edi
+     530:	8b 40 0c             	mov    0xc(%eax),%eax
+     533:	1b 6e 0c             	sbb    0xc(%esi),%ebp
+     536:	e8 fc ff ff ff       	call   537 <crypt_map+0x49>
+			537: R_386_PC32	mempool_alloc
+     53b:	89 30                	mov    %esi,(%eax)
+     53d:	8d 48 0c             	lea    0xc(%eax),%ecx
+     540:	89 58 04             	mov    %ebx,0x4(%eax)
+     543:	8d 50 08             	lea    0x8(%eax),%edx
+     546:	89 78 54             	mov    %edi,0x54(%eax)
+     549:	89 68 58             	mov    %ebp,0x58(%eax)
+     54c:	c7 40 50 00 00 00 00 	movl   $0x0,0x50(%eax)
+     553:	c7 40 5c 00 00 00 00 	movl   $0x0,0x5c(%eax)
+     55a:	c7 40 4c 00 00 00 00 	movl   $0x0,0x4c(%eax)
+     561:	f6 43 14 01          	testb  $0x1,0x14(%ebx)
+     565:	8b 5e 24             	mov    0x24(%esi),%ebx
+     568:	75 19                	jne    583 <crypt_map+0x95>
+     56a:	c7 40 08 00 00 00 00 	movl   $0x0,0x8(%eax)
+     571:	89 48 0c             	mov    %ecx,0xc(%eax)
+     574:	89 48 10             	mov    %ecx,0x10(%eax)
+     577:	c7 40 14 f1 05 00 00 	movl   $0x5f1,0x14(%eax)
+			57a: R_386_32	.text
+     57e:	8b 43 1c             	mov    0x1c(%ebx),%eax
+     581:	eb 17                	jmp    59a <crypt_map+0xac>
+     583:	c7 40 08 00 00 00 00 	movl   $0x0,0x8(%eax)
+     58a:	89 48 0c             	mov    %ecx,0xc(%eax)
+     58d:	89 48 10             	mov    %ecx,0x10(%eax)
+     590:	c7 40 14 7c 0b 00 00 	movl   $0xb7c,0x14(%eax)
+			593: R_386_32	.text
+     597:	8b 43 20             	mov    0x20(%ebx),%eax
+     59a:	e8 fc ff ff ff       	call   59b <crypt_map+0xad>
+			59b: R_386_PC32	queue_work
+     59f:	31 c0                	xor    %eax,%eax
+     5a1:	5b                   	pop    %ebx
+     5a2:	5e                   	pop    %esi
+     5a3:	5f                   	pop    %edi
+     5a4:	5d                   	pop    %ebp
+     5a5:	c3                   	ret    
+
+000005a6 <crypt_dec_pending>:
+     5a6:	57                   	push   %edi
+     5a7:	56                   	push   %esi
+     5a8:	53                   	push   %ebx
+     5a9:	eb 02                	jmp    5ad <crypt_dec_pending+0x7>
+     5ab:	89 d8                	mov    %ebx,%eax
+     5ad:	8b 10                	mov    (%eax),%edx
+     5af:	8b 78 04             	mov    0x4(%eax),%edi
+     5b2:	8b 58 5c             	mov    0x5c(%eax),%ebx
+     5b5:	8b 70 50             	mov    0x50(%eax),%esi
+     5b8:	8b 52 24             	mov    0x24(%edx),%edx
+     5bb:	f0 ff 48 4c          	lock decl 0x4c(%eax)
+     5bf:	0f 94 c1             	sete   %cl
+     5c2:	84 c9                	test   %cl,%cl
+     5c4:	74 27                	je     5ed <crypt_dec_pending+0x47>
+     5c6:	8b 52 0c             	mov    0xc(%edx),%edx
+     5c9:	e8 fc ff ff ff       	call   5ca <crypt_dec_pending+0x24>
+			5ca: R_386_PC32	mempool_free
+     5ce:	85 db                	test   %ebx,%ebx
+     5d0:	75 0c                	jne    5de <crypt_dec_pending+0x38>
+     5d2:	89 f2                	mov    %esi,%edx
+     5d4:	89 f8                	mov    %edi,%eax
+     5d6:	5b                   	pop    %ebx
+     5d7:	5e                   	pop    %esi
+     5d8:	5f                   	pop    %edi
+     5d9:	e9 fc ff ff ff       	jmp    5da <crypt_dec_pending+0x34>
+			5da: R_386_PC32	bio_endio
+     5de:	85 f6                	test   %esi,%esi
+     5e0:	74 c9                	je     5ab <crypt_dec_pending+0x5>
+     5e2:	83 7b 50 00          	cmpl   $0x0,0x50(%ebx)
+     5e6:	75 c3                	jne    5ab <crypt_dec_pending+0x5>
+     5e8:	89 73 50             	mov    %esi,0x50(%ebx)
+     5eb:	eb be                	jmp    5ab <crypt_dec_pending+0x5>
+     5ed:	5b                   	pop    %ebx
+     5ee:	5e                   	pop    %esi
+     5ef:	5f                   	pop    %edi
+     5f0:	c3                   	ret    
+
+000005f1 <kcryptd_io>:
+     5f1:	55                   	push   %ebp
+     5f2:	57                   	push   %edi
+     5f3:	89 c7                	mov    %eax,%edi
+     5f5:	56                   	push   %esi
+     5f6:	8d 70 f8             	lea    -0x8(%eax),%esi
+     5f9:	53                   	push   %ebx
+     5fa:	8b 5e 04             	mov    0x4(%esi),%ebx
+     5fd:	f6 43 14 01          	testb  $0x1,0x14(%ebx)
+     601:	0f 85 ab 00 00 00    	jne    6b2 <kcryptd_io+0xc1>
+     607:	8b 40 f8             	mov    -0x8(%eax),%eax
+     60a:	8b 68 24             	mov    0x24(%eax),%ebp
+     60d:	f0 ff 47 44          	lock incl 0x44(%edi)
+     611:	0f b7 43 1a          	movzwl 0x1a(%ebx),%eax
+     615:	0f b7 53 18          	movzwl 0x18(%ebx),%edx
+     619:	8b 4d 18             	mov    0x18(%ebp),%ecx
+     61c:	29 c2                	sub    %eax,%edx
+     61e:	b8 10 00 00 00       	mov    $0x10,%eax
+     623:	e8 fc ff ff ff       	call   624 <kcryptd_io+0x33>
+			624: R_386_PC32	bio_alloc_bioset
+     628:	85 c0                	test   %eax,%eax
+     62a:	75 12                	jne    63e <kcryptd_io+0x4d>
+     62c:	c7 46 50 f4 ff ff ff 	movl   $0xfffffff4,0x50(%esi)
+     633:	89 f0                	mov    %esi,%eax
+     635:	5b                   	pop    %ebx
+     636:	5e                   	pop    %esi
+     637:	5f                   	pop    %edi
+     638:	5d                   	pop    %ebp
+     639:	e9 68 ff ff ff       	jmp    5a6 <crypt_dec_pending>
+     63e:	8b 57 f8             	mov    -0x8(%edi),%edx
+     641:	8b 52 24             	mov    0x24(%edx),%edx
+     644:	89 70 40             	mov    %esi,0x40(%eax)
+     647:	c7 40 3c ce 06 00 00 	movl   $0x6ce,0x3c(%eax)
+			64a: R_386_32	.text
+     64e:	8b 12                	mov    (%edx),%edx
+     650:	8b 12                	mov    (%edx),%edx
+     652:	89 50 0c             	mov    %edx,0xc(%eax)
+     655:	8b 56 04             	mov    0x4(%esi),%edx
+     658:	8b 52 14             	mov    0x14(%edx),%edx
+     65b:	c7 40 48 be 06 00 00 	movl   $0x6be,0x48(%eax)
+			65e: R_386_32	.text
+     662:	66 c7 40 1a 00 00    	movw   $0x0,0x1a(%eax)
+     668:	89 50 14             	mov    %edx,0x14(%eax)
+     66b:	8b 53 18             	mov    0x18(%ebx),%edx
+     66e:	66 2b 53 1a          	sub    0x1a(%ebx),%dx
+     672:	66 89 50 18          	mov    %dx,0x18(%eax)
+     676:	8b 4b 20             	mov    0x20(%ebx),%ecx
+     679:	0f b7 d2             	movzwl %dx,%edx
+     67c:	89 48 20             	mov    %ecx,0x20(%eax)
+     67f:	8b 7e 58             	mov    0x58(%esi),%edi
+     682:	8b 76 54             	mov    0x54(%esi),%esi
+     685:	03 75 04             	add    0x4(%ebp),%esi
+     688:	13 7d 08             	adc    0x8(%ebp),%edi
+     68b:	6b d2 0c             	imul   $0xc,%edx,%edx
+     68e:	89 30                	mov    %esi,(%eax)
+     690:	89 78 04             	mov    %edi,0x4(%eax)
+     693:	0f b7 73 1a          	movzwl 0x1a(%ebx),%esi
+     697:	8b 78 38             	mov    0x38(%eax),%edi
+     69a:	89 d1                	mov    %edx,%ecx
+     69c:	c1 e9 02             	shr    $0x2,%ecx
+     69f:	6b f6 0c             	imul   $0xc,%esi,%esi
+     6a2:	03 73 38             	add    0x38(%ebx),%esi
+     6a5:	f3 a5                	rep movsl %ds:(%esi),%es:(%edi)
+     6a7:	89 d1                	mov    %edx,%ecx
+     6a9:	83 e1 03             	and    $0x3,%ecx
+     6ac:	74 02                	je     6b0 <kcryptd_io+0xbf>
+     6ae:	f3 a4                	rep movsb %ds:(%esi),%es:(%edi)
+     6b0:	eb 03                	jmp    6b5 <kcryptd_io+0xc4>
+     6b2:	8b 46 2c             	mov    0x2c(%esi),%eax
+     6b5:	5b                   	pop    %ebx
+     6b6:	5e                   	pop    %esi
+     6b7:	5f                   	pop    %edi
+     6b8:	5d                   	pop    %ebp
+     6b9:	e9 fc ff ff ff       	jmp    6ba <kcryptd_io+0xc9>
+			6ba: R_386_PC32	generic_make_request
+
+000006be <dm_crypt_bio_destructor>:
+     6be:	8b 50 40             	mov    0x40(%eax),%edx
+     6c1:	8b 12                	mov    (%edx),%edx
+     6c3:	8b 52 24             	mov    0x24(%edx),%edx
+     6c6:	8b 52 18             	mov    0x18(%edx),%edx
+     6c9:	e9 fc ff ff ff       	jmp    6ca <dm_crypt_bio_destructor+0xc>
+			6ca: R_386_PC32	bio_free
+
+000006ce <crypt_endio>:
+     6ce:	55                   	push   %ebp
+     6cf:	57                   	push   %edi
+     6d0:	89 d7                	mov    %edx,%edi
+     6d2:	56                   	push   %esi
+     6d3:	89 c6                	mov    %eax,%esi
+     6d5:	53                   	push   %ebx
+     6d6:	83 ec 0c             	sub    $0xc,%esp
+     6d9:	8b 58 40             	mov    0x40(%eax),%ebx
+     6dc:	8b 03                	mov    (%ebx),%eax
+     6de:	8b 48 24             	mov    0x24(%eax),%ecx
+     6e1:	8b 46 14             	mov    0x14(%esi),%eax
+     6e4:	83 e0 01             	and    $0x1,%eax
+     6e7:	85 d2                	test   %edx,%edx
+     6e9:	89 44 24 08          	mov    %eax,0x8(%esp)
+     6ed:	75 0c                	jne    6fb <crypt_endio+0x2d>
+     6ef:	f6 46 10 01          	testb  $0x1,0x10(%esi)
+     6f3:	b8 fb ff ff ff       	mov    $0xfffffffb,%eax
+     6f8:	0f 44 f8             	cmove  %eax,%edi
+     6fb:	83 7c 24 08 01       	cmpl   $0x1,0x8(%esp)
+     700:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
+     707:	00 
+     708:	75 3c                	jne    746 <crypt_endio+0x78>
+     70a:	eb 2c                	jmp    738 <crypt_endio+0x6a>
+     70c:	6b 5c 24 04 0c       	imul   $0xc,0x4(%esp),%ebx
+     711:	03 5e 38             	add    0x38(%esi),%ebx
+     714:	8b 03                	mov    (%ebx),%eax
+     716:	85 c0                	test   %eax,%eax
+     718:	75 04                	jne    71e <crypt_endio+0x50>
+     71a:	0f 0b                	ud2a   
+     71c:	eb fe                	jmp    71c <crypt_endio+0x4e>
+     71e:	8b 51 14             	mov    0x14(%ecx),%edx
+     721:	89 0c 24             	mov    %ecx,(%esp)
+     724:	e8 fc ff ff ff       	call   725 <crypt_endio+0x57>
+			725: R_386_PC32	mempool_free
+     729:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
+     72f:	ff 44 24 04          	incl   0x4(%esp)
+     733:	8b 0c 24             	mov    (%esp),%ecx
+     736:	eb 02                	jmp    73a <crypt_endio+0x6c>
+     738:	89 dd                	mov    %ebx,%ebp
+     73a:	0f b7 46 18          	movzwl 0x18(%esi),%eax
+     73e:	39 44 24 04          	cmp    %eax,0x4(%esp)
+     742:	72 c8                	jb     70c <crypt_endio+0x3e>
+     744:	89 eb                	mov    %ebp,%ebx
+     746:	89 f0                	mov    %esi,%eax
+     748:	e8 fc ff ff ff       	call   749 <crypt_endio+0x7b>
+			749: R_386_PC32	bio_put
+     74d:	85 ff                	test   %edi,%edi
+     74f:	75 35                	jne    786 <crypt_endio+0xb8>
+     751:	83 7c 24 08 00       	cmpl   $0x0,0x8(%esp)
+     756:	75 31                	jne    789 <crypt_endio+0xbb>
+     758:	8b 03                	mov    (%ebx),%eax
+     75a:	8d 53 08             	lea    0x8(%ebx),%edx
+     75d:	8b 48 24             	mov    0x24(%eax),%ecx
+     760:	8d 43 0c             	lea    0xc(%ebx),%eax
+     763:	c7 43 08 00 00 00 00 	movl   $0x0,0x8(%ebx)
+     76a:	89 43 0c             	mov    %eax,0xc(%ebx)
+     76d:	89 43 10             	mov    %eax,0x10(%ebx)
+     770:	c7 43 14 7c 0b 00 00 	movl   $0xb7c,0x14(%ebx)
+			773: R_386_32	.text
+     777:	8b 41 20             	mov    0x20(%ecx),%eax
+     77a:	83 c4 0c             	add    $0xc,%esp
+     77d:	5b                   	pop    %ebx
+     77e:	5e                   	pop    %esi
+     77f:	5f                   	pop    %edi
+     780:	5d                   	pop    %ebp
+     781:	e9 fc ff ff ff       	jmp    782 <crypt_endio+0xb4>
+			782: R_386_PC32	queue_work
+     786:	89 7b 50             	mov    %edi,0x50(%ebx)
+     789:	83 c4 0c             	add    $0xc,%esp
+     78c:	89 d8                	mov    %ebx,%eax
+     78e:	5b                   	pop    %ebx
+     78f:	5e                   	pop    %esi
+     790:	5f                   	pop    %edi
+     791:	5d                   	pop    %ebp
+     792:	e9 0f fe ff ff       	jmp    5a6 <crypt_dec_pending>
+
+00000797 <kcryptd_crypt_write_io_submit>:
+     797:	55                   	push   %ebp
+     798:	57                   	push   %edi
+     799:	56                   	push   %esi
+     79a:	53                   	push   %ebx
+     79b:	89 c3                	mov    %eax,%ebx
+     79d:	83 ec 04             	sub    $0x4,%esp
+     7a0:	89 c8                	mov    %ecx,%eax
+     7a2:	8b 0b                	mov    (%ebx),%ecx
+     7a4:	8b 73 2c             	mov    0x2c(%ebx),%esi
+     7a7:	8b 69 24             	mov    0x24(%ecx),%ebp
+     7aa:	31 c9                	xor    %ecx,%ecx
+     7ac:	85 d2                	test   %edx,%edx
+     7ae:	79 49                	jns    7f9 <kcryptd_crypt_write_io_submit+0x62>
+     7b0:	eb 25                	jmp    7d7 <kcryptd_crypt_write_io_submit+0x40>
+     7b2:	6b f9 0c             	imul   $0xc,%ecx,%edi
+     7b5:	03 7e 38             	add    0x38(%esi),%edi
+     7b8:	8b 07                	mov    (%edi),%eax
+     7ba:	85 c0                	test   %eax,%eax
+     7bc:	75 04                	jne    7c2 <kcryptd_crypt_write_io_submit+0x2b>
+     7be:	0f 0b                	ud2a   
+     7c0:	eb fe                	jmp    7c0 <kcryptd_crypt_write_io_submit+0x29>
+     7c2:	8b 55 14             	mov    0x14(%ebp),%edx
+     7c5:	89 0c 24             	mov    %ecx,(%esp)
+     7c8:	e8 fc ff ff ff       	call   7c9 <kcryptd_crypt_write_io_submit+0x32>
+			7c9: R_386_PC32	mempool_free
+     7cd:	c7 07 00 00 00 00    	movl   $0x0,(%edi)
+     7d3:	8b 0c 24             	mov    (%esp),%ecx
+     7d6:	41                   	inc    %ecx
+     7d7:	0f b7 46 18          	movzwl 0x18(%esi),%eax
+     7db:	39 c1                	cmp    %eax,%ecx
+     7dd:	72 d3                	jb     7b2 <kcryptd_crypt_write_io_submit+0x1b>
+     7df:	89 f0                	mov    %esi,%eax
+     7e1:	e8 fc ff ff ff       	call   7e2 <kcryptd_crypt_write_io_submit+0x4b>
+			7e2: R_386_PC32	bio_put
+     7e6:	89 d8                	mov    %ebx,%eax
+     7e8:	c7 43 50 fb ff ff ff 	movl   $0xfffffffb,0x50(%ebx)
+     7ef:	5e                   	pop    %esi
+     7f0:	5b                   	pop    %ebx
+     7f1:	5e                   	pop    %esi
+     7f2:	5f                   	pop    %edi
+     7f3:	5d                   	pop    %ebp
+     7f4:	e9 ad fd ff ff       	jmp    5a6 <crypt_dec_pending>
+     7f9:	0f b7 56 18          	movzwl 0x18(%esi),%edx
+     7fd:	39 53 3c             	cmp    %edx,0x3c(%ebx)
+     800:	73 04                	jae    806 <kcryptd_crypt_write_io_submit+0x6f>
+     802:	0f 0b                	ud2a   
+     804:	eb fe                	jmp    804 <kcryptd_crypt_write_io_submit+0x6d>
+     806:	8b 53 54             	mov    0x54(%ebx),%edx
+     809:	8b 4b 58             	mov    0x58(%ebx),%ecx
+     80c:	03 55 04             	add    0x4(%ebp),%edx
+     80f:	13 4d 08             	adc    0x8(%ebp),%ecx
+     812:	85 c0                	test   %eax,%eax
+     814:	89 16                	mov    %edx,(%esi)
+     816:	89 4e 04             	mov    %ecx,0x4(%esi)
+     819:	74 2c                	je     847 <kcryptd_crypt_write_io_submit+0xb0>
+     81b:	8b 03                	mov    (%ebx),%eax
+     81d:	8d 53 08             	lea    0x8(%ebx),%edx
+     820:	8b 48 24             	mov    0x24(%eax),%ecx
+     823:	8d 43 0c             	lea    0xc(%ebx),%eax
+     826:	c7 43 08 00 00 00 00 	movl   $0x0,0x8(%ebx)
+     82d:	89 43 0c             	mov    %eax,0xc(%ebx)
+     830:	89 43 10             	mov    %eax,0x10(%ebx)
+     833:	c7 43 14 f1 05 00 00 	movl   $0x5f1,0x14(%ebx)
+			836: R_386_32	.text
+     83a:	8b 41 1c             	mov    0x1c(%ecx),%eax
+     83d:	5b                   	pop    %ebx
+     83e:	5b                   	pop    %ebx
+     83f:	5e                   	pop    %esi
+     840:	5f                   	pop    %edi
+     841:	5d                   	pop    %ebp
+     842:	e9 fc ff ff ff       	jmp    843 <kcryptd_crypt_write_io_submit+0xac>
+			843: R_386_PC32	queue_work
+     847:	59                   	pop    %ecx
+     848:	89 f0                	mov    %esi,%eax
+     84a:	5b                   	pop    %ebx
+     84b:	5e                   	pop    %esi
+     84c:	5f                   	pop    %edi
+     84d:	5d                   	pop    %ebp
+     84e:	e9 fc ff ff ff       	jmp    84f <kcryptd_crypt_write_io_submit+0xb8>
+			84f: R_386_PC32	generic_make_request
+
+00000853 <crypt_convert_init>:
+     853:	55                   	push   %ebp
+     854:	31 ed                	xor    %ebp,%ebp
+     856:	57                   	push   %edi
+     857:	56                   	push   %esi
+     858:	53                   	push   %ebx
+     859:	8b 5c 24 14          	mov    0x14(%esp),%ebx
+     85d:	8b 74 24 18          	mov    0x18(%esp),%esi
+     861:	8b 7c 24 1c          	mov    0x1c(%esp),%edi
+     865:	89 4a 14             	mov    %ecx,0x14(%edx)
+     868:	85 db                	test   %ebx,%ebx
+     86a:	89 5a 10             	mov    %ebx,0x10(%edx)
+     86d:	c7 42 18 00 00 00 00 	movl   $0x0,0x18(%edx)
+     874:	c7 42 1c 00 00 00 00 	movl   $0x0,0x1c(%edx)
+     87b:	74 04                	je     881 <crypt_convert_init+0x2e>
+     87d:	0f b7 6b 1a          	movzwl 0x1a(%ebx),%ebp
+     881:	31 db                	xor    %ebx,%ebx
+     883:	85 c9                	test   %ecx,%ecx
+     885:	89 6a 20             	mov    %ebp,0x20(%edx)
+     888:	74 04                	je     88e <crypt_convert_init+0x3b>
+     88a:	0f b7 59 1a          	movzwl 0x1a(%ecx),%ebx
+     88e:	89 5a 24             	mov    %ebx,0x24(%edx)
+     891:	03 70 38             	add    0x38(%eax),%esi
+     894:	13 78 3c             	adc    0x3c(%eax),%edi
+     897:	c7 02 00 00 00 00    	movl   $0x0,(%edx)
+     89d:	8d 42 04             	lea    0x4(%edx),%eax
+     8a0:	89 72 28             	mov    %esi,0x28(%edx)
+     8a3:	89 7a 2c             	mov    %edi,0x2c(%edx)
+     8a6:	ba 00 00 00 00       	mov    $0x0,%edx
+			8a7: R_386_32	.bss
+     8ab:	5b                   	pop    %ebx
+     8ac:	5e                   	pop    %esi
+     8ad:	5f                   	pop    %edi
+     8ae:	5d                   	pop    %ebp
+     8af:	e9 fc ff ff ff       	jmp    8b0 <crypt_convert_init+0x5d>
+			8b0: R_386_PC32	__init_waitqueue_head
+
+000008b4 <kcryptd_async_done>:
+     8b4:	57                   	push   %edi
+     8b5:	56                   	push   %esi
+     8b6:	89 d6                	mov    %edx,%esi
+     8b8:	53                   	push   %ebx
+     8b9:	8b 40 0c             	mov    0xc(%eax),%eax
+     8bc:	83 fe 8d             	cmp    $0xffffff8d,%esi
+     8bf:	8b 38                	mov    (%eax),%edi
+     8c1:	8b 57 e8             	mov    -0x18(%edi),%edx
+     8c4:	8d 5f e8             	lea    -0x18(%edi),%ebx
+     8c7:	8b 4a 24             	mov    0x24(%edx),%ecx
+     8ca:	75 0a                	jne    8d6 <kcryptd_async_done+0x22>
+     8cc:	89 f8                	mov    %edi,%eax
+     8ce:	5b                   	pop    %ebx
+     8cf:	5e                   	pop    %esi
+     8d0:	5f                   	pop    %edi
+     8d1:	e9 fc ff ff ff       	jmp    8d2 <kcryptd_async_done+0x1e>
+			8d2: R_386_PC32	complete
+     8d6:	8b 51 10             	mov    0x10(%ecx),%edx
+     8d9:	2b 41 44             	sub    0x44(%ecx),%eax
+     8dc:	e8 fc ff ff ff       	call   8dd <kcryptd_async_done+0x29>
+			8dd: R_386_PC32	mempool_free
+     8e1:	f0 ff 4f 30          	lock decl 0x30(%edi)
+     8e5:	0f 94 c0             	sete   %al
+     8e8:	84 c0                	test   %al,%al
+     8ea:	74 2f                	je     91b <kcryptd_async_done+0x67>
+     8ec:	8b 43 04             	mov    0x4(%ebx),%eax
+     8ef:	f6 40 14 01          	testb  $0x1,0x14(%eax)
+     8f3:	75 15                	jne    90a <kcryptd_async_done+0x56>
+     8f5:	85 f6                	test   %esi,%esi
+     8f7:	79 07                	jns    900 <kcryptd_async_done+0x4c>
+     8f9:	c7 43 50 fb ff ff ff 	movl   $0xfffffffb,0x50(%ebx)
+     900:	89 d8                	mov    %ebx,%eax
+     902:	5b                   	pop    %ebx
+     903:	5e                   	pop    %esi
+     904:	5f                   	pop    %edi
+     905:	e9 9c fc ff ff       	jmp    5a6 <crypt_dec_pending>
+     90a:	89 f2                	mov    %esi,%edx
+     90c:	89 d8                	mov    %ebx,%eax
+     90e:	5b                   	pop    %ebx
+     90f:	b9 01 00 00 00       	mov    $0x1,%ecx
+     914:	5e                   	pop    %esi
+     915:	5f                   	pop    %edi
+     916:	e9 7c fe ff ff       	jmp    797 <kcryptd_crypt_write_io_submit>
+     91b:	5b                   	pop    %ebx
+     91c:	5e                   	pop    %esi
+     91d:	5f                   	pop    %edi
+     91e:	c3                   	ret    
+
+0000091f <crypt_convert>:
+     91f:	55                   	push   %ebp
+     920:	57                   	push   %edi
+     921:	56                   	push   %esi
+     922:	89 c6                	mov    %eax,%esi
+     924:	53                   	push   %ebx
+     925:	89 d3                	mov    %edx,%ebx
+     927:	83 ec 24             	sub    $0x24,%esp
+     92a:	8d 42 30             	lea    0x30(%edx),%eax
+     92d:	c7 42 30 01 00 00 00 	movl   $0x1,0x30(%edx)
+     934:	89 44 24 08          	mov    %eax,0x8(%esp)
+     938:	e9 19 02 00 00       	jmp    b56 <crypt_convert+0x237>
+     93d:	83 7e 48 00          	cmpl   $0x0,0x48(%esi)
+     941:	75 10                	jne    953 <crypt_convert+0x34>
+     943:	8b 46 10             	mov    0x10(%esi),%eax
+     946:	ba 10 00 00 00       	mov    $0x10,%edx
+     94b:	e8 fc ff ff ff       	call   94c <crypt_convert+0x2d>
+			94c: R_386_PC32	mempool_alloc
+     950:	89 46 48             	mov    %eax,0x48(%esi)
+     953:	8b 96 cc 00 00 00    	mov    0xcc(%esi),%edx
+     959:	8b 46 48             	mov    0x48(%esi),%eax
+     95c:	8b 52 18             	mov    0x18(%edx),%edx
+     95f:	89 50 10             	mov    %edx,0x10(%eax)
+     962:	8b 46 48             	mov    0x48(%esi),%eax
+     965:	8b 56 44             	mov    0x44(%esi),%edx
+     968:	c7 40 08 b4 08 00 00 	movl   $0x8b4,0x8(%eax)
+			96b: R_386_32	.text
+     96f:	01 c2                	add    %eax,%edx
+     971:	89 50 0c             	mov    %edx,0xc(%eax)
+     974:	c7 40 14 00 06 00 00 	movl   $0x600,0x14(%eax)
+     97b:	8b 54 24 08          	mov    0x8(%esp),%edx
+     97f:	f0 ff 02             	lock incl (%edx)
+     982:	8b 43 10             	mov    0x10(%ebx),%eax
+     985:	6b 4b 20 0c          	imul   $0xc,0x20(%ebx),%ecx
+     989:	8b 6e 48             	mov    0x48(%esi),%ebp
+     98c:	8b 7e 44             	mov    0x44(%esi),%edi
+     98f:	03 48 38             	add    0x38(%eax),%ecx
+     992:	8b 43 14             	mov    0x14(%ebx),%eax
+     995:	01 ef                	add    %ebp,%edi
+     997:	8d 57 04             	lea    0x4(%edi),%edx
+     99a:	8b 40 38             	mov    0x38(%eax),%eax
+     99d:	89 44 24 04          	mov    %eax,0x4(%esp)
+     9a1:	8b 43 24             	mov    0x24(%ebx),%eax
+     9a4:	89 44 24 0c          	mov    %eax,0xc(%esp)
+     9a8:	8b 86 cc 00 00 00    	mov    0xcc(%esi),%eax
+     9ae:	8b 40 2c             	mov    0x2c(%eax),%eax
+     9b1:	8b 40 1c             	mov    0x1c(%eax),%eax
+     9b4:	89 44 24 1c          	mov    %eax,0x1c(%esp)
+     9b8:	89 1f                	mov    %ebx,(%edi)
+     9ba:	89 54 24 18          	mov    %edx,0x18(%esp)
+     9be:	8b 44 24 18          	mov    0x18(%esp),%eax
+     9c2:	ba 01 00 00 00       	mov    $0x1,%edx
+     9c7:	89 0c 24             	mov    %ecx,(%esp)
+     9ca:	e8 fc ff ff ff       	call   9cb <crypt_convert+0xac>
+			9cb: R_386_PC32	sg_init_table
+     9cf:	8b 53 18             	mov    0x18(%ebx),%edx
+     9d2:	8b 0c 24             	mov    (%esp),%ecx
+     9d5:	8b 41 08             	mov    0x8(%ecx),%eax
+     9d8:	89 54 24 14          	mov    %edx,0x14(%esp)
+     9dc:	89 44 24 10          	mov    %eax,0x10(%esp)
+     9e0:	8b 47 04             	mov    0x4(%edi),%eax
+     9e3:	89 44 24 20          	mov    %eax,0x20(%esp)
+     9e7:	8b 11                	mov    (%ecx),%edx
+     9e9:	f6 c2 03             	test   $0x3,%dl
+     9ec:	74 04                	je     9f2 <crypt_convert+0xd3>
+     9ee:	0f 0b                	ud2a   
+     9f0:	eb fe                	jmp    9f0 <crypt_convert+0xd1>
+     9f2:	6b 44 24 0c 0c       	imul   $0xc,0xc(%esp),%eax
+     9f7:	03 44 24 04          	add    0x4(%esp),%eax
+     9fb:	89 44 24 04          	mov    %eax,0x4(%esp)
+     9ff:	8b 44 24 20          	mov    0x20(%esp),%eax
+     a03:	83 e0 03             	and    $0x3,%eax
+     a06:	09 d0                	or     %edx,%eax
+     a08:	89 47 04             	mov    %eax,0x4(%edi)
+     a0b:	8b 44 24 14          	mov    0x14(%esp),%eax
+     a0f:	8d 57 18             	lea    0x18(%edi),%edx
+     a12:	03 44 24 10          	add    0x10(%esp),%eax
+     a16:	c7 47 0c 00 02 00 00 	movl   $0x200,0xc(%edi)
+     a1d:	89 47 08             	mov    %eax,0x8(%edi)
+     a20:	89 54 24 0c          	mov    %edx,0xc(%esp)
+     a24:	8b 44 24 0c          	mov    0xc(%esp),%eax
+     a28:	ba 01 00 00 00       	mov    $0x1,%edx
+     a2d:	89 0c 24             	mov    %ecx,(%esp)
+     a30:	e8 fc ff ff ff       	call   a31 <crypt_convert+0x112>
+			a31: R_386_PC32	sg_init_table
+     a35:	8b 53 1c             	mov    0x1c(%ebx),%edx
+     a38:	8b 44 24 04          	mov    0x4(%esp),%eax
+     a3c:	8b 0c 24             	mov    (%esp),%ecx
+     a3f:	8b 40 08             	mov    0x8(%eax),%eax
+     a42:	89 54 24 14          	mov    %edx,0x14(%esp)
+     a46:	89 44 24 10          	mov    %eax,0x10(%esp)
+     a4a:	8b 47 18             	mov    0x18(%edi),%eax
+     a4d:	89 44 24 20          	mov    %eax,0x20(%esp)
+     a51:	8b 44 24 04          	mov    0x4(%esp),%eax
+     a55:	8b 10                	mov    (%eax),%edx
+     a57:	f6 c2 03             	test   $0x3,%dl
+     a5a:	74 04                	je     a60 <crypt_convert+0x141>
+     a5c:	0f 0b                	ud2a   
+     a5e:	eb fe                	jmp    a5e <crypt_convert+0x13f>
+     a60:	8b 44 24 20          	mov    0x20(%esp),%eax
+     a64:	83 e0 03             	and    $0x3,%eax
+     a67:	09 d0                	or     %edx,%eax
+     a69:	89 47 18             	mov    %eax,0x18(%edi)
+     a6c:	8b 44 24 14          	mov    0x14(%esp),%eax
+     a70:	03 44 24 10          	add    0x10(%esp),%eax
+     a74:	c7 47 20 00 02 00 00 	movl   $0x200,0x20(%edi)
+     a7b:	89 47 1c             	mov    %eax,0x1c(%edi)
+     a7e:	8b 43 18             	mov    0x18(%ebx),%eax
+     a81:	05 00 02 00 00       	add    $0x200,%eax
+     a86:	89 43 18             	mov    %eax,0x18(%ebx)
+     a89:	3b 41 04             	cmp    0x4(%ecx),%eax
+     a8c:	72 0a                	jb     a98 <crypt_convert+0x179>
+     a8e:	ff 43 20             	incl   0x20(%ebx)
+     a91:	c7 43 18 00 00 00 00 	movl   $0x0,0x18(%ebx)
+     a98:	8b 43 1c             	mov    0x1c(%ebx),%eax
+     a9b:	8b 54 24 04          	mov    0x4(%esp),%edx
+     a9f:	05 00 02 00 00       	add    $0x200,%eax
+     aa4:	89 43 1c             	mov    %eax,0x1c(%ebx)
+     aa7:	3b 42 04             	cmp    0x4(%edx),%eax
+     aaa:	72 0a                	jb     ab6 <crypt_convert+0x197>
+     aac:	ff 43 24             	incl   0x24(%ebx)
+     aaf:	c7 43 1c 00 00 00 00 	movl   $0x0,0x1c(%ebx)
+     ab6:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+     aba:	8b 4e 24             	mov    0x24(%esi),%ecx
+     abd:	8d 7c 07 2c          	lea    0x2c(%edi,%eax,1),%edi
+     ac1:	f7 d0                	not    %eax
+     ac3:	21 c7                	and    %eax,%edi
+     ac5:	85 c9                	test   %ecx,%ecx
+     ac7:	74 13                	je     adc <crypt_convert+0x1bd>
+     ac9:	ff 73 2c             	pushl  0x2c(%ebx)
+     acc:	89 fa                	mov    %edi,%edx
+     ace:	ff 73 28             	pushl  0x28(%ebx)
+     ad1:	89 f0                	mov    %esi,%eax
+     ad3:	ff 51 10             	call   *0x10(%ecx)
+     ad6:	5a                   	pop    %edx
+     ad7:	59                   	pop    %ecx
+     ad8:	85 c0                	test   %eax,%eax
+     ada:	78 30                	js     b0c <crypt_convert+0x1ed>
+     adc:	8b 54 24 18          	mov    0x18(%esp),%edx
+     ae0:	89 55 20             	mov    %edx,0x20(%ebp)
+     ae3:	8b 44 24 0c          	mov    0xc(%esp),%eax
+     ae7:	c7 45 18 00 02 00 00 	movl   $0x200,0x18(%ebp)
+     aee:	8b 55 10             	mov    0x10(%ebp),%edx
+     af1:	89 7d 1c             	mov    %edi,0x1c(%ebp)
+     af4:	89 45 24             	mov    %eax,0x24(%ebp)
+     af7:	8b 43 10             	mov    0x10(%ebx),%eax
+     afa:	f6 40 14 01          	testb  $0x1,0x14(%eax)
+     afe:	74 07                	je     b07 <crypt_convert+0x1e8>
+     b00:	89 e8                	mov    %ebp,%eax
+     b02:	ff 52 08             	call   *0x8(%edx)
+     b05:	eb 05                	jmp    b0c <crypt_convert+0x1ed>
+     b07:	89 e8                	mov    %ebp,%eax
+     b09:	ff 52 0c             	call   *0xc(%edx)
+     b0c:	83 f8 f0             	cmp    $0xfffffff0,%eax
+     b0f:	74 0b                	je     b1c <crypt_convert+0x1fd>
+     b11:	85 c0                	test   %eax,%eax
+     b13:	74 25                	je     b3a <crypt_convert+0x21b>
+     b15:	83 f8 8d             	cmp    $0xffffff8d,%eax
+     b18:	75 36                	jne    b50 <crypt_convert+0x231>
+     b1a:	eb 0d                	jmp    b29 <crypt_convert+0x20a>
+     b1c:	89 d8                	mov    %ebx,%eax
+     b1e:	e8 fc ff ff ff       	call   b1f <crypt_convert+0x200>
+			b1f: R_386_PC32	wait_for_completion
+     b23:	c7 03 00 00 00 00    	movl   $0x0,(%ebx)
+     b29:	c7 46 48 00 00 00 00 	movl   $0x0,0x48(%esi)
+     b30:	83 43 28 01          	addl   $0x1,0x28(%ebx)
+     b34:	83 53 2c 00          	adcl   $0x0,0x2c(%ebx)
+     b38:	eb 1c                	jmp    b56 <crypt_convert+0x237>
+     b3a:	8b 54 24 08          	mov    0x8(%esp),%edx
+     b3e:	f0 ff 0a             	lock decl (%edx)
+     b41:	83 43 28 01          	addl   $0x1,0x28(%ebx)
+     b45:	83 53 2c 00          	adcl   $0x0,0x2c(%ebx)
+     b49:	e8 fc ff ff ff       	call   b4a <crypt_convert+0x22b>
+			b4a: R_386_PC32	_cond_resched
+     b4e:	eb 06                	jmp    b56 <crypt_convert+0x237>
+     b50:	f0 ff 4b 30          	lock decl 0x30(%ebx)
+     b54:	eb 1e                	jmp    b74 <crypt_convert+0x255>
+     b56:	8b 43 10             	mov    0x10(%ebx),%eax
+     b59:	0f b7 40 18          	movzwl 0x18(%eax),%eax
+     b5d:	39 43 20             	cmp    %eax,0x20(%ebx)
+     b60:	73 10                	jae    b72 <crypt_convert+0x253>
+     b62:	8b 43 14             	mov    0x14(%ebx),%eax
+     b65:	0f b7 40 18          	movzwl 0x18(%eax),%eax
+     b69:	39 43 24             	cmp    %eax,0x24(%ebx)
+     b6c:	0f 82 cb fd ff ff    	jb     93d <crypt_convert+0x1e>
+     b72:	31 c0                	xor    %eax,%eax
+     b74:	83 c4 24             	add    $0x24,%esp
+     b77:	5b                   	pop    %ebx
+     b78:	5e                   	pop    %esi
+     b79:	5f                   	pop    %edi
+     b7a:	5d                   	pop    %ebp
+     b7b:	c3                   	ret    
+
+00000b7c <kcryptd_crypt>:
+     b7c:	55                   	push   %ebp
+     b7d:	57                   	push   %edi
+     b7e:	56                   	push   %esi
+     b7f:	53                   	push   %ebx
+     b80:	89 c3                	mov    %eax,%ebx
+     b82:	8d 70 f8             	lea    -0x8(%eax),%esi
+     b85:	83 ec 24             	sub    $0x24,%esp
+     b88:	8b 53 f8             	mov    -0x8(%ebx),%edx
+     b8b:	8b 46 04             	mov    0x4(%esi),%eax
+     b8e:	8d 7b 10             	lea    0x10(%ebx),%edi
+     b91:	f6 40 14 01          	testb  $0x1,0x14(%eax)
+     b95:	75 4b                	jne    be2 <kcryptd_crypt+0x66>
+     b97:	8b 6a 24             	mov    0x24(%edx),%ebp
+     b9a:	f0 ff 43 44          	lock incl 0x44(%ebx)
+     b9e:	ff 76 58             	pushl  0x58(%esi)
+     ba1:	89 c1                	mov    %eax,%ecx
+     ba3:	ff 76 54             	pushl  0x54(%esi)
+     ba6:	89 fa                	mov    %edi,%edx
+     ba8:	50                   	push   %eax
+     ba9:	89 e8                	mov    %ebp,%eax
+     bab:	e8 a3 fc ff ff       	call   853 <crypt_convert_init>
+     bb0:	89 fa                	mov    %edi,%edx
+     bb2:	89 e8                	mov    %ebp,%eax
+     bb4:	e8 66 fd ff ff       	call   91f <crypt_convert>
+     bb9:	f0 ff 4b 40          	lock decl 0x40(%ebx)
+     bbd:	0f 94 c2             	sete   %dl
+     bc0:	83 c4 0c             	add    $0xc,%esp
+     bc3:	84 d2                	test   %dl,%dl
+     bc5:	0f 84 33 02 00 00    	je     dfe <kcryptd_crypt+0x282>
+     bcb:	85 c0                	test   %eax,%eax
+     bcd:	79 07                	jns    bd6 <kcryptd_crypt+0x5a>
+     bcf:	c7 46 50 fb ff ff ff 	movl   $0xfffffffb,0x50(%esi)
+     bd6:	89 f0                	mov    %esi,%eax
+     bd8:	e8 c9 f9 ff ff       	call   5a6 <crypt_dec_pending>
+     bdd:	e9 1c 02 00 00       	jmp    dfe <kcryptd_crypt+0x282>
+     be2:	8b 52 24             	mov    0x24(%edx),%edx
+     be5:	89 54 24 1c          	mov    %edx,0x1c(%esp)
+     be9:	8b 40 20             	mov    0x20(%eax),%eax
+     bec:	89 44 24 04          	mov    %eax,0x4(%esp)
+     bf0:	8b 46 54             	mov    0x54(%esi),%eax
+     bf3:	8b 56 58             	mov    0x58(%esi),%edx
+     bf6:	89 44 24 08          	mov    %eax,0x8(%esp)
+     bfa:	89 54 24 0c          	mov    %edx,0xc(%esp)
+     bfe:	f0 ff 43 44          	lock incl 0x44(%ebx)
+     c02:	52                   	push   %edx
+     c03:	31 c9                	xor    %ecx,%ecx
+     c05:	50                   	push   %eax
+     c06:	89 fa                	mov    %edi,%edx
+     c08:	ff 76 04             	pushl  0x4(%esi)
+     c0b:	8b 44 24 28          	mov    0x28(%esp),%eax
+     c0f:	e8 3f fc ff ff       	call   853 <crypt_convert_init>
+     c14:	83 c4 0c             	add    $0xc,%esp
+     c17:	e9 d7 01 00 00       	jmp    df3 <kcryptd_crypt+0x277>
+     c1c:	8b 06                	mov    (%esi),%eax
+     c1e:	8b 54 24 04          	mov    0x4(%esp),%edx
+     c22:	8b 78 24             	mov    0x24(%eax),%edi
+     c25:	b8 10 00 00 00       	mov    $0x10,%eax
+     c2a:	81 c2 ff 0f 00 00    	add    $0xfff,%edx
+     c30:	c1 ea 0c             	shr    $0xc,%edx
+     c33:	89 54 24 14          	mov    %edx,0x14(%esp)
+     c37:	8b 4f 18             	mov    0x18(%edi),%ecx
+     c3a:	e8 fc ff ff ff       	call   c3b <kcryptd_crypt+0xbf>
+			c3b: R_386_PC32	bio_alloc_bioset
+     c3f:	85 c0                	test   %eax,%eax
+     c41:	89 c3                	mov    %eax,%ebx
+     c43:	0f 84 c9 00 00 00    	je     d12 <kcryptd_crypt+0x196>
+     c49:	8b 06                	mov    (%esi),%eax
+     c4b:	8b 40 24             	mov    0x24(%eax),%eax
+     c4e:	89 73 40             	mov    %esi,0x40(%ebx)
+     c51:	c7 43 3c ce 06 00 00 	movl   $0x6ce,0x3c(%ebx)
+			c54: R_386_32	.text
+     c58:	8b 00                	mov    (%eax),%eax
+     c5a:	8b 00                	mov    (%eax),%eax
+     c5c:	89 43 0c             	mov    %eax,0xc(%ebx)
+     c5f:	8b 46 04             	mov    0x4(%esi),%eax
+     c62:	8b 40 14             	mov    0x14(%eax),%eax
+     c65:	c7 43 48 be 06 00 00 	movl   $0x6be,0x48(%ebx)
+			c68: R_386_32	.text
+     c6c:	89 43 14             	mov    %eax,0x14(%ebx)
+     c6f:	8b 44 24 04          	mov    0x4(%esp),%eax
+     c73:	c7 44 24 18 00 00 00 	movl   $0x0,0x18(%esp)
+     c7a:	00 
+     c7b:	c7 04 24 12 00 00 00 	movl   $0x12,(%esp)
+     c82:	89 44 24 10          	mov    %eax,0x10(%esp)
+     c86:	eb 6d                	jmp    cf5 <kcryptd_crypt+0x179>
+     c88:	8b 47 14             	mov    0x14(%edi),%eax
+     c8b:	8b 14 24             	mov    (%esp),%edx
+     c8e:	e8 fc ff ff ff       	call   c8f <kcryptd_crypt+0x113>
+			c8f: R_386_PC32	mempool_alloc
+     c93:	85 c0                	test   %eax,%eax
+     c95:	89 c5                	mov    %eax,%ebp
+     c97:	75 07                	jne    ca0 <kcryptd_crypt+0x124>
+     c99:	bf 01 00 00 00       	mov    $0x1,%edi
+     c9e:	eb 61                	jmp    d01 <kcryptd_crypt+0x185>
+     ca0:	83 7c 24 18 07       	cmpl   $0x7,0x18(%esp)
+     ca5:	75 0e                	jne    cb5 <kcryptd_crypt+0x139>
+     ca7:	81 24 24 ef fd ff ff 	andl   $0xfffffdef,(%esp)
+     cae:	81 0c 24 00 02 00 00 	orl    $0x200,(%esp)
+     cb5:	81 7c 24 10 00 10 00 	cmpl   $0x1000,0x10(%esp)
+     cbc:	00 
+     cbd:	ba 00 10 00 00       	mov    $0x1000,%edx
+     cc2:	0f 46 54 24 10       	cmovbe 0x10(%esp),%edx
+     cc7:	89 d8                	mov    %ebx,%eax
+     cc9:	89 54 24 20          	mov    %edx,0x20(%esp)
+     ccd:	89 d1                	mov    %edx,%ecx
+     ccf:	89 ea                	mov    %ebp,%edx
+     cd1:	6a 00                	push   $0x0
+     cd3:	e8 fc ff ff ff       	call   cd4 <kcryptd_crypt+0x158>
+			cd4: R_386_PC32	bio_add_page
+     cd8:	5a                   	pop    %edx
+     cd9:	85 c0                	test   %eax,%eax
+     cdb:	75 0c                	jne    ce9 <kcryptd_crypt+0x16d>
+     cdd:	8b 57 14             	mov    0x14(%edi),%edx
+     ce0:	89 e8                	mov    %ebp,%eax
+     ce2:	e8 fc ff ff ff       	call   ce3 <kcryptd_crypt+0x167>
+			ce3: R_386_PC32	mempool_free
+     ce7:	eb 16                	jmp    cff <kcryptd_crypt+0x183>
+     ce9:	8b 44 24 20          	mov    0x20(%esp),%eax
+     ced:	29 44 24 10          	sub    %eax,0x10(%esp)
+     cf1:	ff 44 24 18          	incl   0x18(%esp)
+     cf5:	8b 54 24 14          	mov    0x14(%esp),%edx
+     cf9:	39 54 24 18          	cmp    %edx,0x18(%esp)
+     cfd:	72 89                	jb     c88 <kcryptd_crypt+0x10c>
+     cff:	31 ff                	xor    %edi,%edi
+     d01:	83 7b 20 00          	cmpl   $0x0,0x20(%ebx)
+     d05:	0f 85 01 01 00 00    	jne    e0c <kcryptd_crypt+0x290>
+     d0b:	89 d8                	mov    %ebx,%eax
+     d0d:	e8 fc ff ff ff       	call   d0e <kcryptd_crypt+0x192>
+			d0e: R_386_PC32	bio_put
+     d12:	c7 46 50 f4 ff ff ff 	movl   $0xfffffff4,0x50(%esi)
+     d19:	e9 e0 00 00 00       	jmp    dfe <kcryptd_crypt+0x282>
+     d1e:	31 c9                	xor    %ecx,%ecx
+     d20:	89 ea                	mov    %ebp,%edx
+     d22:	89 f0                	mov    %esi,%eax
+     d24:	e8 6e fa ff ff       	call   797 <kcryptd_crypt_write_io_submit>
+     d29:	85 ed                	test   %ebp,%ebp
+     d2b:	0f 88 cd 00 00 00    	js     dfe <kcryptd_crypt+0x282>
+     d31:	8b 44 24 08          	mov    0x8(%esp),%eax
+     d35:	8b 54 24 0c          	mov    0xc(%esp),%edx
+     d39:	89 46 54             	mov    %eax,0x54(%esi)
+     d3c:	89 56 58             	mov    %edx,0x58(%esi)
+     d3f:	85 ff                	test   %edi,%edi
+     d41:	74 0c                	je     d4f <kcryptd_crypt+0x1d3>
+     d43:	ba 02 00 00 00       	mov    $0x2,%edx
+     d48:	31 c0                	xor    %eax,%eax
+     d4a:	e8 fc ff ff ff       	call   d4b <kcryptd_crypt+0x1cf>
+			d4b: R_386_PC32	congestion_wait
+     d4f:	8b 14 24             	mov    (%esp),%edx
+     d52:	29 54 24 04          	sub    %edx,0x4(%esp)
+     d56:	85 db                	test   %ebx,%ebx
+     d58:	0f 85 95 00 00 00    	jne    df3 <kcryptd_crypt+0x277>
+     d5e:	83 7c 24 04 00       	cmpl   $0x0,0x4(%esp)
+     d63:	0f 84 95 00 00 00    	je     dfe <kcryptd_crypt+0x282>
+     d69:	8b 3e                	mov    (%esi),%edi
+     d6b:	ba 10 00 00 00       	mov    $0x10,%edx
+     d70:	8b 6e 04             	mov    0x4(%esi),%ebp
+     d73:	8b 47 24             	mov    0x24(%edi),%eax
+     d76:	8b 40 0c             	mov    0xc(%eax),%eax
+     d79:	e8 fc ff ff ff       	call   d7a <kcryptd_crypt+0x1fe>
+			d7a: R_386_PC32	mempool_alloc
+     d7e:	89 38                	mov    %edi,(%eax)
+     d80:	89 c3                	mov    %eax,%ebx
+     d82:	89 68 04             	mov    %ebp,0x4(%eax)
+     d85:	8b 44 24 08          	mov    0x8(%esp),%eax
+     d89:	8b 54 24 0c          	mov    0xc(%esp),%edx
+     d8d:	c7 43 50 00 00 00 00 	movl   $0x0,0x50(%ebx)
+     d94:	c7 43 5c 00 00 00 00 	movl   $0x0,0x5c(%ebx)
+     d9b:	89 43 54             	mov    %eax,0x54(%ebx)
+     d9e:	89 53 58             	mov    %edx,0x58(%ebx)
+     da1:	c7 43 4c 00 00 00 00 	movl   $0x0,0x4c(%ebx)
+     da8:	f0 ff 43 4c          	lock incl 0x4c(%ebx)
+     dac:	ff 74 24 0c          	pushl  0xc(%esp)
+     db0:	31 c9                	xor    %ecx,%ecx
+     db2:	ff 74 24 0c          	pushl  0xc(%esp)
+     db6:	ff 76 04             	pushl  0x4(%esi)
+     db9:	8b 44 24 28          	mov    0x28(%esp),%eax
+     dbd:	8d 53 18             	lea    0x18(%ebx),%edx
+     dc0:	e8 8e fa ff ff       	call   853 <crypt_convert_init>
+     dc5:	8b 46 38             	mov    0x38(%esi),%eax
+     dc8:	89 43 38             	mov    %eax,0x38(%ebx)
+     dcb:	8b 46 30             	mov    0x30(%esi),%eax
+     dce:	83 c4 0c             	add    $0xc,%esp
+     dd1:	89 43 30             	mov    %eax,0x30(%ebx)
+     dd4:	8b 46 5c             	mov    0x5c(%esi),%eax
+     dd7:	85 c0                	test   %eax,%eax
+     dd9:	75 05                	jne    de0 <kcryptd_crypt+0x264>
+     ddb:	89 73 5c             	mov    %esi,0x5c(%ebx)
+     dde:	eb 11                	jmp    df1 <kcryptd_crypt+0x275>
+     de0:	89 43 5c             	mov    %eax,0x5c(%ebx)
+     de3:	8b 46 5c             	mov    0x5c(%esi),%eax
+     de6:	f0 ff 40 4c          	lock incl 0x4c(%eax)
+     dea:	89 f0                	mov    %esi,%eax
+     dec:	e8 b5 f7 ff ff       	call   5a6 <crypt_dec_pending>
+     df1:	89 de                	mov    %ebx,%esi
+     df3:	83 7c 24 04 00       	cmpl   $0x0,0x4(%esp)
+     df8:	0f 85 1e fe ff ff    	jne    c1c <kcryptd_crypt+0xa0>
+     dfe:	83 c4 24             	add    $0x24,%esp
+     e01:	89 f0                	mov    %esi,%eax
+     e03:	5b                   	pop    %ebx
+     e04:	5e                   	pop    %esi
+     e05:	5f                   	pop    %edi
+     e06:	5d                   	pop    %ebp
+     e07:	e9 9a f7 ff ff       	jmp    5a6 <crypt_dec_pending>
+     e0c:	89 5e 2c             	mov    %ebx,0x2c(%esi)
+     e0f:	31 d2                	xor    %edx,%edx
+     e11:	c7 46 3c 00 00 00 00 	movl   $0x0,0x3c(%esi)
+     e18:	8b 5b 20             	mov    0x20(%ebx),%ebx
+     e1b:	89 d8                	mov    %ebx,%eax
+     e1d:	c1 e8 09             	shr    $0x9,%eax
+     e20:	01 44 24 08          	add    %eax,0x8(%esp)
+     e24:	11 54 24 0c          	adc    %edx,0xc(%esp)
+     e28:	89 1c 24             	mov    %ebx,(%esp)
+     e2b:	f0 ff 46 4c          	lock incl 0x4c(%esi)
+     e2f:	8b 44 24 1c          	mov    0x1c(%esp),%eax
+     e33:	8d 56 18             	lea    0x18(%esi),%edx
+     e36:	e8 e4 fa ff ff       	call   91f <crypt_convert>
+     e3b:	89 c5                	mov    %eax,%ebp
+     e3d:	f0 ff 4e 48          	lock decl 0x48(%esi)
+     e41:	0f 94 c0             	sete   %al
+     e44:	31 db                	xor    %ebx,%ebx
+     e46:	84 c0                	test   %al,%al
+     e48:	0f 95 c3             	setne  %bl
+     e4b:	85 db                	test   %ebx,%ebx
+     e4d:	0f 84 ec fe ff ff    	je     d3f <kcryptd_crypt+0x1c3>
+     e53:	e9 c6 fe ff ff       	jmp    d1e <kcryptd_crypt+0x1a2>
+
+00000e58 <crypt_dtr>:
+     e58:	56                   	push   %esi
+     e59:	89 c6                	mov    %eax,%esi
+     e5b:	53                   	push   %ebx
+     e5c:	8b 58 24             	mov    0x24(%eax),%ebx
+     e5f:	8b 43 1c             	mov    0x1c(%ebx),%eax
+     e62:	e8 fc ff ff ff       	call   e63 <crypt_dtr+0xb>
+			e63: R_386_PC32	destroy_workqueue
+     e67:	8b 43 20             	mov    0x20(%ebx),%eax
+     e6a:	e8 fc ff ff ff       	call   e6b <crypt_dtr+0x13>
+			e6b: R_386_PC32	destroy_workqueue
+     e6f:	8b 43 48             	mov    0x48(%ebx),%eax
+     e72:	85 c0                	test   %eax,%eax
+     e74:	74 08                	je     e7e <crypt_dtr+0x26>
+     e76:	8b 53 10             	mov    0x10(%ebx),%edx
+     e79:	e8 fc ff ff ff       	call   e7a <crypt_dtr+0x22>
+			e7a: R_386_PC32	mempool_free
+     e7e:	8b 43 18             	mov    0x18(%ebx),%eax
+     e81:	e8 fc ff ff ff       	call   e82 <crypt_dtr+0x2a>
+			e82: R_386_PC32	bioset_free
+     e86:	8b 43 14             	mov    0x14(%ebx),%eax
+     e89:	e8 fc ff ff ff       	call   e8a <crypt_dtr+0x32>
+			e8a: R_386_PC32	mempool_destroy
+     e8e:	8b 43 10             	mov    0x10(%ebx),%eax
+     e91:	e8 fc ff ff ff       	call   e92 <crypt_dtr+0x3a>
+			e92: R_386_PC32	mempool_destroy
+     e96:	8b 43 0c             	mov    0xc(%ebx),%eax
+     e99:	e8 fc ff ff ff       	call   e9a <crypt_dtr+0x42>
+			e9a: R_386_PC32	mempool_destroy
+     e9e:	8b 43 28             	mov    0x28(%ebx),%eax
+     ea1:	e8 fc ff ff ff       	call   ea2 <crypt_dtr+0x4a>
+			ea2: R_386_PC32	kfree
+     ea6:	8b 43 24             	mov    0x24(%ebx),%eax
+     ea9:	85 c0                	test   %eax,%eax
+     eab:	74 0b                	je     eb8 <crypt_dtr+0x60>
+     ead:	8b 50 04             	mov    0x4(%eax),%edx
+     eb0:	85 d2                	test   %edx,%edx
+     eb2:	74 04                	je     eb8 <crypt_dtr+0x60>
+     eb4:	89 d8                	mov    %ebx,%eax
+     eb6:	ff d2                	call   *%edx
+     eb8:	8b 83 cc 00 00 00    	mov    0xcc(%ebx),%eax
+     ebe:	89 c2                	mov    %eax,%edx
+     ec0:	e8 fc ff ff ff       	call   ec1 <crypt_dtr+0x69>
+			ec1: R_386_PC32	crypto_destroy_tfm
+     ec5:	8b 13                	mov    (%ebx),%edx
+     ec7:	89 f0                	mov    %esi,%eax
+     ec9:	e8 fc ff ff ff       	call   eca <crypt_dtr+0x72>
+			eca: R_386_PC32	dm_put_device
+     ece:	89 d8                	mov    %ebx,%eax
+     ed0:	5b                   	pop    %ebx
+     ed1:	5e                   	pop    %esi
+     ed2:	e9 fc ff ff ff       	jmp    ed3 <crypt_dtr+0x7b>
+			ed3: R_386_PC32	kzfree
+
+00000ed7 <crypt_iv_essiv_dtr>:
+     ed7:	53                   	push   %ebx
+     ed8:	89 c3                	mov    %eax,%ebx
+     eda:	8b 40 2c             	mov    0x2c(%eax),%eax
+     edd:	89 c2                	mov    %eax,%edx
+     edf:	e8 fc ff ff ff       	call   ee0 <crypt_iv_essiv_dtr+0x9>
+			ee0: R_386_PC32	crypto_destroy_tfm
+     ee4:	8b 43 30             	mov    0x30(%ebx),%eax
+     ee7:	c7 43 2c 00 00 00 00 	movl   $0x0,0x2c(%ebx)
+     eee:	89 c2                	mov    %eax,%edx
+     ef0:	e8 fc ff ff ff       	call   ef1 <crypt_iv_essiv_dtr+0x1a>
+			ef1: R_386_PC32	crypto_destroy_tfm
+     ef5:	8b 43 34             	mov    0x34(%ebx),%eax
+     ef8:	c7 43 30 00 00 00 00 	movl   $0x0,0x30(%ebx)
+     eff:	e8 fc ff ff ff       	call   f00 <crypt_iv_essiv_dtr+0x29>
+			f00: R_386_PC32	kzfree
+     f04:	c7 43 34 00 00 00 00 	movl   $0x0,0x34(%ebx)
+     f0b:	5b                   	pop    %ebx
+     f0c:	c3                   	ret    
+
+00000f0d <crypt_iv_benbi_ctr>:
+     f0d:	56                   	push   %esi
+     f0e:	53                   	push   %ebx
+     f0f:	8b 88 cc 00 00 00    	mov    0xcc(%eax),%ecx
+     f15:	83 cb ff             	or     $0xffffffff,%ebx
+     f18:	8b 49 2c             	mov    0x2c(%ecx),%ecx
+     f1b:	8b 71 14             	mov    0x14(%ecx),%esi
+     f1e:	0f bd ce             	bsr    %esi,%ecx
+     f21:	0f 44 cb             	cmove  %ebx,%ecx
+     f24:	bb 01 00 00 00       	mov    $0x1,%ebx
+     f29:	d3 e3                	shl    %cl,%ebx
+     f2b:	39 f3                	cmp    %esi,%ebx
+     f2d:	74 09                	je     f38 <crypt_iv_benbi_ctr+0x2b>
+     f2f:	c7 42 28 21 01 00 00 	movl   $0x121,0x28(%edx)
+			f32: R_386_32	.rodata.str1.1
+     f36:	eb 0c                	jmp    f44 <crypt_iv_benbi_ctr+0x37>
+     f38:	83 f9 09             	cmp    $0x9,%ecx
+     f3b:	7e 0e                	jle    f4b <crypt_iv_benbi_ctr+0x3e>
+     f3d:	c7 42 28 46 01 00 00 	movl   $0x146,0x28(%edx)
+			f40: R_386_32	.rodata.str1.1
+     f44:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+     f49:	eb 0c                	jmp    f57 <crypt_iv_benbi_ctr+0x4a>
+     f4b:	ba 09 00 00 00       	mov    $0x9,%edx
+     f50:	29 ca                	sub    %ecx,%edx
+     f52:	89 50 2c             	mov    %edx,0x2c(%eax)
+     f55:	31 c0                	xor    %eax,%eax
+     f57:	5b                   	pop    %ebx
+     f58:	5e                   	pop    %esi
+     f59:	c3                   	ret    
+
+00000f5a <crypt_iv_essiv_init>:
+     f5a:	57                   	push   %edi
+     f5b:	56                   	push   %esi
+     f5c:	53                   	push   %ebx
+     f5d:	89 c3                	mov    %eax,%ebx
+     f5f:	83 ec 1c             	sub    $0x1c,%esp
+     f62:	8b 88 d4 00 00 00    	mov    0xd4(%eax),%ecx
+     f68:	8d 90 d8 00 00 00    	lea    0xd8(%eax),%edx
+     f6e:	89 e0                	mov    %esp,%eax
+     f70:	89 e6                	mov    %esp,%esi
+     f72:	e8 fc ff ff ff       	call   f73 <crypt_iv_essiv_init+0x19>
+			f73: R_386_PC32	sg_init_one
+     f77:	8b 7b 30             	mov    0x30(%ebx),%edi
+     f7a:	89 f2                	mov    %esi,%edx
+     f7c:	8b 8b d4 00 00 00    	mov    0xd4(%ebx),%ecx
+     f82:	89 7c 24 14          	mov    %edi,0x14(%esp)
+     f86:	8d 44 24 14          	lea    0x14(%esp),%eax
+     f8a:	c7 44 24 18 00 02 00 	movl   $0x200,0x18(%esp)
+     f91:	00 
+     f92:	ff 73 34             	pushl  0x34(%ebx)
+     f95:	ff 57 10             	call   *0x10(%edi)
+     f98:	59                   	pop    %ecx
+     f99:	85 c0                	test   %eax,%eax
+     f9b:	75 11                	jne    fae <crypt_iv_essiv_init+0x54>
+     f9d:	8b 43 30             	mov    0x30(%ebx),%eax
+     fa0:	8b 73 2c             	mov    0x2c(%ebx),%esi
+     fa3:	8b 53 34             	mov    0x34(%ebx),%edx
+     fa6:	8b 48 18             	mov    0x18(%eax),%ecx
+     fa9:	89 f0                	mov    %esi,%eax
+     fab:	ff 56 04             	call   *0x4(%esi)
+     fae:	83 c4 1c             	add    $0x1c,%esp
+     fb1:	5b                   	pop    %ebx
+     fb2:	5e                   	pop    %esi
+     fb3:	5f                   	pop    %edi
+     fb4:	c3                   	ret    
+
+00000fb5 <T.871>:
+     fb5:	ba d0 80 00 00       	mov    $0x80d0,%edx
+     fba:	e9 fc ff ff ff       	jmp    fbb <T.871+0x6>
+			fbb: R_386_PC32	__kmalloc
+
+00000fbf <crypt_iv_essiv_ctr>:
+     fbf:	55                   	push   %ebp
+     fc0:	85 c9                	test   %ecx,%ecx
+     fc2:	57                   	push   %edi
+     fc3:	89 d7                	mov    %edx,%edi
+     fc5:	56                   	push   %esi
+     fc6:	89 c6                	mov    %eax,%esi
+     fc8:	53                   	push   %ebx
+     fc9:	89 c8                	mov    %ecx,%eax
+     fcb:	75 11                	jne    fde <crypt_iv_essiv_ctr+0x1f>
+     fcd:	c7 42 28 99 01 00 00 	movl   $0x199,0x28(%edx)
+			fd0: R_386_32	.rodata.str1.1
+     fd4:	be ea ff ff ff       	mov    $0xffffffea,%esi
+     fd9:	e9 c3 00 00 00       	jmp    10a1 <crypt_iv_essiv_ctr+0xe2>
+     fde:	b9 8e 00 00 00       	mov    $0x8e,%ecx
+     fe3:	ba 08 00 00 00       	mov    $0x8,%edx
+     fe8:	e8 fc ff ff ff       	call   fe9 <crypt_iv_essiv_ctr+0x2a>
+			fe9: R_386_PC32	crypto_alloc_base
+     fed:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+     ff2:	89 c3                	mov    %eax,%ebx
+     ff4:	76 0e                	jbe    1004 <crypt_iv_essiv_ctr+0x45>
+     ff6:	c7 47 28 c1 01 00 00 	movl   $0x1c1,0x28(%edi)
+			ff9: R_386_32	.rodata.str1.1
+     ffd:	89 c6                	mov    %eax,%esi
+     fff:	e9 a4 00 00 00       	jmp    10a8 <crypt_iv_essiv_ctr+0xe9>
+    1004:	8b 40 18             	mov    0x18(%eax),%eax
+    1007:	e8 a9 ff ff ff       	call   fb5 <T.871>
+    100c:	85 c0                	test   %eax,%eax
+    100e:	89 c5                	mov    %eax,%ebp
+    1010:	75 11                	jne    1023 <crypt_iv_essiv_ctr+0x64>
+    1012:	c7 47 28 df 01 00 00 	movl   $0x1df,0x28(%edi)
+			1015: R_386_32	.rodata.str1.1
+    1019:	be f4 ff ff ff       	mov    $0xfffffff4,%esi
+    101e:	e9 85 00 00 00       	jmp    10a8 <crypt_iv_essiv_ctr+0xe9>
+    1023:	8d 46 4c             	lea    0x4c(%esi),%eax
+    1026:	b9 8f 00 00 00       	mov    $0x8f,%ecx
+    102b:	ba 01 00 00 00       	mov    $0x1,%edx
+    1030:	e8 fc ff ff ff       	call   1031 <crypt_iv_essiv_ctr+0x72>
+			1031: R_386_PC32	crypto_alloc_base
+    1035:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+    103a:	76 0b                	jbe    1047 <crypt_iv_essiv_ctr+0x88>
+    103c:	c7 47 28 06 02 00 00 	movl   $0x206,0x28(%edi)
+			103f: R_386_32	.rodata.str1.1
+    1043:	89 c6                	mov    %eax,%esi
+    1045:	eb 2c                	jmp    1073 <crypt_iv_essiv_ctr+0xb4>
+    1047:	8b 48 2c             	mov    0x2c(%eax),%ecx
+    104a:	8b 96 cc 00 00 00    	mov    0xcc(%esi),%edx
+    1050:	8b 49 14             	mov    0x14(%ecx),%ecx
+    1053:	3b 4a 1c             	cmp    0x1c(%edx),%ecx
+    1056:	74 0e                	je     1066 <crypt_iv_essiv_ctr+0xa7>
+    1058:	c7 47 28 2c 02 00 00 	movl   $0x22c,0x28(%edi)
+			105b: R_386_32	.rodata.str1.1
+    105f:	be ea ff ff ff       	mov    $0xffffffea,%esi
+    1064:	eb 0d                	jmp    1073 <crypt_iv_essiv_ctr+0xb4>
+    1066:	89 6e 34             	mov    %ebp,0x34(%esi)
+    1069:	89 46 2c             	mov    %eax,0x2c(%esi)
+    106c:	89 5e 30             	mov    %ebx,0x30(%esi)
+    106f:	31 f6                	xor    %esi,%esi
+    1071:	eb 2e                	jmp    10a1 <crypt_iv_essiv_ctr+0xe2>
+    1073:	85 c0                	test   %eax,%eax
+    1075:	74 0e                	je     1085 <crypt_iv_essiv_ctr+0xc6>
+    1077:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+    107c:	77 07                	ja     1085 <crypt_iv_essiv_ctr+0xc6>
+    107e:	89 c2                	mov    %eax,%edx
+    1080:	e8 fc ff ff ff       	call   1081 <crypt_iv_essiv_ctr+0xc2>
+			1081: R_386_PC32	crypto_destroy_tfm
+    1085:	85 db                	test   %ebx,%ebx
+    1087:	74 11                	je     109a <crypt_iv_essiv_ctr+0xdb>
+    1089:	81 fb 00 f0 ff ff    	cmp    $0xfffff000,%ebx
+    108f:	77 09                	ja     109a <crypt_iv_essiv_ctr+0xdb>
+    1091:	89 da                	mov    %ebx,%edx
+    1093:	89 d8                	mov    %ebx,%eax
+    1095:	e8 fc ff ff ff       	call   1096 <crypt_iv_essiv_ctr+0xd7>
+			1096: R_386_PC32	crypto_destroy_tfm
+    109a:	89 e8                	mov    %ebp,%eax
+    109c:	e8 fc ff ff ff       	call   109d <crypt_iv_essiv_ctr+0xde>
+			109d: R_386_PC32	kfree
+    10a1:	89 f0                	mov    %esi,%eax
+    10a3:	5b                   	pop    %ebx
+    10a4:	5e                   	pop    %esi
+    10a5:	5f                   	pop    %edi
+    10a6:	5d                   	pop    %ebp
+    10a7:	c3                   	ret    
+    10a8:	31 ed                	xor    %ebp,%ebp
+    10aa:	eb d9                	jmp    1085 <crypt_iv_essiv_ctr+0xc6>
+
+000010ac <crypt_ctr>:
+    10ac:	55                   	push   %ebp
+    10ad:	57                   	push   %edi
+    10ae:	56                   	push   %esi
+    10af:	89 c6                	mov    %eax,%esi
+    10b1:	53                   	push   %ebx
+    10b2:	83 ec 28             	sub    $0x28,%esp
+    10b5:	83 fa 05             	cmp    $0x5,%edx
+    10b8:	89 4c 24 08          	mov    %ecx,0x8(%esp)
+    10bc:	74 0c                	je     10ca <crypt_ctr+0x1e>
+    10be:	c7 40 28 6e 02 00 00 	movl   $0x26e,0x28(%eax)
+			10c1: R_386_32	.rodata.str1.1
+    10c5:	e9 11 05 00 00       	jmp    15db <crypt_ctr+0x52f>
+    10ca:	8b 54 24 08          	mov    0x8(%esp),%edx
+    10ce:	8d 5c 24 24          	lea    0x24(%esp),%ebx
+    10d2:	8b 02                	mov    (%edx),%eax
+    10d4:	ba 42 00 00 00       	mov    $0x42,%edx
+			10d5: R_386_32	.rodata.str1.1
+    10d9:	89 44 24 24          	mov    %eax,0x24(%esp)
+    10dd:	89 d8                	mov    %ebx,%eax
+    10df:	e8 fc ff ff ff       	call   10e0 <crypt_ctr+0x34>
+			10e0: R_386_PC32	strsep
+    10e4:	ba 42 00 00 00       	mov    $0x42,%edx
+			10e5: R_386_32	.rodata.str1.1
+    10e9:	89 44 24 14          	mov    %eax,0x14(%esp)
+    10ed:	89 d8                	mov    %ebx,%eax
+    10ef:	e8 fc ff ff ff       	call   10f0 <crypt_ctr+0x44>
+			10f0: R_386_PC32	strsep
+    10f4:	ba 42 00 00 00       	mov    $0x42,%edx
+			10f5: R_386_32	.rodata.str1.1
+    10f9:	89 44 24 04          	mov    %eax,0x4(%esp)
+    10fd:	89 d8                	mov    %ebx,%eax
+    10ff:	e8 fc ff ff ff       	call   1100 <crypt_ctr+0x54>
+			1100: R_386_PC32	strsep
+    1104:	ba 83 02 00 00       	mov    $0x283,%edx
+			1105: R_386_32	.rodata.str1.1
+    1109:	89 44 24 20          	mov    %eax,0x20(%esp)
+    110d:	8d 44 24 20          	lea    0x20(%esp),%eax
+    1111:	e8 fc ff ff ff       	call   1112 <crypt_ctr+0x66>
+			1112: R_386_PC32	strsep
+    1116:	83 7c 24 24 00       	cmpl   $0x0,0x24(%esp)
+    111b:	89 c5                	mov    %eax,%ebp
+    111d:	74 0b                	je     112a <crypt_ctr+0x7e>
+    111f:	68 85 02 00 00       	push   $0x285
+			1120: R_386_32	.rodata.str1.1
+    1124:	e8 fc ff ff ff       	call   1125 <crypt_ctr+0x79>
+			1125: R_386_PC32	printk
+    1129:	5b                   	pop    %ebx
+    112a:	8b 4c 24 08          	mov    0x8(%esp),%ecx
+    112e:	8b 41 04             	mov    0x4(%ecx),%eax
+    1131:	e8 fc ff ff ff       	call   1132 <crypt_ctr+0x86>
+			1132: R_386_PC32	strlen
+    1136:	d1 e8                	shr    %eax
+    1138:	89 44 24 0c          	mov    %eax,0xc(%esp)
+    113c:	05 d8 00 00 00       	add    $0xd8,%eax
+    1141:	e8 6f fe ff ff       	call   fb5 <T.871>
+    1146:	85 c0                	test   %eax,%eax
+    1148:	89 c3                	mov    %eax,%ebx
+    114a:	75 11                	jne    115d <crypt_ctr+0xb1>
+    114c:	c7 46 28 c4 02 00 00 	movl   $0x2c4,0x28(%esi)
+			114f: R_386_32	.rodata.str1.1
+    1153:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
+    1158:	e9 83 04 00 00       	jmp    15e0 <crypt_ctr+0x534>
+    115d:	8b 44 24 08          	mov    0x8(%esp),%eax
+    1161:	8b 50 04             	mov    0x4(%eax),%edx
+    1164:	89 d8                	mov    %ebx,%eax
+    1166:	e8 39 ef ff ff       	call   a4 <crypt_set_key>
+    116b:	85 c0                	test   %eax,%eax
+    116d:	74 0c                	je     117b <crypt_ctr+0xcf>
+    116f:	c7 46 28 f3 02 00 00 	movl   $0x2f3,0x28(%esi)
+			1172: R_386_32	.rodata.str1.1
+    1176:	e9 59 04 00 00       	jmp    15d4 <crypt_ctr+0x528>
+    117b:	83 7c 24 04 00       	cmpl   $0x0,0x4(%esp)
+    1180:	74 16                	je     1198 <crypt_ctr+0xec>
+    1182:	8b 44 24 04          	mov    0x4(%esp),%eax
+    1186:	ba 06 03 00 00       	mov    $0x306,%edx
+			1187: R_386_32	.rodata.str1.1
+    118b:	e8 fc ff ff ff       	call   118c <crypt_ctr+0xe0>
+			118c: R_386_PC32	strcmp
+    1190:	85 c0                	test   %eax,%eax
+    1192:	75 11                	jne    11a5 <crypt_ctr+0xf9>
+    1194:	85 ed                	test   %ebp,%ebp
+    1196:	75 0d                	jne    11a5 <crypt_ctr+0xf9>
+    1198:	bd 06 03 00 00       	mov    $0x306,%ebp
+			1199: R_386_32	.rodata.str1.1
+    119d:	c7 44 24 04 0c 03 00 	movl   $0x30c,0x4(%esp)
+    11a4:	00 
+			11a1: R_386_32	.rodata.str1.1
+    11a5:	8b 44 24 04          	mov    0x4(%esp),%eax
+    11a9:	ba 10 03 00 00       	mov    $0x310,%edx
+			11aa: R_386_32	.rodata.str1.1
+    11ae:	e8 fc ff ff ff       	call   11af <crypt_ctr+0x103>
+			11af: R_386_PC32	strcmp
+    11b3:	85 c0                	test   %eax,%eax
+    11b5:	74 10                	je     11c7 <crypt_ctr+0x11b>
+    11b7:	85 ed                	test   %ebp,%ebp
+    11b9:	75 0c                	jne    11c7 <crypt_ctr+0x11b>
+    11bb:	c7 46 28 14 03 00 00 	movl   $0x314,0x28(%esi)
+			11be: R_386_32	.rodata.str1.1
+    11c2:	e9 0d 04 00 00       	jmp    15d4 <crypt_ctr+0x528>
+    11c7:	8d 53 4c             	lea    0x4c(%ebx),%edx
+    11ca:	89 54 24 10          	mov    %edx,0x10(%esp)
+    11ce:	ff 74 24 14          	pushl  0x14(%esp)
+    11d2:	ff 74 24 08          	pushl  0x8(%esp)
+    11d6:	68 40 03 00 00       	push   $0x340
+			11d7: R_386_32	.rodata.str1.1
+    11db:	6a 40                	push   $0x40
+    11dd:	52                   	push   %edx
+    11de:	e8 fc ff ff ff       	call   11df <crypt_ctr+0x133>
+			11df: R_386_PC32	snprintf
+    11e3:	83 c4 14             	add    $0x14,%esp
+    11e6:	83 f8 3f             	cmp    $0x3f,%eax
+    11e9:	7e 0c                	jle    11f7 <crypt_ctr+0x14b>
+    11eb:	c7 46 28 47 03 00 00 	movl   $0x347,0x28(%esi)
+			11ee: R_386_32	.rodata.str1.1
+    11f2:	e9 dd 03 00 00       	jmp    15d4 <crypt_ctr+0x528>
+    11f7:	8b 44 24 10          	mov    0x10(%esp),%eax
+    11fb:	31 c9                	xor    %ecx,%ecx
+    11fd:	31 d2                	xor    %edx,%edx
+    11ff:	e8 fc ff ff ff       	call   1200 <crypt_ctr+0x154>
+			1200: R_386_PC32	crypto_alloc_ablkcipher
+    1204:	3d 00 f0 ff ff       	cmp    $0xfffff000,%eax
+    1209:	89 c7                	mov    %eax,%edi
+    120b:	76 0c                	jbe    1219 <crypt_ctr+0x16d>
+    120d:	c7 46 28 6c 03 00 00 	movl   $0x36c,0x28(%esi)
+			1210: R_386_32	.rodata.str1.1
+    1214:	e9 bb 03 00 00       	jmp    15d4 <crypt_ctr+0x528>
+    1219:	8b 54 24 14          	mov    0x14(%esp),%edx
+    121d:	8b 44 24 10          	mov    0x10(%esp),%eax
+    1221:	e8 fc ff ff ff       	call   1222 <crypt_ctr+0x176>
+			1222: R_386_PC32	strcpy
+    1226:	8d 83 8c 00 00 00    	lea    0x8c(%ebx),%eax
+    122c:	8b 54 24 04          	mov    0x4(%esp),%edx
+    1230:	e8 fc ff ff ff       	call   1231 <crypt_ctr+0x185>
+			1231: R_386_PC32	strcpy
+    1235:	85 ed                	test   %ebp,%ebp
+    1237:	89 bb cc 00 00 00    	mov    %edi,0xcc(%ebx)
+    123d:	75 09                	jne    1248 <crypt_ctr+0x19c>
+    123f:	c7 43 24 00 00 00 00 	movl   $0x0,0x24(%ebx)
+    1246:	eb 70                	jmp    12b8 <crypt_ctr+0x20c>
+    1248:	ba 06 03 00 00       	mov    $0x306,%edx
+			1249: R_386_32	.rodata.str1.1
+    124d:	89 e8                	mov    %ebp,%eax
+    124f:	e8 fc ff ff ff       	call   1250 <crypt_ctr+0x1a4>
+			1250: R_386_PC32	strcmp
+    1254:	85 c0                	test   %eax,%eax
+    1256:	75 09                	jne    1261 <crypt_ctr+0x1b5>
+    1258:	c7 43 24 6c 00 00 00 	movl   $0x6c,0x24(%ebx)
+			125b: R_386_32	.data
+    125f:	eb 57                	jmp    12b8 <crypt_ctr+0x20c>
+    1261:	ba 88 03 00 00       	mov    $0x388,%edx
+			1262: R_386_32	.rodata.str1.1
+    1266:	89 e8                	mov    %ebp,%eax
+    1268:	e8 fc ff ff ff       	call   1269 <crypt_ctr+0x1bd>
+			1269: R_386_PC32	strcmp
+    126d:	85 c0                	test   %eax,%eax
+    126f:	75 09                	jne    127a <crypt_ctr+0x1ce>
+    1271:	c7 43 24 80 00 00 00 	movl   $0x80,0x24(%ebx)
+			1274: R_386_32	.data
+    1278:	eb 3e                	jmp    12b8 <crypt_ctr+0x20c>
+    127a:	ba 8e 03 00 00       	mov    $0x38e,%edx
+			127b: R_386_32	.rodata.str1.1
+    127f:	89 e8                	mov    %ebp,%eax
+    1281:	e8 fc ff ff ff       	call   1282 <crypt_ctr+0x1d6>
+			1282: R_386_PC32	strcmp
+    1286:	85 c0                	test   %eax,%eax
+    1288:	75 09                	jne    1293 <crypt_ctr+0x1e7>
+    128a:	c7 43 24 94 00 00 00 	movl   $0x94,0x24(%ebx)
+			128d: R_386_32	.data
+    1291:	eb 25                	jmp    12b8 <crypt_ctr+0x20c>
+    1293:	ba 94 03 00 00       	mov    $0x394,%edx
+			1294: R_386_32	.rodata.str1.1
+    1298:	89 e8                	mov    %ebp,%eax
+    129a:	e8 fc ff ff ff       	call   129b <crypt_ctr+0x1ef>
+			129b: R_386_PC32	strcmp
+    129f:	85 c0                	test   %eax,%eax
+    12a1:	75 09                	jne    12ac <crypt_ctr+0x200>
+    12a3:	c7 43 24 a8 00 00 00 	movl   $0xa8,0x24(%ebx)
+			12a6: R_386_32	.data
+    12aa:	eb 0c                	jmp    12b8 <crypt_ctr+0x20c>
+    12ac:	c7 46 28 99 03 00 00 	movl   $0x399,0x28(%esi)
+			12af: R_386_32	.rodata.str1.1
+    12b3:	e9 13 03 00 00       	jmp    15cb <crypt_ctr+0x51f>
+    12b8:	8b 43 24             	mov    0x24(%ebx),%eax
+    12bb:	85 c0                	test   %eax,%eax
+    12bd:	74 1e                	je     12dd <crypt_ctr+0x231>
+    12bf:	8b 00                	mov    (%eax),%eax
+    12c1:	85 c0                	test   %eax,%eax
+    12c3:	89 44 24 04          	mov    %eax,0x4(%esp)
+    12c7:	74 14                	je     12dd <crypt_ctr+0x231>
+    12c9:	8b 4c 24 20          	mov    0x20(%esp),%ecx
+    12cd:	89 f2                	mov    %esi,%edx
+    12cf:	89 d8                	mov    %ebx,%eax
+    12d1:	ff 54 24 04          	call   *0x4(%esp)
+    12d5:	85 c0                	test   %eax,%eax
+    12d7:	0f 88 ee 02 00 00    	js     15cb <crypt_ctr+0x51f>
+    12dd:	8b 43 24             	mov    0x24(%ebx),%eax
+    12e0:	85 c0                	test   %eax,%eax
+    12e2:	74 1b                	je     12ff <crypt_ctr+0x253>
+    12e4:	8b 50 08             	mov    0x8(%eax),%edx
+    12e7:	85 d2                	test   %edx,%edx
+    12e9:	74 14                	je     12ff <crypt_ctr+0x253>
+    12eb:	89 d8                	mov    %ebx,%eax
+    12ed:	ff d2                	call   *%edx
+    12ef:	85 c0                	test   %eax,%eax
+    12f1:	79 0c                	jns    12ff <crypt_ctr+0x253>
+    12f3:	c7 46 28 a9 03 00 00 	movl   $0x3a9,0x28(%esi)
+			12f6: R_386_32	.rodata.str1.1
+    12fa:	e9 ba 02 00 00       	jmp    15b9 <crypt_ctr+0x50d>
+    12ff:	8b 47 1c             	mov    0x1c(%edi),%eax
+    1302:	85 c0                	test   %eax,%eax
+    1304:	89 43 40             	mov    %eax,0x40(%ebx)
+    1307:	74 10                	je     1319 <crypt_ctr+0x26d>
+    1309:	ba 08 00 00 00       	mov    $0x8,%edx
+    130e:	83 f8 08             	cmp    $0x8,%eax
+    1311:	0f 43 d0             	cmovae %eax,%edx
+    1314:	89 53 40             	mov    %edx,0x40(%ebx)
+    1317:	eb 26                	jmp    133f <crypt_ctr+0x293>
+    1319:	83 7b 24 00          	cmpl   $0x0,0x24(%ebx)
+    131d:	74 20                	je     133f <crypt_ctr+0x293>
+    131f:	68 bf 03 00 00       	push   $0x3bf
+			1320: R_386_32	.rodata.str1.1
+    1324:	e8 fc ff ff ff       	call   1325 <crypt_ctr+0x279>
+			1325: R_386_PC32	printk
+    1329:	8b 43 24             	mov    0x24(%ebx),%eax
+    132c:	59                   	pop    %ecx
+    132d:	8b 50 04             	mov    0x4(%eax),%edx
+    1330:	85 d2                	test   %edx,%edx
+    1332:	74 04                	je     1338 <crypt_ctr+0x28c>
+    1334:	89 d8                	mov    %ebx,%eax
+    1336:	ff d2                	call   *%edx
+    1338:	c7 43 24 00 00 00 00 	movl   $0x0,0x24(%ebx)
+    133f:	ff 35 00 00 00 00    	pushl  0x0
+			1341: R_386_32	.bss
+    1345:	ba 00 00 00 00       	mov    $0x0,%edx
+			1346: R_386_32	mempool_alloc_slab
+    134a:	b9 00 00 00 00       	mov    $0x0,%ecx
+			134b: R_386_32	mempool_free_slab
+    134f:	b8 10 00 00 00       	mov    $0x10,%eax
+    1354:	e8 fc ff ff ff       	call   1355 <crypt_ctr+0x2a9>
+			1355: R_386_PC32	mempool_create
+    1359:	85 c0                	test   %eax,%eax
+    135b:	89 43 0c             	mov    %eax,0xc(%ebx)
+    135e:	5a                   	pop    %edx
+    135f:	75 0c                	jne    136d <crypt_ctr+0x2c1>
+    1361:	c7 46 28 fe 03 00 00 	movl   $0x3fe,0x28(%esi)
+			1364: R_386_32	.rodata.str1.1
+    1368:	e9 4c 02 00 00       	jmp    15b9 <crypt_ctr+0x50d>
+    136d:	c7 43 44 28 00 00 00 	movl   $0x28,0x44(%ebx)
+    1374:	8b 47 20             	mov    0x20(%edi),%eax
+    1377:	b9 00 00 00 00       	mov    $0x0,%ecx
+			1378: R_386_32	mempool_kfree
+    137c:	83 c0 2f             	add    $0x2f,%eax
+    137f:	83 e0 f8             	and    $0xfffffff8,%eax
+    1382:	89 43 44             	mov    %eax,0x44(%ebx)
+    1385:	8b 57 2c             	mov    0x2c(%edi),%edx
+    1388:	8b 52 1c             	mov    0x1c(%edx),%edx
+    138b:	83 e2 f8             	and    $0xfffffff8,%edx
+    138e:	01 d0                	add    %edx,%eax
+    1390:	8b 53 40             	mov    0x40(%ebx),%edx
+    1393:	89 43 44             	mov    %eax,0x44(%ebx)
+    1396:	8d 44 10 2c          	lea    0x2c(%eax,%edx,1),%eax
+    139a:	ba 00 00 00 00       	mov    $0x0,%edx
+			139b: R_386_32	mempool_kmalloc
+    139f:	50                   	push   %eax
+    13a0:	b8 10 00 00 00       	mov    $0x10,%eax
+    13a5:	e8 fc ff ff ff       	call   13a6 <crypt_ctr+0x2fa>
+			13a6: R_386_PC32	mempool_create
+    13aa:	85 c0                	test   %eax,%eax
+    13ac:	89 43 10             	mov    %eax,0x10(%ebx)
+    13af:	59                   	pop    %ecx
+    13b0:	75 0c                	jne    13be <crypt_ctr+0x312>
+    13b2:	c7 46 28 1f 04 00 00 	movl   $0x41f,0x28(%esi)
+			13b5: R_386_32	.rodata.str1.1
+    13b9:	e9 f3 01 00 00       	jmp    15b1 <crypt_ctr+0x505>
+    13be:	c7 43 48 00 00 00 00 	movl   $0x0,0x48(%ebx)
+    13c5:	ba 00 00 00 00       	mov    $0x0,%edx
+			13c6: R_386_32	mempool_alloc_pages
+    13ca:	b9 00 00 00 00       	mov    $0x0,%ecx
+			13cb: R_386_32	mempool_free_pages
+    13cf:	6a 00                	push   $0x0
+    13d1:	b8 20 00 00 00       	mov    $0x20,%eax
+    13d6:	e8 fc ff ff ff       	call   13d7 <crypt_ctr+0x32b>
+			13d7: R_386_PC32	mempool_create
+    13db:	85 c0                	test   %eax,%eax
+    13dd:	89 43 14             	mov    %eax,0x14(%ebx)
+    13e0:	5a                   	pop    %edx
+    13e1:	75 0c                	jne    13ef <crypt_ctr+0x343>
+    13e3:	c7 46 28 45 04 00 00 	movl   $0x445,0x28(%esi)
+			13e6: R_386_32	.rodata.str1.1
+    13ea:	e9 ba 01 00 00       	jmp    15a9 <crypt_ctr+0x4fd>
+    13ef:	31 d2                	xor    %edx,%edx
+    13f1:	b8 10 00 00 00       	mov    $0x10,%eax
+    13f6:	e8 fc ff ff ff       	call   13f7 <crypt_ctr+0x34b>
+			13f7: R_386_PC32	bioset_create
+    13fb:	85 c0                	test   %eax,%eax
+    13fd:	89 43 18             	mov    %eax,0x18(%ebx)
+    1400:	75 0c                	jne    140e <crypt_ctr+0x362>
+    1402:	c7 46 28 62 04 00 00 	movl   $0x462,0x28(%esi)
+			1405: R_386_32	.rodata.str1.1
+    1409:	e9 93 01 00 00       	jmp    15a1 <crypt_ctr+0x4f5>
+    140e:	8b 47 18             	mov    0x18(%edi),%eax
+    1411:	8d 93 d8 00 00 00    	lea    0xd8(%ebx),%edx
+    1417:	8b 4c 24 0c          	mov    0xc(%esp),%ecx
+    141b:	ff 57 04             	call   *0x4(%edi)
+    141e:	85 c0                	test   %eax,%eax
+    1420:	79 0c                	jns    142e <crypt_ctr+0x382>
+    1422:	c7 46 28 7f 04 00 00 	movl   $0x47f,0x28(%esi)
+			1425: R_386_32	.rodata.str1.1
+    1429:	e9 6b 01 00 00       	jmp    1599 <crypt_ctr+0x4ed>
+    142e:	8d 4c 24 18          	lea    0x18(%esp),%ecx
+    1432:	51                   	push   %ecx
+    1433:	68 91 04 00 00       	push   $0x491
+			1434: R_386_32	.rodata.str1.1
+    1438:	8b 44 24 10          	mov    0x10(%esp),%eax
+    143c:	ff 70 08             	pushl  0x8(%eax)
+    143f:	89 4c 24 0c          	mov    %ecx,0xc(%esp)
+    1443:	e8 fc ff ff ff       	call   1444 <crypt_ctr+0x398>
+			1444: R_386_PC32	sscanf
+    1448:	83 c4 0c             	add    $0xc,%esp
+    144b:	48                   	dec    %eax
+    144c:	8b 0c 24             	mov    (%esp),%ecx
+    144f:	74 0c                	je     145d <crypt_ctr+0x3b1>
+    1451:	c7 46 28 96 04 00 00 	movl   $0x496,0x28(%esi)
+			1454: R_386_32	.rodata.str1.1
+    1458:	e9 3c 01 00 00       	jmp    1599 <crypt_ctr+0x4ed>
+    145d:	8b 54 24 1c          	mov    0x1c(%esp),%edx
+    1461:	8b 44 24 18          	mov    0x18(%esp),%eax
+    1465:	89 53 3c             	mov    %edx,0x3c(%ebx)
+    1468:	89 43 38             	mov    %eax,0x38(%ebx)
+    146b:	51                   	push   %ecx
+    146c:	68 91 04 00 00       	push   $0x491
+			146d: R_386_32	.rodata.str1.1
+    1471:	8b 54 24 10          	mov    0x10(%esp),%edx
+    1475:	ff 72 10             	pushl  0x10(%edx)
+    1478:	e8 fc ff ff ff       	call   1479 <crypt_ctr+0x3cd>
+			1479: R_386_PC32	sscanf
+    147d:	83 c4 0c             	add    $0xc,%esp
+    1480:	48                   	dec    %eax
+    1481:	74 0c                	je     148f <crypt_ctr+0x3e3>
+    1483:	c7 46 28 af 04 00 00 	movl   $0x4af,0x28(%esi)
+			1486: R_386_32	.rodata.str1.1
+    148a:	e9 0a 01 00 00       	jmp    1599 <crypt_ctr+0x4ed>
+    148f:	8b 44 24 18          	mov    0x18(%esp),%eax
+    1493:	8b 54 24 1c          	mov    0x1c(%esp),%edx
+    1497:	89 43 04             	mov    %eax,0x4(%ebx)
+    149a:	89 53 08             	mov    %edx,0x8(%ebx)
+    149d:	8b 06                	mov    (%esi),%eax
+    149f:	e8 fc ff ff ff       	call   14a0 <crypt_ctr+0x3f4>
+			14a0: R_386_PC32	dm_table_get_mode
+    14a4:	8b 4c 24 08          	mov    0x8(%esp),%ecx
+    14a8:	8b 51 0c             	mov    0xc(%ecx),%edx
+    14ab:	53                   	push   %ebx
+    14ac:	50                   	push   %eax
+    14ad:	89 f0                	mov    %esi,%eax
+    14af:	ff 76 14             	pushl  0x14(%esi)
+    14b2:	ff 76 10             	pushl  0x10(%esi)
+    14b5:	ff 73 08             	pushl  0x8(%ebx)
+    14b8:	ff 73 04             	pushl  0x4(%ebx)
+    14bb:	e8 fc ff ff ff       	call   14bc <crypt_ctr+0x410>
+			14bc: R_386_PC32	dm_get_device
+    14c0:	83 c4 18             	add    $0x18,%esp
+    14c3:	85 c0                	test   %eax,%eax
+    14c5:	74 0c                	je     14d3 <crypt_ctr+0x427>
+    14c7:	c7 46 28 c5 04 00 00 	movl   $0x4c5,0x28(%esi)
+			14ca: R_386_32	.rodata.str1.1
+    14ce:	e9 c6 00 00 00       	jmp    1599 <crypt_ctr+0x4ed>
+    14d3:	85 ed                	test   %ebp,%ebp
+    14d5:	74 40                	je     1517 <crypt_ctr+0x46b>
+    14d7:	83 7b 24 00          	cmpl   $0x0,0x24(%ebx)
+    14db:	74 3a                	je     1517 <crypt_ctr+0x46b>
+    14dd:	8b 44 24 20          	mov    0x20(%esp),%eax
+    14e1:	85 c0                	test   %eax,%eax
+    14e3:	74 04                	je     14e9 <crypt_ctr+0x43d>
+    14e5:	c6 40 ff 3a          	movb   $0x3a,-0x1(%eax)
+    14e9:	89 e8                	mov    %ebp,%eax
+    14eb:	e8 fc ff ff ff       	call   14ec <crypt_ctr+0x440>
+			14ec: R_386_PC32	strlen
+    14f0:	ba d0 00 00 00       	mov    $0xd0,%edx
+    14f5:	40                   	inc    %eax
+    14f6:	e8 fc ff ff ff       	call   14f7 <crypt_ctr+0x44b>
+			14f7: R_386_PC32	__kmalloc
+    14fb:	85 c0                	test   %eax,%eax
+    14fd:	89 43 28             	mov    %eax,0x28(%ebx)
+    1500:	75 0c                	jne    150e <crypt_ctr+0x462>
+    1502:	c7 46 28 da 04 00 00 	movl   $0x4da,0x28(%esi)
+			1505: R_386_32	.rodata.str1.1
+    1509:	e9 82 00 00 00       	jmp    1590 <crypt_ctr+0x4e4>
+    150e:	89 ea                	mov    %ebp,%edx
+    1510:	e8 fc ff ff ff       	call   1511 <crypt_ctr+0x465>
+			1511: R_386_PC32	strcpy
+    1515:	eb 07                	jmp    151e <crypt_ctr+0x472>
+    1517:	c7 43 28 00 00 00 00 	movl   $0x0,0x28(%ebx)
+    151e:	6a 00                	push   $0x0
+    1520:	31 c9                	xor    %ecx,%ecx
+    1522:	6a 00                	push   $0x0
+    1524:	ba 01 00 00 00       	mov    $0x1,%edx
+    1529:	6a 00                	push   $0x0
+    152b:	b8 fa 04 00 00       	mov    $0x4fa,%eax
+			152c: R_386_32	.rodata.str1.1
+    1530:	e8 fc ff ff ff       	call   1531 <crypt_ctr+0x485>
+			1531: R_386_PC32	__create_workqueue_key
+    1535:	83 c4 0c             	add    $0xc,%esp
+    1538:	85 c0                	test   %eax,%eax
+    153a:	89 43 1c             	mov    %eax,0x1c(%ebx)
+    153d:	75 09                	jne    1548 <crypt_ctr+0x49c>
+    153f:	c7 46 28 05 05 00 00 	movl   $0x505,0x28(%esi)
+			1542: R_386_32	.rodata.str1.1
+    1546:	eb 40                	jmp    1588 <crypt_ctr+0x4dc>
+    1548:	6a 00                	push   $0x0
+    154a:	31 c9                	xor    %ecx,%ecx
+    154c:	6a 00                	push   $0x0
+    154e:	ba 01 00 00 00       	mov    $0x1,%edx
+    1553:	6a 00                	push   $0x0
+    1555:	b8 26 05 00 00       	mov    $0x526,%eax
+			1556: R_386_32	.rodata.str1.1
+    155a:	e8 fc ff ff ff       	call   155b <crypt_ctr+0x4af>
+			155b: R_386_PC32	__create_workqueue_key
+    155f:	83 c4 0c             	add    $0xc,%esp
+    1562:	85 c0                	test   %eax,%eax
+    1564:	89 43 20             	mov    %eax,0x20(%ebx)
+    1567:	75 11                	jne    157a <crypt_ctr+0x4ce>
+    1569:	c7 46 28 2e 05 00 00 	movl   $0x52e,0x28(%esi)
+			156c: R_386_32	.rodata.str1.1
+    1570:	8b 43 1c             	mov    0x1c(%ebx),%eax
+    1573:	e8 fc ff ff ff       	call   1574 <crypt_ctr+0x4c8>
+			1574: R_386_PC32	destroy_workqueue
+    1578:	eb 0e                	jmp    1588 <crypt_ctr+0x4dc>
+    157a:	c7 46 20 01 00 00 00 	movl   $0x1,0x20(%esi)
+    1581:	31 c0                	xor    %eax,%eax
+    1583:	89 5e 24             	mov    %ebx,0x24(%esi)
+    1586:	eb 58                	jmp    15e0 <crypt_ctr+0x534>
+    1588:	8b 43 28             	mov    0x28(%ebx),%eax
+    158b:	e8 fc ff ff ff       	call   158c <crypt_ctr+0x4e0>
+			158c: R_386_PC32	kfree
+    1590:	8b 13                	mov    (%ebx),%edx
+    1592:	89 f0                	mov    %esi,%eax
+    1594:	e8 fc ff ff ff       	call   1595 <crypt_ctr+0x4e9>
+			1595: R_386_PC32	dm_put_device
+    1599:	8b 43 18             	mov    0x18(%ebx),%eax
+    159c:	e8 fc ff ff ff       	call   159d <crypt_ctr+0x4f1>
+			159d: R_386_PC32	bioset_free
+    15a1:	8b 43 14             	mov    0x14(%ebx),%eax
+    15a4:	e8 fc ff ff ff       	call   15a5 <crypt_ctr+0x4f9>
+			15a5: R_386_PC32	mempool_destroy
+    15a9:	8b 43 10             	mov    0x10(%ebx),%eax
+    15ac:	e8 fc ff ff ff       	call   15ad <crypt_ctr+0x501>
+			15ad: R_386_PC32	mempool_destroy
+    15b1:	8b 43 0c             	mov    0xc(%ebx),%eax
+    15b4:	e8 fc ff ff ff       	call   15b5 <crypt_ctr+0x509>
+			15b5: R_386_PC32	mempool_destroy
+    15b9:	8b 43 24             	mov    0x24(%ebx),%eax
+    15bc:	85 c0                	test   %eax,%eax
+    15be:	74 0b                	je     15cb <crypt_ctr+0x51f>
+    15c0:	8b 50 04             	mov    0x4(%eax),%edx
+    15c3:	85 d2                	test   %edx,%edx
+    15c5:	74 04                	je     15cb <crypt_ctr+0x51f>
+    15c7:	89 d8                	mov    %ebx,%eax
+    15c9:	ff d2                	call   *%edx
+    15cb:	89 fa                	mov    %edi,%edx
+    15cd:	89 f8                	mov    %edi,%eax
+    15cf:	e8 fc ff ff ff       	call   15d0 <crypt_ctr+0x524>
+			15d0: R_386_PC32	crypto_destroy_tfm
+    15d4:	89 d8                	mov    %ebx,%eax
+    15d6:	e8 fc ff ff ff       	call   15d7 <crypt_ctr+0x52b>
+			15d7: R_386_PC32	kzfree
+    15db:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+    15e0:	83 c4 28             	add    $0x28,%esp
+    15e3:	5b                   	pop    %ebx
+    15e4:	5e                   	pop    %esi
+    15e5:	5f                   	pop    %edi
+    15e6:	5d                   	pop    %ebp
+    15e7:	c3                   	ret    
+
+Disassembly of section .exit.text:
+
+00000000 <cleanup_module>:
+   0:	b8 00 00 00 00       	mov    $0x0,%eax
+			1: R_386_32	.data
+   5:	e8 fc ff ff ff       	call   6 <cleanup_module+0x6>
+			6: R_386_PC32	dm_unregister_target
+   a:	a1 00 00 00 00       	mov    0x0,%eax
+			b: R_386_32	.bss
+   f:	e9 fc ff ff ff       	jmp    10 <cleanup_module+0x10>
+			10: R_386_PC32	kmem_cache_destroy
+
+Disassembly of section .init.text:
+
+00000000 <init_module>:
+   0:	53                   	push   %ebx
+   1:	b9 04 00 00 00       	mov    $0x4,%ecx
+   6:	6a 00                	push   $0x0
+   8:	ba 60 00 00 00       	mov    $0x60,%edx
+   d:	6a 00                	push   $0x0
+   f:	b8 60 01 00 00       	mov    $0x160,%eax
+			10: R_386_32	.rodata.str1.1
+  14:	e8 fc ff ff ff       	call   15 <init_module+0x15>
+			15: R_386_PC32	kmem_cache_create
+  19:	59                   	pop    %ecx
+  1a:	5b                   	pop    %ebx
+  1b:	bb f4 ff ff ff       	mov    $0xfffffff4,%ebx
+  20:	85 c0                	test   %eax,%eax
+  22:	a3 00 00 00 00       	mov    %eax,0x0
+			23: R_386_32	.bss
+  27:	74 27                	je     50 <init_module+0x50>
+  29:	b8 00 00 00 00       	mov    $0x0,%eax
+			2a: R_386_32	.data
+  2e:	e8 fc ff ff ff       	call   2f <init_module+0x2f>
+			2f: R_386_PC32	dm_register_target
+  33:	85 c0                	test   %eax,%eax
+  35:	89 c3                	mov    %eax,%ebx
+  37:	79 17                	jns    50 <init_module+0x50>
+  39:	50                   	push   %eax
+  3a:	68 6c 01 00 00       	push   $0x16c
+			3b: R_386_32	.rodata.str1.1
+  3f:	e8 fc ff ff ff       	call   40 <init_module+0x40>
+			40: R_386_PC32	printk
+  44:	a1 00 00 00 00       	mov    0x0,%eax
+			45: R_386_32	.bss
+  49:	e8 fc ff ff ff       	call   4a <init_module+0x4a>
+			4a: R_386_PC32	kmem_cache_destroy
+  4e:	58                   	pop    %eax
+  4f:	5a                   	pop    %edx
+  50:	89 d8                	mov    %ebx,%eax
+  52:	5b                   	pop    %ebx
+  53:	c3                   	ret    
