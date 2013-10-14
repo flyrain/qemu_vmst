@@ -163,8 +163,7 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
     target_phys_addr_t ioaddr;
     unsigned long addend;
     void *retaddr;
-    
-    //addr = module_revise(addr);//yufei
+ 
 
 //////////////////////////////////////////////////////////////////////////////////////
 	//zlin.begin
@@ -259,6 +258,12 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 				qemu_log("not exit");
 		}
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
+            
+            //yufei.begin
+            extern uint32_t sys_need_red;
+            if(sys_need_red)
+                 res = module_revise(res);
+            //yufei.end
         }
     } else {
         /* the page is not in the TLB : fill it */
@@ -284,7 +289,7 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
     unsigned long addend;
     target_ulong tlb_addr, addr1, addr2;
 
-    //addr = module_revise(addr); //yufei
+
 
 //////////////////////////////////////////////////////////////////
 //zlin.begin
@@ -374,6 +379,11 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* unaligned/aligned access in the same page */
             addend = env->tlb_table[mmu_idx][index].addend;
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
+            //yufei.begin
+            extern uint32_t sys_need_red;
+            if(sys_need_red)
+                 res = module_revise(res);
+            //yufei.end
         }
     } else {
         /* the page is not in the TLB : fill it */
@@ -437,7 +447,6 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
     void *retaddr;
     int index;
 
-    //addr = module_revise(addr);//yufei
 
     index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
 //////////////////////////////////////////////////////////////////////////////////
@@ -558,7 +567,6 @@ static void glue(glue(slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
     target_ulong tlb_addr;
     int index, i;
 
-    //addr = module_revise(addr);//yufei
 
     index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
 

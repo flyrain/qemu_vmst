@@ -1,0 +1,1841 @@
+
+/lib/modules/2.6.32.8/kernel/arch/x86/crypto/aes-i586.ko:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <aes_enc_blk>:
+       0:	55                   	push   %ebp
+       1:	8b 6c 24 08          	mov    0x8(%esp),%ebp
+       5:	53                   	push   %ebx
+       6:	8b 4c 24 14          	mov    0x14(%esp),%ecx
+       a:	56                   	push   %esi
+       b:	8b 95 e0 01 00 00    	mov    0x1e0(%ebp),%edx
+      11:	57                   	push   %edi
+      12:	8b 01                	mov    (%ecx),%eax
+      14:	8b 59 04             	mov    0x4(%ecx),%ebx
+      17:	8b 71 08             	mov    0x8(%ecx),%esi
+      1a:	8b 79 0c             	mov    0xc(%ecx),%edi
+      1d:	33 45 00             	xor    0x0(%ebp),%eax
+      20:	33 5d 04             	xor    0x4(%ebp),%ebx
+      23:	33 75 08             	xor    0x8(%ebp),%esi
+      26:	33 7d 0c             	xor    0xc(%ebp),%edi
+      29:	83 ec 08             	sub    $0x8,%esp
+      2c:	83 c5 10             	add    $0x10,%ebp
+      2f:	83 fa 18             	cmp    $0x18,%edx
+      32:	0f 82 2c 03 00 00    	jb     364 <aes_enc_blk+0x364>
+      38:	8d 6d 20             	lea    0x20(%ebp),%ebp
+      3b:	0f 84 93 01 00 00    	je     1d4 <aes_enc_blk+0x1d4>
+      41:	8d 6d 20             	lea    0x20(%ebp),%ebp
+      44:	89 1c 24             	mov    %ebx,(%esp)
+      47:	89 7c 24 04          	mov    %edi,0x4(%esp)
+      4b:	8b 4d c0             	mov    -0x40(%ebp),%ecx
+      4e:	0f b6 d0             	movzbl %al,%edx
+      51:	8b 7d cc             	mov    -0x34(%ebp),%edi
+      54:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			57: R_386_32	crypto_ft_tab
+      5b:	8b 5d c4             	mov    -0x3c(%ebp),%ebx
+      5e:	0f b6 d4             	movzbl %ah,%edx
+      61:	c1 e8 10             	shr    $0x10,%eax
+      64:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			67: R_386_32	crypto_ft_tab
+      6b:	0f b6 d0             	movzbl %al,%edx
+      6e:	0f b6 c4             	movzbl %ah,%eax
+      71:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			74: R_386_32	crypto_ft_tab
+      78:	89 f0                	mov    %esi,%eax
+      7a:	8b 75 c8             	mov    -0x38(%ebp),%esi
+      7d:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			80: R_386_32	crypto_ft_tab
+      84:	0f b6 d0             	movzbl %al,%edx
+      87:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			8a: R_386_32	crypto_ft_tab
+      8e:	0f b6 d4             	movzbl %ah,%edx
+      91:	c1 e8 10             	shr    $0x10,%eax
+      94:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			97: R_386_32	crypto_ft_tab
+      9b:	0f b6 d0             	movzbl %al,%edx
+      9e:	0f b6 c4             	movzbl %ah,%eax
+      a1:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			a4: R_386_32	crypto_ft_tab
+      a8:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			ab: R_386_32	crypto_ft_tab
+      af:	8b 04 24             	mov    (%esp),%eax
+      b2:	0f b6 d0             	movzbl %al,%edx
+      b5:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			b8: R_386_32	crypto_ft_tab
+      bc:	0f b6 d4             	movzbl %ah,%edx
+      bf:	c1 e8 10             	shr    $0x10,%eax
+      c2:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			c5: R_386_32	crypto_ft_tab
+      c9:	0f b6 d0             	movzbl %al,%edx
+      cc:	0f b6 c4             	movzbl %ah,%eax
+      cf:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			d2: R_386_32	crypto_ft_tab
+      d6:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			d9: R_386_32	crypto_ft_tab
+      dd:	8b 44 24 04          	mov    0x4(%esp),%eax
+      e1:	0f b6 d0             	movzbl %al,%edx
+      e4:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			e7: R_386_32	crypto_ft_tab
+      eb:	0f b6 d4             	movzbl %ah,%edx
+      ee:	c1 e8 10             	shr    $0x10,%eax
+      f1:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			f4: R_386_32	crypto_ft_tab
+      f8:	0f b6 d0             	movzbl %al,%edx
+      fb:	0f b6 c4             	movzbl %ah,%eax
+      fe:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			101: R_386_32	crypto_ft_tab
+     105:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			108: R_386_32	crypto_ft_tab
+     10c:	89 1c 24             	mov    %ebx,(%esp)
+     10f:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     113:	8b 45 d0             	mov    -0x30(%ebp),%eax
+     116:	0f b6 d1             	movzbl %cl,%edx
+     119:	8b 7d dc             	mov    -0x24(%ebp),%edi
+     11c:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			11f: R_386_32	crypto_ft_tab
+     123:	8b 5d d4             	mov    -0x2c(%ebp),%ebx
+     126:	0f b6 d5             	movzbl %ch,%edx
+     129:	c1 e9 10             	shr    $0x10,%ecx
+     12c:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			12f: R_386_32	crypto_ft_tab
+     133:	0f b6 d1             	movzbl %cl,%edx
+     136:	0f b6 cd             	movzbl %ch,%ecx
+     139:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			13c: R_386_32	crypto_ft_tab
+     140:	89 f1                	mov    %esi,%ecx
+     142:	8b 75 d8             	mov    -0x28(%ebp),%esi
+     145:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			148: R_386_32	crypto_ft_tab
+     14c:	0f b6 d1             	movzbl %cl,%edx
+     14f:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			152: R_386_32	crypto_ft_tab
+     156:	0f b6 d5             	movzbl %ch,%edx
+     159:	c1 e9 10             	shr    $0x10,%ecx
+     15c:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			15f: R_386_32	crypto_ft_tab
+     163:	0f b6 d1             	movzbl %cl,%edx
+     166:	0f b6 cd             	movzbl %ch,%ecx
+     169:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			16c: R_386_32	crypto_ft_tab
+     170:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			173: R_386_32	crypto_ft_tab
+     177:	8b 0c 24             	mov    (%esp),%ecx
+     17a:	0f b6 d1             	movzbl %cl,%edx
+     17d:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			180: R_386_32	crypto_ft_tab
+     184:	0f b6 d5             	movzbl %ch,%edx
+     187:	c1 e9 10             	shr    $0x10,%ecx
+     18a:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			18d: R_386_32	crypto_ft_tab
+     191:	0f b6 d1             	movzbl %cl,%edx
+     194:	0f b6 cd             	movzbl %ch,%ecx
+     197:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			19a: R_386_32	crypto_ft_tab
+     19e:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			1a1: R_386_32	crypto_ft_tab
+     1a5:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     1a9:	0f b6 d1             	movzbl %cl,%edx
+     1ac:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			1af: R_386_32	crypto_ft_tab
+     1b3:	0f b6 d5             	movzbl %ch,%edx
+     1b6:	c1 e9 10             	shr    $0x10,%ecx
+     1b9:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			1bc: R_386_32	crypto_ft_tab
+     1c0:	0f b6 d1             	movzbl %cl,%edx
+     1c3:	0f b6 cd             	movzbl %ch,%ecx
+     1c6:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			1c9: R_386_32	crypto_ft_tab
+     1cd:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			1d0: R_386_32	crypto_ft_tab
+     1d4:	89 1c 24             	mov    %ebx,(%esp)
+     1d7:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     1db:	8b 4d e0             	mov    -0x20(%ebp),%ecx
+     1de:	0f b6 d0             	movzbl %al,%edx
+     1e1:	8b 7d ec             	mov    -0x14(%ebp),%edi
+     1e4:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			1e7: R_386_32	crypto_ft_tab
+     1eb:	8b 5d e4             	mov    -0x1c(%ebp),%ebx
+     1ee:	0f b6 d4             	movzbl %ah,%edx
+     1f1:	c1 e8 10             	shr    $0x10,%eax
+     1f4:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			1f7: R_386_32	crypto_ft_tab
+     1fb:	0f b6 d0             	movzbl %al,%edx
+     1fe:	0f b6 c4             	movzbl %ah,%eax
+     201:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			204: R_386_32	crypto_ft_tab
+     208:	89 f0                	mov    %esi,%eax
+     20a:	8b 75 e8             	mov    -0x18(%ebp),%esi
+     20d:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			210: R_386_32	crypto_ft_tab
+     214:	0f b6 d0             	movzbl %al,%edx
+     217:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			21a: R_386_32	crypto_ft_tab
+     21e:	0f b6 d4             	movzbl %ah,%edx
+     221:	c1 e8 10             	shr    $0x10,%eax
+     224:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			227: R_386_32	crypto_ft_tab
+     22b:	0f b6 d0             	movzbl %al,%edx
+     22e:	0f b6 c4             	movzbl %ah,%eax
+     231:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			234: R_386_32	crypto_ft_tab
+     238:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			23b: R_386_32	crypto_ft_tab
+     23f:	8b 04 24             	mov    (%esp),%eax
+     242:	0f b6 d0             	movzbl %al,%edx
+     245:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			248: R_386_32	crypto_ft_tab
+     24c:	0f b6 d4             	movzbl %ah,%edx
+     24f:	c1 e8 10             	shr    $0x10,%eax
+     252:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			255: R_386_32	crypto_ft_tab
+     259:	0f b6 d0             	movzbl %al,%edx
+     25c:	0f b6 c4             	movzbl %ah,%eax
+     25f:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			262: R_386_32	crypto_ft_tab
+     266:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			269: R_386_32	crypto_ft_tab
+     26d:	8b 44 24 04          	mov    0x4(%esp),%eax
+     271:	0f b6 d0             	movzbl %al,%edx
+     274:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			277: R_386_32	crypto_ft_tab
+     27b:	0f b6 d4             	movzbl %ah,%edx
+     27e:	c1 e8 10             	shr    $0x10,%eax
+     281:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			284: R_386_32	crypto_ft_tab
+     288:	0f b6 d0             	movzbl %al,%edx
+     28b:	0f b6 c4             	movzbl %ah,%eax
+     28e:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			291: R_386_32	crypto_ft_tab
+     295:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			298: R_386_32	crypto_ft_tab
+     29c:	89 1c 24             	mov    %ebx,(%esp)
+     29f:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     2a3:	8b 45 f0             	mov    -0x10(%ebp),%eax
+     2a6:	0f b6 d1             	movzbl %cl,%edx
+     2a9:	8b 7d fc             	mov    -0x4(%ebp),%edi
+     2ac:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			2af: R_386_32	crypto_ft_tab
+     2b3:	8b 5d f4             	mov    -0xc(%ebp),%ebx
+     2b6:	0f b6 d5             	movzbl %ch,%edx
+     2b9:	c1 e9 10             	shr    $0x10,%ecx
+     2bc:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			2bf: R_386_32	crypto_ft_tab
+     2c3:	0f b6 d1             	movzbl %cl,%edx
+     2c6:	0f b6 cd             	movzbl %ch,%ecx
+     2c9:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			2cc: R_386_32	crypto_ft_tab
+     2d0:	89 f1                	mov    %esi,%ecx
+     2d2:	8b 75 f8             	mov    -0x8(%ebp),%esi
+     2d5:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			2d8: R_386_32	crypto_ft_tab
+     2dc:	0f b6 d1             	movzbl %cl,%edx
+     2df:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			2e2: R_386_32	crypto_ft_tab
+     2e6:	0f b6 d5             	movzbl %ch,%edx
+     2e9:	c1 e9 10             	shr    $0x10,%ecx
+     2ec:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			2ef: R_386_32	crypto_ft_tab
+     2f3:	0f b6 d1             	movzbl %cl,%edx
+     2f6:	0f b6 cd             	movzbl %ch,%ecx
+     2f9:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			2fc: R_386_32	crypto_ft_tab
+     300:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			303: R_386_32	crypto_ft_tab
+     307:	8b 0c 24             	mov    (%esp),%ecx
+     30a:	0f b6 d1             	movzbl %cl,%edx
+     30d:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			310: R_386_32	crypto_ft_tab
+     314:	0f b6 d5             	movzbl %ch,%edx
+     317:	c1 e9 10             	shr    $0x10,%ecx
+     31a:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			31d: R_386_32	crypto_ft_tab
+     321:	0f b6 d1             	movzbl %cl,%edx
+     324:	0f b6 cd             	movzbl %ch,%ecx
+     327:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			32a: R_386_32	crypto_ft_tab
+     32e:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			331: R_386_32	crypto_ft_tab
+     335:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     339:	0f b6 d1             	movzbl %cl,%edx
+     33c:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			33f: R_386_32	crypto_ft_tab
+     343:	0f b6 d5             	movzbl %ch,%edx
+     346:	c1 e9 10             	shr    $0x10,%ecx
+     349:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			34c: R_386_32	crypto_ft_tab
+     350:	0f b6 d1             	movzbl %cl,%edx
+     353:	0f b6 cd             	movzbl %ch,%ecx
+     356:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			359: R_386_32	crypto_ft_tab
+     35d:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			360: R_386_32	crypto_ft_tab
+     364:	89 1c 24             	mov    %ebx,(%esp)
+     367:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     36b:	8b 4d 00             	mov    0x0(%ebp),%ecx
+     36e:	0f b6 d0             	movzbl %al,%edx
+     371:	8b 7d 0c             	mov    0xc(%ebp),%edi
+     374:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			377: R_386_32	crypto_ft_tab
+     37b:	8b 5d 04             	mov    0x4(%ebp),%ebx
+     37e:	0f b6 d4             	movzbl %ah,%edx
+     381:	c1 e8 10             	shr    $0x10,%eax
+     384:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			387: R_386_32	crypto_ft_tab
+     38b:	0f b6 d0             	movzbl %al,%edx
+     38e:	0f b6 c4             	movzbl %ah,%eax
+     391:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			394: R_386_32	crypto_ft_tab
+     398:	89 f0                	mov    %esi,%eax
+     39a:	8b 75 08             	mov    0x8(%ebp),%esi
+     39d:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			3a0: R_386_32	crypto_ft_tab
+     3a4:	0f b6 d0             	movzbl %al,%edx
+     3a7:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			3aa: R_386_32	crypto_ft_tab
+     3ae:	0f b6 d4             	movzbl %ah,%edx
+     3b1:	c1 e8 10             	shr    $0x10,%eax
+     3b4:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			3b7: R_386_32	crypto_ft_tab
+     3bb:	0f b6 d0             	movzbl %al,%edx
+     3be:	0f b6 c4             	movzbl %ah,%eax
+     3c1:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			3c4: R_386_32	crypto_ft_tab
+     3c8:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			3cb: R_386_32	crypto_ft_tab
+     3cf:	8b 04 24             	mov    (%esp),%eax
+     3d2:	0f b6 d0             	movzbl %al,%edx
+     3d5:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			3d8: R_386_32	crypto_ft_tab
+     3dc:	0f b6 d4             	movzbl %ah,%edx
+     3df:	c1 e8 10             	shr    $0x10,%eax
+     3e2:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			3e5: R_386_32	crypto_ft_tab
+     3e9:	0f b6 d0             	movzbl %al,%edx
+     3ec:	0f b6 c4             	movzbl %ah,%eax
+     3ef:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			3f2: R_386_32	crypto_ft_tab
+     3f6:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			3f9: R_386_32	crypto_ft_tab
+     3fd:	8b 44 24 04          	mov    0x4(%esp),%eax
+     401:	0f b6 d0             	movzbl %al,%edx
+     404:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			407: R_386_32	crypto_ft_tab
+     40b:	0f b6 d4             	movzbl %ah,%edx
+     40e:	c1 e8 10             	shr    $0x10,%eax
+     411:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			414: R_386_32	crypto_ft_tab
+     418:	0f b6 d0             	movzbl %al,%edx
+     41b:	0f b6 c4             	movzbl %ah,%eax
+     41e:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			421: R_386_32	crypto_ft_tab
+     425:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			428: R_386_32	crypto_ft_tab
+     42c:	89 1c 24             	mov    %ebx,(%esp)
+     42f:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     433:	8b 45 10             	mov    0x10(%ebp),%eax
+     436:	0f b6 d1             	movzbl %cl,%edx
+     439:	8b 7d 1c             	mov    0x1c(%ebp),%edi
+     43c:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			43f: R_386_32	crypto_ft_tab
+     443:	8b 5d 14             	mov    0x14(%ebp),%ebx
+     446:	0f b6 d5             	movzbl %ch,%edx
+     449:	c1 e9 10             	shr    $0x10,%ecx
+     44c:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			44f: R_386_32	crypto_ft_tab
+     453:	0f b6 d1             	movzbl %cl,%edx
+     456:	0f b6 cd             	movzbl %ch,%ecx
+     459:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			45c: R_386_32	crypto_ft_tab
+     460:	89 f1                	mov    %esi,%ecx
+     462:	8b 75 18             	mov    0x18(%ebp),%esi
+     465:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			468: R_386_32	crypto_ft_tab
+     46c:	0f b6 d1             	movzbl %cl,%edx
+     46f:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			472: R_386_32	crypto_ft_tab
+     476:	0f b6 d5             	movzbl %ch,%edx
+     479:	c1 e9 10             	shr    $0x10,%ecx
+     47c:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			47f: R_386_32	crypto_ft_tab
+     483:	0f b6 d1             	movzbl %cl,%edx
+     486:	0f b6 cd             	movzbl %ch,%ecx
+     489:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			48c: R_386_32	crypto_ft_tab
+     490:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			493: R_386_32	crypto_ft_tab
+     497:	8b 0c 24             	mov    (%esp),%ecx
+     49a:	0f b6 d1             	movzbl %cl,%edx
+     49d:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			4a0: R_386_32	crypto_ft_tab
+     4a4:	0f b6 d5             	movzbl %ch,%edx
+     4a7:	c1 e9 10             	shr    $0x10,%ecx
+     4aa:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			4ad: R_386_32	crypto_ft_tab
+     4b1:	0f b6 d1             	movzbl %cl,%edx
+     4b4:	0f b6 cd             	movzbl %ch,%ecx
+     4b7:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			4ba: R_386_32	crypto_ft_tab
+     4be:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			4c1: R_386_32	crypto_ft_tab
+     4c5:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     4c9:	0f b6 d1             	movzbl %cl,%edx
+     4cc:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			4cf: R_386_32	crypto_ft_tab
+     4d3:	0f b6 d5             	movzbl %ch,%edx
+     4d6:	c1 e9 10             	shr    $0x10,%ecx
+     4d9:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			4dc: R_386_32	crypto_ft_tab
+     4e0:	0f b6 d1             	movzbl %cl,%edx
+     4e3:	0f b6 cd             	movzbl %ch,%ecx
+     4e6:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			4e9: R_386_32	crypto_ft_tab
+     4ed:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			4f0: R_386_32	crypto_ft_tab
+     4f4:	89 1c 24             	mov    %ebx,(%esp)
+     4f7:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     4fb:	8b 4d 20             	mov    0x20(%ebp),%ecx
+     4fe:	0f b6 d0             	movzbl %al,%edx
+     501:	8b 7d 2c             	mov    0x2c(%ebp),%edi
+     504:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			507: R_386_32	crypto_ft_tab
+     50b:	8b 5d 24             	mov    0x24(%ebp),%ebx
+     50e:	0f b6 d4             	movzbl %ah,%edx
+     511:	c1 e8 10             	shr    $0x10,%eax
+     514:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			517: R_386_32	crypto_ft_tab
+     51b:	0f b6 d0             	movzbl %al,%edx
+     51e:	0f b6 c4             	movzbl %ah,%eax
+     521:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			524: R_386_32	crypto_ft_tab
+     528:	89 f0                	mov    %esi,%eax
+     52a:	8b 75 28             	mov    0x28(%ebp),%esi
+     52d:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			530: R_386_32	crypto_ft_tab
+     534:	0f b6 d0             	movzbl %al,%edx
+     537:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			53a: R_386_32	crypto_ft_tab
+     53e:	0f b6 d4             	movzbl %ah,%edx
+     541:	c1 e8 10             	shr    $0x10,%eax
+     544:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			547: R_386_32	crypto_ft_tab
+     54b:	0f b6 d0             	movzbl %al,%edx
+     54e:	0f b6 c4             	movzbl %ah,%eax
+     551:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			554: R_386_32	crypto_ft_tab
+     558:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			55b: R_386_32	crypto_ft_tab
+     55f:	8b 04 24             	mov    (%esp),%eax
+     562:	0f b6 d0             	movzbl %al,%edx
+     565:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			568: R_386_32	crypto_ft_tab
+     56c:	0f b6 d4             	movzbl %ah,%edx
+     56f:	c1 e8 10             	shr    $0x10,%eax
+     572:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			575: R_386_32	crypto_ft_tab
+     579:	0f b6 d0             	movzbl %al,%edx
+     57c:	0f b6 c4             	movzbl %ah,%eax
+     57f:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			582: R_386_32	crypto_ft_tab
+     586:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			589: R_386_32	crypto_ft_tab
+     58d:	8b 44 24 04          	mov    0x4(%esp),%eax
+     591:	0f b6 d0             	movzbl %al,%edx
+     594:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			597: R_386_32	crypto_ft_tab
+     59b:	0f b6 d4             	movzbl %ah,%edx
+     59e:	c1 e8 10             	shr    $0x10,%eax
+     5a1:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			5a4: R_386_32	crypto_ft_tab
+     5a8:	0f b6 d0             	movzbl %al,%edx
+     5ab:	0f b6 c4             	movzbl %ah,%eax
+     5ae:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			5b1: R_386_32	crypto_ft_tab
+     5b5:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			5b8: R_386_32	crypto_ft_tab
+     5bc:	89 1c 24             	mov    %ebx,(%esp)
+     5bf:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     5c3:	8b 45 30             	mov    0x30(%ebp),%eax
+     5c6:	0f b6 d1             	movzbl %cl,%edx
+     5c9:	8b 7d 3c             	mov    0x3c(%ebp),%edi
+     5cc:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			5cf: R_386_32	crypto_ft_tab
+     5d3:	8b 5d 34             	mov    0x34(%ebp),%ebx
+     5d6:	0f b6 d5             	movzbl %ch,%edx
+     5d9:	c1 e9 10             	shr    $0x10,%ecx
+     5dc:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			5df: R_386_32	crypto_ft_tab
+     5e3:	0f b6 d1             	movzbl %cl,%edx
+     5e6:	0f b6 cd             	movzbl %ch,%ecx
+     5e9:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			5ec: R_386_32	crypto_ft_tab
+     5f0:	89 f1                	mov    %esi,%ecx
+     5f2:	8b 75 38             	mov    0x38(%ebp),%esi
+     5f5:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			5f8: R_386_32	crypto_ft_tab
+     5fc:	0f b6 d1             	movzbl %cl,%edx
+     5ff:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			602: R_386_32	crypto_ft_tab
+     606:	0f b6 d5             	movzbl %ch,%edx
+     609:	c1 e9 10             	shr    $0x10,%ecx
+     60c:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			60f: R_386_32	crypto_ft_tab
+     613:	0f b6 d1             	movzbl %cl,%edx
+     616:	0f b6 cd             	movzbl %ch,%ecx
+     619:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			61c: R_386_32	crypto_ft_tab
+     620:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			623: R_386_32	crypto_ft_tab
+     627:	8b 0c 24             	mov    (%esp),%ecx
+     62a:	0f b6 d1             	movzbl %cl,%edx
+     62d:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			630: R_386_32	crypto_ft_tab
+     634:	0f b6 d5             	movzbl %ch,%edx
+     637:	c1 e9 10             	shr    $0x10,%ecx
+     63a:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			63d: R_386_32	crypto_ft_tab
+     641:	0f b6 d1             	movzbl %cl,%edx
+     644:	0f b6 cd             	movzbl %ch,%ecx
+     647:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			64a: R_386_32	crypto_ft_tab
+     64e:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			651: R_386_32	crypto_ft_tab
+     655:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     659:	0f b6 d1             	movzbl %cl,%edx
+     65c:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			65f: R_386_32	crypto_ft_tab
+     663:	0f b6 d5             	movzbl %ch,%edx
+     666:	c1 e9 10             	shr    $0x10,%ecx
+     669:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			66c: R_386_32	crypto_ft_tab
+     670:	0f b6 d1             	movzbl %cl,%edx
+     673:	0f b6 cd             	movzbl %ch,%ecx
+     676:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			679: R_386_32	crypto_ft_tab
+     67d:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			680: R_386_32	crypto_ft_tab
+     684:	89 1c 24             	mov    %ebx,(%esp)
+     687:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     68b:	8b 4d 40             	mov    0x40(%ebp),%ecx
+     68e:	0f b6 d0             	movzbl %al,%edx
+     691:	8b 7d 4c             	mov    0x4c(%ebp),%edi
+     694:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			697: R_386_32	crypto_ft_tab
+     69b:	8b 5d 44             	mov    0x44(%ebp),%ebx
+     69e:	0f b6 d4             	movzbl %ah,%edx
+     6a1:	c1 e8 10             	shr    $0x10,%eax
+     6a4:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			6a7: R_386_32	crypto_ft_tab
+     6ab:	0f b6 d0             	movzbl %al,%edx
+     6ae:	0f b6 c4             	movzbl %ah,%eax
+     6b1:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			6b4: R_386_32	crypto_ft_tab
+     6b8:	89 f0                	mov    %esi,%eax
+     6ba:	8b 75 48             	mov    0x48(%ebp),%esi
+     6bd:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			6c0: R_386_32	crypto_ft_tab
+     6c4:	0f b6 d0             	movzbl %al,%edx
+     6c7:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			6ca: R_386_32	crypto_ft_tab
+     6ce:	0f b6 d4             	movzbl %ah,%edx
+     6d1:	c1 e8 10             	shr    $0x10,%eax
+     6d4:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			6d7: R_386_32	crypto_ft_tab
+     6db:	0f b6 d0             	movzbl %al,%edx
+     6de:	0f b6 c4             	movzbl %ah,%eax
+     6e1:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			6e4: R_386_32	crypto_ft_tab
+     6e8:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			6eb: R_386_32	crypto_ft_tab
+     6ef:	8b 04 24             	mov    (%esp),%eax
+     6f2:	0f b6 d0             	movzbl %al,%edx
+     6f5:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			6f8: R_386_32	crypto_ft_tab
+     6fc:	0f b6 d4             	movzbl %ah,%edx
+     6ff:	c1 e8 10             	shr    $0x10,%eax
+     702:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			705: R_386_32	crypto_ft_tab
+     709:	0f b6 d0             	movzbl %al,%edx
+     70c:	0f b6 c4             	movzbl %ah,%eax
+     70f:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			712: R_386_32	crypto_ft_tab
+     716:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			719: R_386_32	crypto_ft_tab
+     71d:	8b 44 24 04          	mov    0x4(%esp),%eax
+     721:	0f b6 d0             	movzbl %al,%edx
+     724:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			727: R_386_32	crypto_ft_tab
+     72b:	0f b6 d4             	movzbl %ah,%edx
+     72e:	c1 e8 10             	shr    $0x10,%eax
+     731:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			734: R_386_32	crypto_ft_tab
+     738:	0f b6 d0             	movzbl %al,%edx
+     73b:	0f b6 c4             	movzbl %ah,%eax
+     73e:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			741: R_386_32	crypto_ft_tab
+     745:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			748: R_386_32	crypto_ft_tab
+     74c:	89 1c 24             	mov    %ebx,(%esp)
+     74f:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     753:	8b 45 50             	mov    0x50(%ebp),%eax
+     756:	0f b6 d1             	movzbl %cl,%edx
+     759:	8b 7d 5c             	mov    0x5c(%ebp),%edi
+     75c:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			75f: R_386_32	crypto_ft_tab
+     763:	8b 5d 54             	mov    0x54(%ebp),%ebx
+     766:	0f b6 d5             	movzbl %ch,%edx
+     769:	c1 e9 10             	shr    $0x10,%ecx
+     76c:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			76f: R_386_32	crypto_ft_tab
+     773:	0f b6 d1             	movzbl %cl,%edx
+     776:	0f b6 cd             	movzbl %ch,%ecx
+     779:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			77c: R_386_32	crypto_ft_tab
+     780:	89 f1                	mov    %esi,%ecx
+     782:	8b 75 58             	mov    0x58(%ebp),%esi
+     785:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			788: R_386_32	crypto_ft_tab
+     78c:	0f b6 d1             	movzbl %cl,%edx
+     78f:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			792: R_386_32	crypto_ft_tab
+     796:	0f b6 d5             	movzbl %ch,%edx
+     799:	c1 e9 10             	shr    $0x10,%ecx
+     79c:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			79f: R_386_32	crypto_ft_tab
+     7a3:	0f b6 d1             	movzbl %cl,%edx
+     7a6:	0f b6 cd             	movzbl %ch,%ecx
+     7a9:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			7ac: R_386_32	crypto_ft_tab
+     7b0:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			7b3: R_386_32	crypto_ft_tab
+     7b7:	8b 0c 24             	mov    (%esp),%ecx
+     7ba:	0f b6 d1             	movzbl %cl,%edx
+     7bd:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			7c0: R_386_32	crypto_ft_tab
+     7c4:	0f b6 d5             	movzbl %ch,%edx
+     7c7:	c1 e9 10             	shr    $0x10,%ecx
+     7ca:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			7cd: R_386_32	crypto_ft_tab
+     7d1:	0f b6 d1             	movzbl %cl,%edx
+     7d4:	0f b6 cd             	movzbl %ch,%ecx
+     7d7:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			7da: R_386_32	crypto_ft_tab
+     7de:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			7e1: R_386_32	crypto_ft_tab
+     7e5:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     7e9:	0f b6 d1             	movzbl %cl,%edx
+     7ec:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			7ef: R_386_32	crypto_ft_tab
+     7f3:	0f b6 d5             	movzbl %ch,%edx
+     7f6:	c1 e9 10             	shr    $0x10,%ecx
+     7f9:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			7fc: R_386_32	crypto_ft_tab
+     800:	0f b6 d1             	movzbl %cl,%edx
+     803:	0f b6 cd             	movzbl %ch,%ecx
+     806:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			809: R_386_32	crypto_ft_tab
+     80d:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			810: R_386_32	crypto_ft_tab
+     814:	89 1c 24             	mov    %ebx,(%esp)
+     817:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     81b:	8b 4d 60             	mov    0x60(%ebp),%ecx
+     81e:	0f b6 d0             	movzbl %al,%edx
+     821:	8b 7d 6c             	mov    0x6c(%ebp),%edi
+     824:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			827: R_386_32	crypto_ft_tab
+     82b:	8b 5d 64             	mov    0x64(%ebp),%ebx
+     82e:	0f b6 d4             	movzbl %ah,%edx
+     831:	c1 e8 10             	shr    $0x10,%eax
+     834:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			837: R_386_32	crypto_ft_tab
+     83b:	0f b6 d0             	movzbl %al,%edx
+     83e:	0f b6 c4             	movzbl %ah,%eax
+     841:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			844: R_386_32	crypto_ft_tab
+     848:	89 f0                	mov    %esi,%eax
+     84a:	8b 75 68             	mov    0x68(%ebp),%esi
+     84d:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			850: R_386_32	crypto_ft_tab
+     854:	0f b6 d0             	movzbl %al,%edx
+     857:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			85a: R_386_32	crypto_ft_tab
+     85e:	0f b6 d4             	movzbl %ah,%edx
+     861:	c1 e8 10             	shr    $0x10,%eax
+     864:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			867: R_386_32	crypto_ft_tab
+     86b:	0f b6 d0             	movzbl %al,%edx
+     86e:	0f b6 c4             	movzbl %ah,%eax
+     871:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			874: R_386_32	crypto_ft_tab
+     878:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			87b: R_386_32	crypto_ft_tab
+     87f:	8b 04 24             	mov    (%esp),%eax
+     882:	0f b6 d0             	movzbl %al,%edx
+     885:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			888: R_386_32	crypto_ft_tab
+     88c:	0f b6 d4             	movzbl %ah,%edx
+     88f:	c1 e8 10             	shr    $0x10,%eax
+     892:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			895: R_386_32	crypto_ft_tab
+     899:	0f b6 d0             	movzbl %al,%edx
+     89c:	0f b6 c4             	movzbl %ah,%eax
+     89f:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			8a2: R_386_32	crypto_ft_tab
+     8a6:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			8a9: R_386_32	crypto_ft_tab
+     8ad:	8b 44 24 04          	mov    0x4(%esp),%eax
+     8b1:	0f b6 d0             	movzbl %al,%edx
+     8b4:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			8b7: R_386_32	crypto_ft_tab
+     8bb:	0f b6 d4             	movzbl %ah,%edx
+     8be:	c1 e8 10             	shr    $0x10,%eax
+     8c1:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			8c4: R_386_32	crypto_ft_tab
+     8c8:	0f b6 d0             	movzbl %al,%edx
+     8cb:	0f b6 c4             	movzbl %ah,%eax
+     8ce:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			8d1: R_386_32	crypto_ft_tab
+     8d5:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			8d8: R_386_32	crypto_ft_tab
+     8dc:	89 1c 24             	mov    %ebx,(%esp)
+     8df:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     8e3:	8b 45 70             	mov    0x70(%ebp),%eax
+     8e6:	0f b6 d1             	movzbl %cl,%edx
+     8e9:	8b 7d 7c             	mov    0x7c(%ebp),%edi
+     8ec:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			8ef: R_386_32	crypto_ft_tab
+     8f3:	8b 5d 74             	mov    0x74(%ebp),%ebx
+     8f6:	0f b6 d5             	movzbl %ch,%edx
+     8f9:	c1 e9 10             	shr    $0x10,%ecx
+     8fc:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			8ff: R_386_32	crypto_ft_tab
+     903:	0f b6 d1             	movzbl %cl,%edx
+     906:	0f b6 cd             	movzbl %ch,%ecx
+     909:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			90c: R_386_32	crypto_ft_tab
+     910:	89 f1                	mov    %esi,%ecx
+     912:	8b 75 78             	mov    0x78(%ebp),%esi
+     915:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			918: R_386_32	crypto_ft_tab
+     91c:	0f b6 d1             	movzbl %cl,%edx
+     91f:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			922: R_386_32	crypto_ft_tab
+     926:	0f b6 d5             	movzbl %ch,%edx
+     929:	c1 e9 10             	shr    $0x10,%ecx
+     92c:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			92f: R_386_32	crypto_ft_tab
+     933:	0f b6 d1             	movzbl %cl,%edx
+     936:	0f b6 cd             	movzbl %ch,%ecx
+     939:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			93c: R_386_32	crypto_ft_tab
+     940:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			943: R_386_32	crypto_ft_tab
+     947:	8b 0c 24             	mov    (%esp),%ecx
+     94a:	0f b6 d1             	movzbl %cl,%edx
+     94d:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			950: R_386_32	crypto_ft_tab
+     954:	0f b6 d5             	movzbl %ch,%edx
+     957:	c1 e9 10             	shr    $0x10,%ecx
+     95a:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			95d: R_386_32	crypto_ft_tab
+     961:	0f b6 d1             	movzbl %cl,%edx
+     964:	0f b6 cd             	movzbl %ch,%ecx
+     967:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			96a: R_386_32	crypto_ft_tab
+     96e:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			971: R_386_32	crypto_ft_tab
+     975:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     979:	0f b6 d1             	movzbl %cl,%edx
+     97c:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			97f: R_386_32	crypto_ft_tab
+     983:	0f b6 d5             	movzbl %ch,%edx
+     986:	c1 e9 10             	shr    $0x10,%ecx
+     989:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			98c: R_386_32	crypto_ft_tab
+     990:	0f b6 d1             	movzbl %cl,%edx
+     993:	0f b6 cd             	movzbl %ch,%ecx
+     996:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			999: R_386_32	crypto_ft_tab
+     99d:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			9a0: R_386_32	crypto_ft_tab
+     9a4:	89 1c 24             	mov    %ebx,(%esp)
+     9a7:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     9ab:	8b 8d 80 00 00 00    	mov    0x80(%ebp),%ecx
+     9b1:	0f b6 d0             	movzbl %al,%edx
+     9b4:	8b bd 8c 00 00 00    	mov    0x8c(%ebp),%edi
+     9ba:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			9bd: R_386_32	crypto_ft_tab
+     9c1:	8b 9d 84 00 00 00    	mov    0x84(%ebp),%ebx
+     9c7:	0f b6 d4             	movzbl %ah,%edx
+     9ca:	c1 e8 10             	shr    $0x10,%eax
+     9cd:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			9d0: R_386_32	crypto_ft_tab
+     9d4:	0f b6 d0             	movzbl %al,%edx
+     9d7:	0f b6 c4             	movzbl %ah,%eax
+     9da:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			9dd: R_386_32	crypto_ft_tab
+     9e1:	89 f0                	mov    %esi,%eax
+     9e3:	8b b5 88 00 00 00    	mov    0x88(%ebp),%esi
+     9e9:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			9ec: R_386_32	crypto_ft_tab
+     9f0:	0f b6 d0             	movzbl %al,%edx
+     9f3:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			9f6: R_386_32	crypto_ft_tab
+     9fa:	0f b6 d4             	movzbl %ah,%edx
+     9fd:	c1 e8 10             	shr    $0x10,%eax
+     a00:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			a03: R_386_32	crypto_ft_tab
+     a07:	0f b6 d0             	movzbl %al,%edx
+     a0a:	0f b6 c4             	movzbl %ah,%eax
+     a0d:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			a10: R_386_32	crypto_ft_tab
+     a14:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			a17: R_386_32	crypto_ft_tab
+     a1b:	8b 04 24             	mov    (%esp),%eax
+     a1e:	0f b6 d0             	movzbl %al,%edx
+     a21:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			a24: R_386_32	crypto_ft_tab
+     a28:	0f b6 d4             	movzbl %ah,%edx
+     a2b:	c1 e8 10             	shr    $0x10,%eax
+     a2e:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			a31: R_386_32	crypto_ft_tab
+     a35:	0f b6 d0             	movzbl %al,%edx
+     a38:	0f b6 c4             	movzbl %ah,%eax
+     a3b:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			a3e: R_386_32	crypto_ft_tab
+     a42:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			a45: R_386_32	crypto_ft_tab
+     a49:	8b 44 24 04          	mov    0x4(%esp),%eax
+     a4d:	0f b6 d0             	movzbl %al,%edx
+     a50:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			a53: R_386_32	crypto_ft_tab
+     a57:	0f b6 d4             	movzbl %ah,%edx
+     a5a:	c1 e8 10             	shr    $0x10,%eax
+     a5d:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			a60: R_386_32	crypto_ft_tab
+     a64:	0f b6 d0             	movzbl %al,%edx
+     a67:	0f b6 c4             	movzbl %ah,%eax
+     a6a:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			a6d: R_386_32	crypto_ft_tab
+     a71:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			a74: R_386_32	crypto_ft_tab
+     a78:	89 1c 24             	mov    %ebx,(%esp)
+     a7b:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     a7f:	8b 85 90 00 00 00    	mov    0x90(%ebp),%eax
+     a85:	0f b6 d1             	movzbl %cl,%edx
+     a88:	8b bd 9c 00 00 00    	mov    0x9c(%ebp),%edi
+     a8e:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			a91: R_386_32	crypto_fl_tab
+     a95:	8b 9d 94 00 00 00    	mov    0x94(%ebp),%ebx
+     a9b:	0f b6 d5             	movzbl %ch,%edx
+     a9e:	c1 e9 10             	shr    $0x10,%ecx
+     aa1:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			aa4: R_386_32	crypto_fl_tab
+     aa8:	0f b6 d1             	movzbl %cl,%edx
+     aab:	0f b6 cd             	movzbl %ch,%ecx
+     aae:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			ab1: R_386_32	crypto_fl_tab
+     ab5:	89 f1                	mov    %esi,%ecx
+     ab7:	8b b5 98 00 00 00    	mov    0x98(%ebp),%esi
+     abd:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			ac0: R_386_32	crypto_fl_tab
+     ac4:	0f b6 d1             	movzbl %cl,%edx
+     ac7:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			aca: R_386_32	crypto_fl_tab
+     ace:	0f b6 d5             	movzbl %ch,%edx
+     ad1:	c1 e9 10             	shr    $0x10,%ecx
+     ad4:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			ad7: R_386_32	crypto_fl_tab
+     adb:	0f b6 d1             	movzbl %cl,%edx
+     ade:	0f b6 cd             	movzbl %ch,%ecx
+     ae1:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			ae4: R_386_32	crypto_fl_tab
+     ae8:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			aeb: R_386_32	crypto_fl_tab
+     aef:	8b 0c 24             	mov    (%esp),%ecx
+     af2:	0f b6 d1             	movzbl %cl,%edx
+     af5:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			af8: R_386_32	crypto_fl_tab
+     afc:	0f b6 d5             	movzbl %ch,%edx
+     aff:	c1 e9 10             	shr    $0x10,%ecx
+     b02:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			b05: R_386_32	crypto_fl_tab
+     b09:	0f b6 d1             	movzbl %cl,%edx
+     b0c:	0f b6 cd             	movzbl %ch,%ecx
+     b0f:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			b12: R_386_32	crypto_fl_tab
+     b16:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			b19: R_386_32	crypto_fl_tab
+     b1d:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     b21:	0f b6 d1             	movzbl %cl,%edx
+     b24:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			b27: R_386_32	crypto_fl_tab
+     b2b:	0f b6 d5             	movzbl %ch,%edx
+     b2e:	c1 e9 10             	shr    $0x10,%ecx
+     b31:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			b34: R_386_32	crypto_fl_tab
+     b38:	0f b6 d1             	movzbl %cl,%edx
+     b3b:	0f b6 cd             	movzbl %ch,%ecx
+     b3e:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			b41: R_386_32	crypto_fl_tab
+     b45:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			b48: R_386_32	crypto_fl_tab
+     b4c:	83 c4 08             	add    $0x8,%esp
+     b4f:	8b 6c 24 18          	mov    0x18(%esp),%ebp
+     b53:	89 7d 0c             	mov    %edi,0xc(%ebp)
+     b56:	5f                   	pop    %edi
+     b57:	89 75 08             	mov    %esi,0x8(%ebp)
+     b5a:	5e                   	pop    %esi
+     b5b:	89 5d 04             	mov    %ebx,0x4(%ebp)
+     b5e:	5b                   	pop    %ebx
+     b5f:	89 45 00             	mov    %eax,0x0(%ebp)
+     b62:	5d                   	pop    %ebp
+     b63:	c3                   	ret    
+
+00000b64 <aes_dec_blk>:
+     b64:	55                   	push   %ebp
+     b65:	8b 6c 24 08          	mov    0x8(%esp),%ebp
+     b69:	53                   	push   %ebx
+     b6a:	8b 4c 24 14          	mov    0x14(%esp),%ecx
+     b6e:	56                   	push   %esi
+     b6f:	8b 95 e0 01 00 00    	mov    0x1e0(%ebp),%edx
+     b75:	57                   	push   %edi
+     b76:	8d ad f0 00 00 00    	lea    0xf0(%ebp),%ebp
+     b7c:	8b 01                	mov    (%ecx),%eax
+     b7e:	8b 59 04             	mov    0x4(%ecx),%ebx
+     b81:	8b 71 08             	mov    0x8(%ecx),%esi
+     b84:	8b 79 0c             	mov    0xc(%ecx),%edi
+     b87:	33 45 00             	xor    0x0(%ebp),%eax
+     b8a:	33 5d 04             	xor    0x4(%ebp),%ebx
+     b8d:	33 75 08             	xor    0x8(%ebp),%esi
+     b90:	33 7d 0c             	xor    0xc(%ebp),%edi
+     b93:	83 ec 08             	sub    $0x8,%esp
+     b96:	83 c5 10             	add    $0x10,%ebp
+     b99:	83 fa 18             	cmp    $0x18,%edx
+     b9c:	0f 82 2c 03 00 00    	jb     ece <aes_dec_blk+0x36a>
+     ba2:	8d 6d 20             	lea    0x20(%ebp),%ebp
+     ba5:	0f 84 93 01 00 00    	je     d3e <aes_dec_blk+0x1da>
+     bab:	8d 6d 20             	lea    0x20(%ebp),%ebp
+     bae:	89 1c 24             	mov    %ebx,(%esp)
+     bb1:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     bb5:	8b 4d c0             	mov    -0x40(%ebp),%ecx
+     bb8:	0f b6 d0             	movzbl %al,%edx
+     bbb:	8b 5d c4             	mov    -0x3c(%ebp),%ebx
+     bbe:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			bc1: R_386_32	crypto_it_tab
+     bc5:	8b 7d cc             	mov    -0x34(%ebp),%edi
+     bc8:	0f b6 d4             	movzbl %ah,%edx
+     bcb:	c1 e8 10             	shr    $0x10,%eax
+     bce:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			bd1: R_386_32	crypto_it_tab
+     bd5:	0f b6 d0             	movzbl %al,%edx
+     bd8:	0f b6 c4             	movzbl %ah,%eax
+     bdb:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			bde: R_386_32	crypto_it_tab
+     be2:	89 f0                	mov    %esi,%eax
+     be4:	8b 75 c8             	mov    -0x38(%ebp),%esi
+     be7:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			bea: R_386_32	crypto_it_tab
+     bee:	0f b6 d0             	movzbl %al,%edx
+     bf1:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			bf4: R_386_32	crypto_it_tab
+     bf8:	0f b6 d4             	movzbl %ah,%edx
+     bfb:	c1 e8 10             	shr    $0x10,%eax
+     bfe:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			c01: R_386_32	crypto_it_tab
+     c05:	0f b6 d0             	movzbl %al,%edx
+     c08:	0f b6 c4             	movzbl %ah,%eax
+     c0b:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			c0e: R_386_32	crypto_it_tab
+     c12:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			c15: R_386_32	crypto_it_tab
+     c19:	8b 04 24             	mov    (%esp),%eax
+     c1c:	0f b6 d0             	movzbl %al,%edx
+     c1f:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			c22: R_386_32	crypto_it_tab
+     c26:	0f b6 d4             	movzbl %ah,%edx
+     c29:	c1 e8 10             	shr    $0x10,%eax
+     c2c:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			c2f: R_386_32	crypto_it_tab
+     c33:	0f b6 d0             	movzbl %al,%edx
+     c36:	0f b6 c4             	movzbl %ah,%eax
+     c39:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			c3c: R_386_32	crypto_it_tab
+     c40:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			c43: R_386_32	crypto_it_tab
+     c47:	8b 44 24 04          	mov    0x4(%esp),%eax
+     c4b:	0f b6 d0             	movzbl %al,%edx
+     c4e:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			c51: R_386_32	crypto_it_tab
+     c55:	0f b6 d4             	movzbl %ah,%edx
+     c58:	c1 e8 10             	shr    $0x10,%eax
+     c5b:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			c5e: R_386_32	crypto_it_tab
+     c62:	0f b6 d0             	movzbl %al,%edx
+     c65:	0f b6 c4             	movzbl %ah,%eax
+     c68:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			c6b: R_386_32	crypto_it_tab
+     c6f:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			c72: R_386_32	crypto_it_tab
+     c76:	89 1c 24             	mov    %ebx,(%esp)
+     c79:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     c7d:	8b 45 d0             	mov    -0x30(%ebp),%eax
+     c80:	0f b6 d1             	movzbl %cl,%edx
+     c83:	8b 5d d4             	mov    -0x2c(%ebp),%ebx
+     c86:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			c89: R_386_32	crypto_it_tab
+     c8d:	8b 7d dc             	mov    -0x24(%ebp),%edi
+     c90:	0f b6 d5             	movzbl %ch,%edx
+     c93:	c1 e9 10             	shr    $0x10,%ecx
+     c96:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			c99: R_386_32	crypto_it_tab
+     c9d:	0f b6 d1             	movzbl %cl,%edx
+     ca0:	0f b6 cd             	movzbl %ch,%ecx
+     ca3:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			ca6: R_386_32	crypto_it_tab
+     caa:	89 f1                	mov    %esi,%ecx
+     cac:	8b 75 d8             	mov    -0x28(%ebp),%esi
+     caf:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			cb2: R_386_32	crypto_it_tab
+     cb6:	0f b6 d1             	movzbl %cl,%edx
+     cb9:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			cbc: R_386_32	crypto_it_tab
+     cc0:	0f b6 d5             	movzbl %ch,%edx
+     cc3:	c1 e9 10             	shr    $0x10,%ecx
+     cc6:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			cc9: R_386_32	crypto_it_tab
+     ccd:	0f b6 d1             	movzbl %cl,%edx
+     cd0:	0f b6 cd             	movzbl %ch,%ecx
+     cd3:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			cd6: R_386_32	crypto_it_tab
+     cda:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			cdd: R_386_32	crypto_it_tab
+     ce1:	8b 0c 24             	mov    (%esp),%ecx
+     ce4:	0f b6 d1             	movzbl %cl,%edx
+     ce7:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			cea: R_386_32	crypto_it_tab
+     cee:	0f b6 d5             	movzbl %ch,%edx
+     cf1:	c1 e9 10             	shr    $0x10,%ecx
+     cf4:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			cf7: R_386_32	crypto_it_tab
+     cfb:	0f b6 d1             	movzbl %cl,%edx
+     cfe:	0f b6 cd             	movzbl %ch,%ecx
+     d01:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			d04: R_386_32	crypto_it_tab
+     d08:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			d0b: R_386_32	crypto_it_tab
+     d0f:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     d13:	0f b6 d1             	movzbl %cl,%edx
+     d16:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			d19: R_386_32	crypto_it_tab
+     d1d:	0f b6 d5             	movzbl %ch,%edx
+     d20:	c1 e9 10             	shr    $0x10,%ecx
+     d23:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			d26: R_386_32	crypto_it_tab
+     d2a:	0f b6 d1             	movzbl %cl,%edx
+     d2d:	0f b6 cd             	movzbl %ch,%ecx
+     d30:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			d33: R_386_32	crypto_it_tab
+     d37:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			d3a: R_386_32	crypto_it_tab
+     d3e:	89 1c 24             	mov    %ebx,(%esp)
+     d41:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     d45:	8b 4d e0             	mov    -0x20(%ebp),%ecx
+     d48:	0f b6 d0             	movzbl %al,%edx
+     d4b:	8b 5d e4             	mov    -0x1c(%ebp),%ebx
+     d4e:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			d51: R_386_32	crypto_it_tab
+     d55:	8b 7d ec             	mov    -0x14(%ebp),%edi
+     d58:	0f b6 d4             	movzbl %ah,%edx
+     d5b:	c1 e8 10             	shr    $0x10,%eax
+     d5e:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			d61: R_386_32	crypto_it_tab
+     d65:	0f b6 d0             	movzbl %al,%edx
+     d68:	0f b6 c4             	movzbl %ah,%eax
+     d6b:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			d6e: R_386_32	crypto_it_tab
+     d72:	89 f0                	mov    %esi,%eax
+     d74:	8b 75 e8             	mov    -0x18(%ebp),%esi
+     d77:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			d7a: R_386_32	crypto_it_tab
+     d7e:	0f b6 d0             	movzbl %al,%edx
+     d81:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			d84: R_386_32	crypto_it_tab
+     d88:	0f b6 d4             	movzbl %ah,%edx
+     d8b:	c1 e8 10             	shr    $0x10,%eax
+     d8e:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			d91: R_386_32	crypto_it_tab
+     d95:	0f b6 d0             	movzbl %al,%edx
+     d98:	0f b6 c4             	movzbl %ah,%eax
+     d9b:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			d9e: R_386_32	crypto_it_tab
+     da2:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			da5: R_386_32	crypto_it_tab
+     da9:	8b 04 24             	mov    (%esp),%eax
+     dac:	0f b6 d0             	movzbl %al,%edx
+     daf:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			db2: R_386_32	crypto_it_tab
+     db6:	0f b6 d4             	movzbl %ah,%edx
+     db9:	c1 e8 10             	shr    $0x10,%eax
+     dbc:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			dbf: R_386_32	crypto_it_tab
+     dc3:	0f b6 d0             	movzbl %al,%edx
+     dc6:	0f b6 c4             	movzbl %ah,%eax
+     dc9:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			dcc: R_386_32	crypto_it_tab
+     dd0:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			dd3: R_386_32	crypto_it_tab
+     dd7:	8b 44 24 04          	mov    0x4(%esp),%eax
+     ddb:	0f b6 d0             	movzbl %al,%edx
+     dde:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			de1: R_386_32	crypto_it_tab
+     de5:	0f b6 d4             	movzbl %ah,%edx
+     de8:	c1 e8 10             	shr    $0x10,%eax
+     deb:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			dee: R_386_32	crypto_it_tab
+     df2:	0f b6 d0             	movzbl %al,%edx
+     df5:	0f b6 c4             	movzbl %ah,%eax
+     df8:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			dfb: R_386_32	crypto_it_tab
+     dff:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			e02: R_386_32	crypto_it_tab
+     e06:	89 1c 24             	mov    %ebx,(%esp)
+     e09:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     e0d:	8b 45 f0             	mov    -0x10(%ebp),%eax
+     e10:	0f b6 d1             	movzbl %cl,%edx
+     e13:	8b 5d f4             	mov    -0xc(%ebp),%ebx
+     e16:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			e19: R_386_32	crypto_it_tab
+     e1d:	8b 7d fc             	mov    -0x4(%ebp),%edi
+     e20:	0f b6 d5             	movzbl %ch,%edx
+     e23:	c1 e9 10             	shr    $0x10,%ecx
+     e26:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			e29: R_386_32	crypto_it_tab
+     e2d:	0f b6 d1             	movzbl %cl,%edx
+     e30:	0f b6 cd             	movzbl %ch,%ecx
+     e33:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			e36: R_386_32	crypto_it_tab
+     e3a:	89 f1                	mov    %esi,%ecx
+     e3c:	8b 75 f8             	mov    -0x8(%ebp),%esi
+     e3f:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			e42: R_386_32	crypto_it_tab
+     e46:	0f b6 d1             	movzbl %cl,%edx
+     e49:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			e4c: R_386_32	crypto_it_tab
+     e50:	0f b6 d5             	movzbl %ch,%edx
+     e53:	c1 e9 10             	shr    $0x10,%ecx
+     e56:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			e59: R_386_32	crypto_it_tab
+     e5d:	0f b6 d1             	movzbl %cl,%edx
+     e60:	0f b6 cd             	movzbl %ch,%ecx
+     e63:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			e66: R_386_32	crypto_it_tab
+     e6a:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			e6d: R_386_32	crypto_it_tab
+     e71:	8b 0c 24             	mov    (%esp),%ecx
+     e74:	0f b6 d1             	movzbl %cl,%edx
+     e77:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			e7a: R_386_32	crypto_it_tab
+     e7e:	0f b6 d5             	movzbl %ch,%edx
+     e81:	c1 e9 10             	shr    $0x10,%ecx
+     e84:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			e87: R_386_32	crypto_it_tab
+     e8b:	0f b6 d1             	movzbl %cl,%edx
+     e8e:	0f b6 cd             	movzbl %ch,%ecx
+     e91:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			e94: R_386_32	crypto_it_tab
+     e98:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			e9b: R_386_32	crypto_it_tab
+     e9f:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+     ea3:	0f b6 d1             	movzbl %cl,%edx
+     ea6:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			ea9: R_386_32	crypto_it_tab
+     ead:	0f b6 d5             	movzbl %ch,%edx
+     eb0:	c1 e9 10             	shr    $0x10,%ecx
+     eb3:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			eb6: R_386_32	crypto_it_tab
+     eba:	0f b6 d1             	movzbl %cl,%edx
+     ebd:	0f b6 cd             	movzbl %ch,%ecx
+     ec0:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			ec3: R_386_32	crypto_it_tab
+     ec7:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			eca: R_386_32	crypto_it_tab
+     ece:	89 1c 24             	mov    %ebx,(%esp)
+     ed1:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     ed5:	8b 4d 00             	mov    0x0(%ebp),%ecx
+     ed8:	0f b6 d0             	movzbl %al,%edx
+     edb:	8b 5d 04             	mov    0x4(%ebp),%ebx
+     ede:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			ee1: R_386_32	crypto_it_tab
+     ee5:	8b 7d 0c             	mov    0xc(%ebp),%edi
+     ee8:	0f b6 d4             	movzbl %ah,%edx
+     eeb:	c1 e8 10             	shr    $0x10,%eax
+     eee:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			ef1: R_386_32	crypto_it_tab
+     ef5:	0f b6 d0             	movzbl %al,%edx
+     ef8:	0f b6 c4             	movzbl %ah,%eax
+     efb:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			efe: R_386_32	crypto_it_tab
+     f02:	89 f0                	mov    %esi,%eax
+     f04:	8b 75 08             	mov    0x8(%ebp),%esi
+     f07:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			f0a: R_386_32	crypto_it_tab
+     f0e:	0f b6 d0             	movzbl %al,%edx
+     f11:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			f14: R_386_32	crypto_it_tab
+     f18:	0f b6 d4             	movzbl %ah,%edx
+     f1b:	c1 e8 10             	shr    $0x10,%eax
+     f1e:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			f21: R_386_32	crypto_it_tab
+     f25:	0f b6 d0             	movzbl %al,%edx
+     f28:	0f b6 c4             	movzbl %ah,%eax
+     f2b:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			f2e: R_386_32	crypto_it_tab
+     f32:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			f35: R_386_32	crypto_it_tab
+     f39:	8b 04 24             	mov    (%esp),%eax
+     f3c:	0f b6 d0             	movzbl %al,%edx
+     f3f:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			f42: R_386_32	crypto_it_tab
+     f46:	0f b6 d4             	movzbl %ah,%edx
+     f49:	c1 e8 10             	shr    $0x10,%eax
+     f4c:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			f4f: R_386_32	crypto_it_tab
+     f53:	0f b6 d0             	movzbl %al,%edx
+     f56:	0f b6 c4             	movzbl %ah,%eax
+     f59:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			f5c: R_386_32	crypto_it_tab
+     f60:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			f63: R_386_32	crypto_it_tab
+     f67:	8b 44 24 04          	mov    0x4(%esp),%eax
+     f6b:	0f b6 d0             	movzbl %al,%edx
+     f6e:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			f71: R_386_32	crypto_it_tab
+     f75:	0f b6 d4             	movzbl %ah,%edx
+     f78:	c1 e8 10             	shr    $0x10,%eax
+     f7b:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			f7e: R_386_32	crypto_it_tab
+     f82:	0f b6 d0             	movzbl %al,%edx
+     f85:	0f b6 c4             	movzbl %ah,%eax
+     f88:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			f8b: R_386_32	crypto_it_tab
+     f8f:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			f92: R_386_32	crypto_it_tab
+     f96:	89 1c 24             	mov    %ebx,(%esp)
+     f99:	89 7c 24 04          	mov    %edi,0x4(%esp)
+     f9d:	8b 45 10             	mov    0x10(%ebp),%eax
+     fa0:	0f b6 d1             	movzbl %cl,%edx
+     fa3:	8b 5d 14             	mov    0x14(%ebp),%ebx
+     fa6:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			fa9: R_386_32	crypto_it_tab
+     fad:	8b 7d 1c             	mov    0x1c(%ebp),%edi
+     fb0:	0f b6 d5             	movzbl %ch,%edx
+     fb3:	c1 e9 10             	shr    $0x10,%ecx
+     fb6:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			fb9: R_386_32	crypto_it_tab
+     fbd:	0f b6 d1             	movzbl %cl,%edx
+     fc0:	0f b6 cd             	movzbl %ch,%ecx
+     fc3:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			fc6: R_386_32	crypto_it_tab
+     fca:	89 f1                	mov    %esi,%ecx
+     fcc:	8b 75 18             	mov    0x18(%ebp),%esi
+     fcf:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			fd2: R_386_32	crypto_it_tab
+     fd6:	0f b6 d1             	movzbl %cl,%edx
+     fd9:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			fdc: R_386_32	crypto_it_tab
+     fe0:	0f b6 d5             	movzbl %ch,%edx
+     fe3:	c1 e9 10             	shr    $0x10,%ecx
+     fe6:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			fe9: R_386_32	crypto_it_tab
+     fed:	0f b6 d1             	movzbl %cl,%edx
+     ff0:	0f b6 cd             	movzbl %ch,%ecx
+     ff3:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			ff6: R_386_32	crypto_it_tab
+     ffa:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			ffd: R_386_32	crypto_it_tab
+    1001:	8b 0c 24             	mov    (%esp),%ecx
+    1004:	0f b6 d1             	movzbl %cl,%edx
+    1007:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			100a: R_386_32	crypto_it_tab
+    100e:	0f b6 d5             	movzbl %ch,%edx
+    1011:	c1 e9 10             	shr    $0x10,%ecx
+    1014:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			1017: R_386_32	crypto_it_tab
+    101b:	0f b6 d1             	movzbl %cl,%edx
+    101e:	0f b6 cd             	movzbl %ch,%ecx
+    1021:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			1024: R_386_32	crypto_it_tab
+    1028:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			102b: R_386_32	crypto_it_tab
+    102f:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+    1033:	0f b6 d1             	movzbl %cl,%edx
+    1036:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			1039: R_386_32	crypto_it_tab
+    103d:	0f b6 d5             	movzbl %ch,%edx
+    1040:	c1 e9 10             	shr    $0x10,%ecx
+    1043:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			1046: R_386_32	crypto_it_tab
+    104a:	0f b6 d1             	movzbl %cl,%edx
+    104d:	0f b6 cd             	movzbl %ch,%ecx
+    1050:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			1053: R_386_32	crypto_it_tab
+    1057:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			105a: R_386_32	crypto_it_tab
+    105e:	89 1c 24             	mov    %ebx,(%esp)
+    1061:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    1065:	8b 4d 20             	mov    0x20(%ebp),%ecx
+    1068:	0f b6 d0             	movzbl %al,%edx
+    106b:	8b 5d 24             	mov    0x24(%ebp),%ebx
+    106e:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			1071: R_386_32	crypto_it_tab
+    1075:	8b 7d 2c             	mov    0x2c(%ebp),%edi
+    1078:	0f b6 d4             	movzbl %ah,%edx
+    107b:	c1 e8 10             	shr    $0x10,%eax
+    107e:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			1081: R_386_32	crypto_it_tab
+    1085:	0f b6 d0             	movzbl %al,%edx
+    1088:	0f b6 c4             	movzbl %ah,%eax
+    108b:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			108e: R_386_32	crypto_it_tab
+    1092:	89 f0                	mov    %esi,%eax
+    1094:	8b 75 28             	mov    0x28(%ebp),%esi
+    1097:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			109a: R_386_32	crypto_it_tab
+    109e:	0f b6 d0             	movzbl %al,%edx
+    10a1:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			10a4: R_386_32	crypto_it_tab
+    10a8:	0f b6 d4             	movzbl %ah,%edx
+    10ab:	c1 e8 10             	shr    $0x10,%eax
+    10ae:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			10b1: R_386_32	crypto_it_tab
+    10b5:	0f b6 d0             	movzbl %al,%edx
+    10b8:	0f b6 c4             	movzbl %ah,%eax
+    10bb:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			10be: R_386_32	crypto_it_tab
+    10c2:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			10c5: R_386_32	crypto_it_tab
+    10c9:	8b 04 24             	mov    (%esp),%eax
+    10cc:	0f b6 d0             	movzbl %al,%edx
+    10cf:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			10d2: R_386_32	crypto_it_tab
+    10d6:	0f b6 d4             	movzbl %ah,%edx
+    10d9:	c1 e8 10             	shr    $0x10,%eax
+    10dc:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			10df: R_386_32	crypto_it_tab
+    10e3:	0f b6 d0             	movzbl %al,%edx
+    10e6:	0f b6 c4             	movzbl %ah,%eax
+    10e9:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			10ec: R_386_32	crypto_it_tab
+    10f0:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			10f3: R_386_32	crypto_it_tab
+    10f7:	8b 44 24 04          	mov    0x4(%esp),%eax
+    10fb:	0f b6 d0             	movzbl %al,%edx
+    10fe:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			1101: R_386_32	crypto_it_tab
+    1105:	0f b6 d4             	movzbl %ah,%edx
+    1108:	c1 e8 10             	shr    $0x10,%eax
+    110b:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			110e: R_386_32	crypto_it_tab
+    1112:	0f b6 d0             	movzbl %al,%edx
+    1115:	0f b6 c4             	movzbl %ah,%eax
+    1118:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			111b: R_386_32	crypto_it_tab
+    111f:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			1122: R_386_32	crypto_it_tab
+    1126:	89 1c 24             	mov    %ebx,(%esp)
+    1129:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    112d:	8b 45 30             	mov    0x30(%ebp),%eax
+    1130:	0f b6 d1             	movzbl %cl,%edx
+    1133:	8b 5d 34             	mov    0x34(%ebp),%ebx
+    1136:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			1139: R_386_32	crypto_it_tab
+    113d:	8b 7d 3c             	mov    0x3c(%ebp),%edi
+    1140:	0f b6 d5             	movzbl %ch,%edx
+    1143:	c1 e9 10             	shr    $0x10,%ecx
+    1146:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			1149: R_386_32	crypto_it_tab
+    114d:	0f b6 d1             	movzbl %cl,%edx
+    1150:	0f b6 cd             	movzbl %ch,%ecx
+    1153:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			1156: R_386_32	crypto_it_tab
+    115a:	89 f1                	mov    %esi,%ecx
+    115c:	8b 75 38             	mov    0x38(%ebp),%esi
+    115f:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			1162: R_386_32	crypto_it_tab
+    1166:	0f b6 d1             	movzbl %cl,%edx
+    1169:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			116c: R_386_32	crypto_it_tab
+    1170:	0f b6 d5             	movzbl %ch,%edx
+    1173:	c1 e9 10             	shr    $0x10,%ecx
+    1176:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			1179: R_386_32	crypto_it_tab
+    117d:	0f b6 d1             	movzbl %cl,%edx
+    1180:	0f b6 cd             	movzbl %ch,%ecx
+    1183:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			1186: R_386_32	crypto_it_tab
+    118a:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			118d: R_386_32	crypto_it_tab
+    1191:	8b 0c 24             	mov    (%esp),%ecx
+    1194:	0f b6 d1             	movzbl %cl,%edx
+    1197:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			119a: R_386_32	crypto_it_tab
+    119e:	0f b6 d5             	movzbl %ch,%edx
+    11a1:	c1 e9 10             	shr    $0x10,%ecx
+    11a4:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			11a7: R_386_32	crypto_it_tab
+    11ab:	0f b6 d1             	movzbl %cl,%edx
+    11ae:	0f b6 cd             	movzbl %ch,%ecx
+    11b1:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			11b4: R_386_32	crypto_it_tab
+    11b8:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			11bb: R_386_32	crypto_it_tab
+    11bf:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+    11c3:	0f b6 d1             	movzbl %cl,%edx
+    11c6:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			11c9: R_386_32	crypto_it_tab
+    11cd:	0f b6 d5             	movzbl %ch,%edx
+    11d0:	c1 e9 10             	shr    $0x10,%ecx
+    11d3:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			11d6: R_386_32	crypto_it_tab
+    11da:	0f b6 d1             	movzbl %cl,%edx
+    11dd:	0f b6 cd             	movzbl %ch,%ecx
+    11e0:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			11e3: R_386_32	crypto_it_tab
+    11e7:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			11ea: R_386_32	crypto_it_tab
+    11ee:	89 1c 24             	mov    %ebx,(%esp)
+    11f1:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    11f5:	8b 4d 40             	mov    0x40(%ebp),%ecx
+    11f8:	0f b6 d0             	movzbl %al,%edx
+    11fb:	8b 5d 44             	mov    0x44(%ebp),%ebx
+    11fe:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			1201: R_386_32	crypto_it_tab
+    1205:	8b 7d 4c             	mov    0x4c(%ebp),%edi
+    1208:	0f b6 d4             	movzbl %ah,%edx
+    120b:	c1 e8 10             	shr    $0x10,%eax
+    120e:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			1211: R_386_32	crypto_it_tab
+    1215:	0f b6 d0             	movzbl %al,%edx
+    1218:	0f b6 c4             	movzbl %ah,%eax
+    121b:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			121e: R_386_32	crypto_it_tab
+    1222:	89 f0                	mov    %esi,%eax
+    1224:	8b 75 48             	mov    0x48(%ebp),%esi
+    1227:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			122a: R_386_32	crypto_it_tab
+    122e:	0f b6 d0             	movzbl %al,%edx
+    1231:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			1234: R_386_32	crypto_it_tab
+    1238:	0f b6 d4             	movzbl %ah,%edx
+    123b:	c1 e8 10             	shr    $0x10,%eax
+    123e:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			1241: R_386_32	crypto_it_tab
+    1245:	0f b6 d0             	movzbl %al,%edx
+    1248:	0f b6 c4             	movzbl %ah,%eax
+    124b:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			124e: R_386_32	crypto_it_tab
+    1252:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			1255: R_386_32	crypto_it_tab
+    1259:	8b 04 24             	mov    (%esp),%eax
+    125c:	0f b6 d0             	movzbl %al,%edx
+    125f:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			1262: R_386_32	crypto_it_tab
+    1266:	0f b6 d4             	movzbl %ah,%edx
+    1269:	c1 e8 10             	shr    $0x10,%eax
+    126c:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			126f: R_386_32	crypto_it_tab
+    1273:	0f b6 d0             	movzbl %al,%edx
+    1276:	0f b6 c4             	movzbl %ah,%eax
+    1279:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			127c: R_386_32	crypto_it_tab
+    1280:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			1283: R_386_32	crypto_it_tab
+    1287:	8b 44 24 04          	mov    0x4(%esp),%eax
+    128b:	0f b6 d0             	movzbl %al,%edx
+    128e:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			1291: R_386_32	crypto_it_tab
+    1295:	0f b6 d4             	movzbl %ah,%edx
+    1298:	c1 e8 10             	shr    $0x10,%eax
+    129b:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			129e: R_386_32	crypto_it_tab
+    12a2:	0f b6 d0             	movzbl %al,%edx
+    12a5:	0f b6 c4             	movzbl %ah,%eax
+    12a8:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			12ab: R_386_32	crypto_it_tab
+    12af:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			12b2: R_386_32	crypto_it_tab
+    12b6:	89 1c 24             	mov    %ebx,(%esp)
+    12b9:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    12bd:	8b 45 50             	mov    0x50(%ebp),%eax
+    12c0:	0f b6 d1             	movzbl %cl,%edx
+    12c3:	8b 5d 54             	mov    0x54(%ebp),%ebx
+    12c6:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			12c9: R_386_32	crypto_it_tab
+    12cd:	8b 7d 5c             	mov    0x5c(%ebp),%edi
+    12d0:	0f b6 d5             	movzbl %ch,%edx
+    12d3:	c1 e9 10             	shr    $0x10,%ecx
+    12d6:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			12d9: R_386_32	crypto_it_tab
+    12dd:	0f b6 d1             	movzbl %cl,%edx
+    12e0:	0f b6 cd             	movzbl %ch,%ecx
+    12e3:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			12e6: R_386_32	crypto_it_tab
+    12ea:	89 f1                	mov    %esi,%ecx
+    12ec:	8b 75 58             	mov    0x58(%ebp),%esi
+    12ef:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			12f2: R_386_32	crypto_it_tab
+    12f6:	0f b6 d1             	movzbl %cl,%edx
+    12f9:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			12fc: R_386_32	crypto_it_tab
+    1300:	0f b6 d5             	movzbl %ch,%edx
+    1303:	c1 e9 10             	shr    $0x10,%ecx
+    1306:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			1309: R_386_32	crypto_it_tab
+    130d:	0f b6 d1             	movzbl %cl,%edx
+    1310:	0f b6 cd             	movzbl %ch,%ecx
+    1313:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			1316: R_386_32	crypto_it_tab
+    131a:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			131d: R_386_32	crypto_it_tab
+    1321:	8b 0c 24             	mov    (%esp),%ecx
+    1324:	0f b6 d1             	movzbl %cl,%edx
+    1327:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			132a: R_386_32	crypto_it_tab
+    132e:	0f b6 d5             	movzbl %ch,%edx
+    1331:	c1 e9 10             	shr    $0x10,%ecx
+    1334:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			1337: R_386_32	crypto_it_tab
+    133b:	0f b6 d1             	movzbl %cl,%edx
+    133e:	0f b6 cd             	movzbl %ch,%ecx
+    1341:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			1344: R_386_32	crypto_it_tab
+    1348:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			134b: R_386_32	crypto_it_tab
+    134f:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+    1353:	0f b6 d1             	movzbl %cl,%edx
+    1356:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			1359: R_386_32	crypto_it_tab
+    135d:	0f b6 d5             	movzbl %ch,%edx
+    1360:	c1 e9 10             	shr    $0x10,%ecx
+    1363:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			1366: R_386_32	crypto_it_tab
+    136a:	0f b6 d1             	movzbl %cl,%edx
+    136d:	0f b6 cd             	movzbl %ch,%ecx
+    1370:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			1373: R_386_32	crypto_it_tab
+    1377:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			137a: R_386_32	crypto_it_tab
+    137e:	89 1c 24             	mov    %ebx,(%esp)
+    1381:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    1385:	8b 4d 60             	mov    0x60(%ebp),%ecx
+    1388:	0f b6 d0             	movzbl %al,%edx
+    138b:	8b 5d 64             	mov    0x64(%ebp),%ebx
+    138e:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			1391: R_386_32	crypto_it_tab
+    1395:	8b 7d 6c             	mov    0x6c(%ebp),%edi
+    1398:	0f b6 d4             	movzbl %ah,%edx
+    139b:	c1 e8 10             	shr    $0x10,%eax
+    139e:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			13a1: R_386_32	crypto_it_tab
+    13a5:	0f b6 d0             	movzbl %al,%edx
+    13a8:	0f b6 c4             	movzbl %ah,%eax
+    13ab:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			13ae: R_386_32	crypto_it_tab
+    13b2:	89 f0                	mov    %esi,%eax
+    13b4:	8b 75 68             	mov    0x68(%ebp),%esi
+    13b7:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			13ba: R_386_32	crypto_it_tab
+    13be:	0f b6 d0             	movzbl %al,%edx
+    13c1:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			13c4: R_386_32	crypto_it_tab
+    13c8:	0f b6 d4             	movzbl %ah,%edx
+    13cb:	c1 e8 10             	shr    $0x10,%eax
+    13ce:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			13d1: R_386_32	crypto_it_tab
+    13d5:	0f b6 d0             	movzbl %al,%edx
+    13d8:	0f b6 c4             	movzbl %ah,%eax
+    13db:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			13de: R_386_32	crypto_it_tab
+    13e2:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			13e5: R_386_32	crypto_it_tab
+    13e9:	8b 04 24             	mov    (%esp),%eax
+    13ec:	0f b6 d0             	movzbl %al,%edx
+    13ef:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			13f2: R_386_32	crypto_it_tab
+    13f6:	0f b6 d4             	movzbl %ah,%edx
+    13f9:	c1 e8 10             	shr    $0x10,%eax
+    13fc:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			13ff: R_386_32	crypto_it_tab
+    1403:	0f b6 d0             	movzbl %al,%edx
+    1406:	0f b6 c4             	movzbl %ah,%eax
+    1409:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			140c: R_386_32	crypto_it_tab
+    1410:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			1413: R_386_32	crypto_it_tab
+    1417:	8b 44 24 04          	mov    0x4(%esp),%eax
+    141b:	0f b6 d0             	movzbl %al,%edx
+    141e:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			1421: R_386_32	crypto_it_tab
+    1425:	0f b6 d4             	movzbl %ah,%edx
+    1428:	c1 e8 10             	shr    $0x10,%eax
+    142b:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			142e: R_386_32	crypto_it_tab
+    1432:	0f b6 d0             	movzbl %al,%edx
+    1435:	0f b6 c4             	movzbl %ah,%eax
+    1438:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			143b: R_386_32	crypto_it_tab
+    143f:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			1442: R_386_32	crypto_it_tab
+    1446:	89 1c 24             	mov    %ebx,(%esp)
+    1449:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    144d:	8b 45 70             	mov    0x70(%ebp),%eax
+    1450:	0f b6 d1             	movzbl %cl,%edx
+    1453:	8b 5d 74             	mov    0x74(%ebp),%ebx
+    1456:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			1459: R_386_32	crypto_it_tab
+    145d:	8b 7d 7c             	mov    0x7c(%ebp),%edi
+    1460:	0f b6 d5             	movzbl %ch,%edx
+    1463:	c1 e9 10             	shr    $0x10,%ecx
+    1466:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			1469: R_386_32	crypto_it_tab
+    146d:	0f b6 d1             	movzbl %cl,%edx
+    1470:	0f b6 cd             	movzbl %ch,%ecx
+    1473:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			1476: R_386_32	crypto_it_tab
+    147a:	89 f1                	mov    %esi,%ecx
+    147c:	8b 75 78             	mov    0x78(%ebp),%esi
+    147f:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			1482: R_386_32	crypto_it_tab
+    1486:	0f b6 d1             	movzbl %cl,%edx
+    1489:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			148c: R_386_32	crypto_it_tab
+    1490:	0f b6 d5             	movzbl %ch,%edx
+    1493:	c1 e9 10             	shr    $0x10,%ecx
+    1496:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			1499: R_386_32	crypto_it_tab
+    149d:	0f b6 d1             	movzbl %cl,%edx
+    14a0:	0f b6 cd             	movzbl %ch,%ecx
+    14a3:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			14a6: R_386_32	crypto_it_tab
+    14aa:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			14ad: R_386_32	crypto_it_tab
+    14b1:	8b 0c 24             	mov    (%esp),%ecx
+    14b4:	0f b6 d1             	movzbl %cl,%edx
+    14b7:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			14ba: R_386_32	crypto_it_tab
+    14be:	0f b6 d5             	movzbl %ch,%edx
+    14c1:	c1 e9 10             	shr    $0x10,%ecx
+    14c4:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			14c7: R_386_32	crypto_it_tab
+    14cb:	0f b6 d1             	movzbl %cl,%edx
+    14ce:	0f b6 cd             	movzbl %ch,%ecx
+    14d1:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			14d4: R_386_32	crypto_it_tab
+    14d8:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			14db: R_386_32	crypto_it_tab
+    14df:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+    14e3:	0f b6 d1             	movzbl %cl,%edx
+    14e6:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			14e9: R_386_32	crypto_it_tab
+    14ed:	0f b6 d5             	movzbl %ch,%edx
+    14f0:	c1 e9 10             	shr    $0x10,%ecx
+    14f3:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			14f6: R_386_32	crypto_it_tab
+    14fa:	0f b6 d1             	movzbl %cl,%edx
+    14fd:	0f b6 cd             	movzbl %ch,%ecx
+    1500:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			1503: R_386_32	crypto_it_tab
+    1507:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			150a: R_386_32	crypto_it_tab
+    150e:	89 1c 24             	mov    %ebx,(%esp)
+    1511:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    1515:	8b 8d 80 00 00 00    	mov    0x80(%ebp),%ecx
+    151b:	0f b6 d0             	movzbl %al,%edx
+    151e:	8b 9d 84 00 00 00    	mov    0x84(%ebp),%ebx
+    1524:	33 0c 95 00 00 00 00 	xor    0x0(,%edx,4),%ecx
+			1527: R_386_32	crypto_it_tab
+    152b:	8b bd 8c 00 00 00    	mov    0x8c(%ebp),%edi
+    1531:	0f b6 d4             	movzbl %ah,%edx
+    1534:	c1 e8 10             	shr    $0x10,%eax
+    1537:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			153a: R_386_32	crypto_it_tab
+    153e:	0f b6 d0             	movzbl %al,%edx
+    1541:	0f b6 c4             	movzbl %ah,%eax
+    1544:	33 3c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%edi
+			1547: R_386_32	crypto_it_tab
+    154b:	89 f0                	mov    %esi,%eax
+    154d:	8b b5 88 00 00 00    	mov    0x88(%ebp),%esi
+    1553:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			1556: R_386_32	crypto_it_tab
+    155a:	0f b6 d0             	movzbl %al,%edx
+    155d:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			1560: R_386_32	crypto_it_tab
+    1564:	0f b6 d4             	movzbl %ah,%edx
+    1567:	c1 e8 10             	shr    $0x10,%eax
+    156a:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			156d: R_386_32	crypto_it_tab
+    1571:	0f b6 d0             	movzbl %al,%edx
+    1574:	0f b6 c4             	movzbl %ah,%eax
+    1577:	33 0c 95 00 08 00 00 	xor    0x800(,%edx,4),%ecx
+			157a: R_386_32	crypto_it_tab
+    157e:	33 1c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ebx
+			1581: R_386_32	crypto_it_tab
+    1585:	8b 04 24             	mov    (%esp),%eax
+    1588:	0f b6 d0             	movzbl %al,%edx
+    158b:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			158e: R_386_32	crypto_it_tab
+    1592:	0f b6 d4             	movzbl %ah,%edx
+    1595:	c1 e8 10             	shr    $0x10,%eax
+    1598:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			159b: R_386_32	crypto_it_tab
+    159f:	0f b6 d0             	movzbl %al,%edx
+    15a2:	0f b6 c4             	movzbl %ah,%eax
+    15a5:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			15a8: R_386_32	crypto_it_tab
+    15ac:	33 0c 85 00 0c 00 00 	xor    0xc00(,%eax,4),%ecx
+			15af: R_386_32	crypto_it_tab
+    15b3:	8b 44 24 04          	mov    0x4(%esp),%eax
+    15b7:	0f b6 d0             	movzbl %al,%edx
+    15ba:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			15bd: R_386_32	crypto_it_tab
+    15c1:	0f b6 d4             	movzbl %ah,%edx
+    15c4:	c1 e8 10             	shr    $0x10,%eax
+    15c7:	33 0c 95 00 04 00 00 	xor    0x400(,%edx,4),%ecx
+			15ca: R_386_32	crypto_it_tab
+    15ce:	0f b6 d0             	movzbl %al,%edx
+    15d1:	0f b6 c4             	movzbl %ah,%eax
+    15d4:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			15d7: R_386_32	crypto_it_tab
+    15db:	33 34 85 00 0c 00 00 	xor    0xc00(,%eax,4),%esi
+			15de: R_386_32	crypto_it_tab
+    15e2:	89 1c 24             	mov    %ebx,(%esp)
+    15e5:	89 7c 24 04          	mov    %edi,0x4(%esp)
+    15e9:	8b 85 90 00 00 00    	mov    0x90(%ebp),%eax
+    15ef:	0f b6 d1             	movzbl %cl,%edx
+    15f2:	8b 9d 94 00 00 00    	mov    0x94(%ebp),%ebx
+    15f8:	33 04 95 00 00 00 00 	xor    0x0(,%edx,4),%eax
+			15fb: R_386_32	crypto_il_tab
+    15ff:	8b bd 9c 00 00 00    	mov    0x9c(%ebp),%edi
+    1605:	0f b6 d5             	movzbl %ch,%edx
+    1608:	c1 e9 10             	shr    $0x10,%ecx
+    160b:	33 1c 95 00 04 00 00 	xor    0x400(,%edx,4),%ebx
+			160e: R_386_32	crypto_il_tab
+    1612:	0f b6 d1             	movzbl %cl,%edx
+    1615:	0f b6 cd             	movzbl %ch,%ecx
+    1618:	33 3c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%edi
+			161b: R_386_32	crypto_il_tab
+    161f:	89 f1                	mov    %esi,%ecx
+    1621:	8b b5 98 00 00 00    	mov    0x98(%ebp),%esi
+    1627:	33 34 95 00 08 00 00 	xor    0x800(,%edx,4),%esi
+			162a: R_386_32	crypto_il_tab
+    162e:	0f b6 d1             	movzbl %cl,%edx
+    1631:	33 34 95 00 00 00 00 	xor    0x0(,%edx,4),%esi
+			1634: R_386_32	crypto_il_tab
+    1638:	0f b6 d5             	movzbl %ch,%edx
+    163b:	c1 e9 10             	shr    $0x10,%ecx
+    163e:	33 3c 95 00 04 00 00 	xor    0x400(,%edx,4),%edi
+			1641: R_386_32	crypto_il_tab
+    1645:	0f b6 d1             	movzbl %cl,%edx
+    1648:	0f b6 cd             	movzbl %ch,%ecx
+    164b:	33 04 95 00 08 00 00 	xor    0x800(,%edx,4),%eax
+			164e: R_386_32	crypto_il_tab
+    1652:	33 1c 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%ebx
+			1655: R_386_32	crypto_il_tab
+    1659:	8b 0c 24             	mov    (%esp),%ecx
+    165c:	0f b6 d1             	movzbl %cl,%edx
+    165f:	33 1c 95 00 00 00 00 	xor    0x0(,%edx,4),%ebx
+			1662: R_386_32	crypto_il_tab
+    1666:	0f b6 d5             	movzbl %ch,%edx
+    1669:	c1 e9 10             	shr    $0x10,%ecx
+    166c:	33 34 95 00 04 00 00 	xor    0x400(,%edx,4),%esi
+			166f: R_386_32	crypto_il_tab
+    1673:	0f b6 d1             	movzbl %cl,%edx
+    1676:	0f b6 cd             	movzbl %ch,%ecx
+    1679:	33 3c 95 00 08 00 00 	xor    0x800(,%edx,4),%edi
+			167c: R_386_32	crypto_il_tab
+    1680:	33 04 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%eax
+			1683: R_386_32	crypto_il_tab
+    1687:	8b 4c 24 04          	mov    0x4(%esp),%ecx
+    168b:	0f b6 d1             	movzbl %cl,%edx
+    168e:	33 3c 95 00 00 00 00 	xor    0x0(,%edx,4),%edi
+			1691: R_386_32	crypto_il_tab
+    1695:	0f b6 d5             	movzbl %ch,%edx
+    1698:	c1 e9 10             	shr    $0x10,%ecx
+    169b:	33 04 95 00 04 00 00 	xor    0x400(,%edx,4),%eax
+			169e: R_386_32	crypto_il_tab
+    16a2:	0f b6 d1             	movzbl %cl,%edx
+    16a5:	0f b6 cd             	movzbl %ch,%ecx
+    16a8:	33 1c 95 00 08 00 00 	xor    0x800(,%edx,4),%ebx
+			16ab: R_386_32	crypto_il_tab
+    16af:	33 34 8d 00 0c 00 00 	xor    0xc00(,%ecx,4),%esi
+			16b2: R_386_32	crypto_il_tab
+    16b6:	83 c4 08             	add    $0x8,%esp
+    16b9:	8b 6c 24 18          	mov    0x18(%esp),%ebp
+    16bd:	89 7d 0c             	mov    %edi,0xc(%ebp)
+    16c0:	5f                   	pop    %edi
+    16c1:	89 75 08             	mov    %esi,0x8(%ebp)
+    16c4:	5e                   	pop    %esi
+    16c5:	89 5d 04             	mov    %ebx,0x4(%ebp)
+    16c8:	5b                   	pop    %ebx
+    16c9:	89 45 00             	mov    %eax,0x0(%ebp)
+    16cc:	5d                   	pop    %ebp
+    16cd:	c3                   	ret    
+    16ce:	90                   	nop
+    16cf:	90                   	nop
+
+000016d0 <aes_decrypt>:
+    16d0:	51                   	push   %ecx
+    16d1:	83 c0 30             	add    $0x30,%eax
+    16d4:	52                   	push   %edx
+    16d5:	50                   	push   %eax
+    16d6:	e8 fc ff ff ff       	call   16d7 <aes_decrypt+0x7>
+			16d7: R_386_PC32	aes_dec_blk
+    16db:	83 c4 0c             	add    $0xc,%esp
+    16de:	c3                   	ret    
+
+000016df <crypto_aes_decrypt_x86>:
+    16df:	51                   	push   %ecx
+    16e0:	52                   	push   %edx
+    16e1:	50                   	push   %eax
+    16e2:	e8 fc ff ff ff       	call   16e3 <crypto_aes_decrypt_x86+0x4>
+			16e3: R_386_PC32	aes_dec_blk
+    16e7:	83 c4 0c             	add    $0xc,%esp
+    16ea:	c3                   	ret    
+
+000016eb <aes_encrypt>:
+    16eb:	51                   	push   %ecx
+    16ec:	83 c0 30             	add    $0x30,%eax
+    16ef:	52                   	push   %edx
+    16f0:	50                   	push   %eax
+    16f1:	e8 fc ff ff ff       	call   16f2 <aes_encrypt+0x7>
+			16f2: R_386_PC32	aes_enc_blk
+    16f6:	83 c4 0c             	add    $0xc,%esp
+    16f9:	c3                   	ret    
+
+000016fa <crypto_aes_encrypt_x86>:
+    16fa:	51                   	push   %ecx
+    16fb:	52                   	push   %edx
+    16fc:	50                   	push   %eax
+    16fd:	e8 fc ff ff ff       	call   16fe <crypto_aes_encrypt_x86+0x4>
+			16fe: R_386_PC32	aes_enc_blk
+    1702:	83 c4 0c             	add    $0xc,%esp
+    1705:	c3                   	ret    
+	...
+
+Disassembly of section .exit.text:
+
+00000000 <cleanup_module>:
+   0:	b8 00 00 00 00       	mov    $0x0,%eax
+			1: R_386_32	.data
+   5:	e9 fc ff ff ff       	jmp    6 <cleanup_module+0x6>
+			6: R_386_PC32	crypto_unregister_alg
+
+Disassembly of section .init.text:
+
+00000000 <init_module>:
+   0:	b8 00 00 00 00       	mov    $0x0,%eax
+			1: R_386_32	.data
+   5:	e9 fc ff ff ff       	jmp    6 <init_module+0x6>
+			6: R_386_PC32	crypto_register_alg

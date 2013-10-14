@@ -1868,28 +1868,58 @@ static int patch_module(CPUState *env, struct module_info * module, int is_patch
     if(ret != 0)
         return -1;
     
-    qemu_log(" addrs_idx %d ", addrs_idx);
+    
 
     module_tb_invalidate(env, module);
 
-    for (i =0; i< addrs_idx; i++){
+    int in_module_count = 0;
+    int out_module_count = 0;
+    for (i = 0; i< addrs_idx; i++){
         //R_386_32 and value in some modules
-        target_ulong addr =  module -> start_addr + module -> offset  + addrs[i];
+        target_ulong addr =  module->start_addr + module->offset + addrs[i];
         //read value of memory 
         uint32_t value = 0;
         cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 0);
-            
-        if (value >= module -> start_addr + module -> offset 
-            && value < module -> start_addr + module -> size + module -> offset){
+        
+        if (value >= module->start_addr + module->offset 
+            && value < module->start_addr + module->size + module->offset){
+            //value is in local module
+            in_module_count ++;
+            //qemu_log("(%x -> ", value);
             //apply offset
             if (is_patch)
-                value = value - module -> offset;
+                value = value - module->offset;
             else 
-                value = value + module -> offset;
+                value = value + module->offset;
+            //qemu_log("%x)\n", value);
             //write into memory
             cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 1);
+        }else{
+            //value is in other modules
+            int j;
+            for (j = 0; j < module_info_idx; j ++){
+                struct module_info module_item = module_infos[j];
+                if (value >= module_item.start_addr + module_item.offset 
+                    && value < module_item.start_addr + module_item.size + module_item.offset){
+                    //qemu_log("(%x -> ", value);
+                    //apply offset
+                    if (is_patch)
+                        value = value - module_item.offset;
+                    else 
+                        value = value + module_item.offset;
+                    //qemu_log("%x)\n", value);
+                    //write into memory
+                    cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 1);
+
+                    out_module_count++;
+
+                    break;
+                }
+            }
         }
     }
+    
+    qemu_log("(total %d, in %d, out %d)", addrs_idx, in_module_count, out_module_count);
     return 0;
 }
 
@@ -2004,10 +2034,23 @@ static int read_module_offset(Monitor *mon, const char * filename)
             module_infos[module_info_idx].offset = offset;
         }
 
-        monitor_printf(mon, "%s, %x, %x, %d\n", module_infos[module_info_idx].name, module_infos[module_info_idx].start_addr, module_infos[module_info_idx].size, module_infos[module_info_idx].offset);
+        monitor_printf(mon, "%s\t%x\t%x\t%x\n", module_infos[module_info_idx].name, module_infos[module_info_idx].start_addr, module_infos[module_info_idx].size, module_infos[module_info_idx].offset);
 
         module_info_idx ++;
     }
+
+//temp for aes_i586
+    char * module_name = "aes_i586";
+    char * name = malloc(strlen(module_name) + 1);
+    memcpy(name, module_name, strlen(module_name) + 1);
+    module_infos[module_info_idx].name = name;
+    module_infos[module_info_idx].start_addr = 0xd0aa6000;
+    module_infos[module_info_idx].size = 6816;
+    module_infos[module_info_idx].offset = 0x1000;
+    monitor_printf(mon, "%s\t%x\t%x\t%x\n", module_infos[module_info_idx].name, module_infos[module_info_idx].start_addr, module_infos[module_info_idx].size, module_infos[module_info_idx].offset);
+
+    module_info_idx ++;
+//end 
     
     fclose(file);
 }

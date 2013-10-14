@@ -796,6 +796,7 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
                     cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
                     vmmi_process_cr3 = pgd +0x40000000;
                     vmmi_start = 1;
+                    vmmi_main_start = 1; //yufei
 #ifdef DEBUG_VMMI
                     if(qemu_log_enabled())
                         qemu_log("vmmi_process is 0x%08x\n", new_cr3);

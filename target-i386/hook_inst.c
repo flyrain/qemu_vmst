@@ -790,7 +790,7 @@ static void Instrument_CALL_NEAR(INS ins) {
 		pc = *( uint32_t *)buf;
 
         //yufei.begin
-        if(is_monitored_vmmi_kernel_data_read(mem_addr) )
+        if(sys_need_red)
             is_module_need_red = 1;
         //yufei.end
 			
@@ -966,7 +966,7 @@ static void Instrument_JMP(INS ins) {
         pc = *( uint32_t *)buf;
 
         //yufei.begin
-        if(is_monitored_vmmi_kernel_data_read(mem_addr) )
+        if(sys_need_red)
           is_module_need_red = 1;
         //yufei.end
 			
@@ -2023,11 +2023,8 @@ void taint_reset()
 
 uint32_t is_kernel_stack(target_ulong addr)
 {
-
-
 	uint32_t i=0;
 	uint32_t res;
-
 	
 	res =0;
 	

@@ -6029,9 +6029,8 @@ void helper_load(target_ulong addr, int size)
 
 	if(is_ins_log())
 	{
-
-		if(addr >=0xc0000000){
-            uint32_t new =vmmi_vtop2(addr, size);
+		if(addr >= 0xc0000000){
+            uint32_t new = vmmi_vtop2(addr, size); 
             uint32_t old;
             char buf[4];
             cpu_memory_rw_debug(cpu_single_env, addr, (char *)&buf, size, 0);
@@ -6043,19 +6042,12 @@ void helper_load(target_ulong addr, int size)
                 }else{
                     old = *(uint8_t *) buf;
                 }
-                qemu_log("  LD:0x%08x:(0x%08x, 0x%08x) ",addr, old, new);
-                //old means local memory value, new means
-                //value in the snapshot.
-		
-                //	qemu_log("  LD:0x%08x:new %x ",addr, *(uint8_t *)(newphyaddr));
-            }else
-                qemu_log("LD:0x%08x", addr);
+                qemu_log(" LD:0x%08x:(0x%08x, 0x%08x) ",addr, old, new);
+            }else {
+                qemu_log(" LD:0x%08x new %d ", addr, new);
+            }
 		}
 	}
-//	else
-//		 qemu_log(" LD:0x%08x", addr);
-	
-	
 }
 
 uint32_t snapshot_size;
@@ -6147,7 +6139,7 @@ int start_log;
 extern uint32_t start_trace;
 target_ulong current_pc;
 target_ulong prev_pc;
-int ret_addr; //yufei
+
 
 
 
@@ -6250,9 +6242,34 @@ extern uint32_t pre_reg_value;
 extern uint32_t file_flag ; 
 target_ulong current_task;
 int is_insert_work = 0;
+
+
+//2.6.32.8
+#define SCHEDULE 0xc125dcff
+#define INSERT_WORK 0xc103ea47
+#define TRY_TO_WAKE_UP 0xc102abfa
+#define PICK_NEXT_TASK_RET 0xc125e1e4
+//#define DEC_NR_RUNNING 0xc101fa26
+#define ACCOUNT_ENTITY_DEQUEUE 0xc1025588
+
+//start from function schedule(), no redirect data
+void no_red_schedule(target_ulong current_PC){
+    static target_ulong ret_addr = 0; 
+    if( sys_need_red == 1 && current_PC == SCHEDULE) {
+        set_sys_need_red(0);
+        //get ret address for future redirect again.
+        if(ret_addr == 0)
+            cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
+    }
+    
+    //if schedule() ret, need redirect again
+    if (current_PC == ret_addr && sys_need_red == 0){
+        set_sys_need_red(1);
+        ret_addr = 0;
+    }
+}
 //yufei.end
 
-//every pc
 void helper_inst_hook(int a)
 {
     current_pc = a;
@@ -6266,44 +6283,66 @@ void helper_inst_hook(int a)
 
 
     //yufei.begin
-    //start from function schedule(), no redirect data
-    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag){
-        const target_ulong schedule_addr = 0xc125dcff;  //2.6.32.8
-        //if (current_pc == 0xc103ea47){
-        //0xc102abfa is the address of function "try_to_wake_up"
-        if (current_pc == 0xc102abfa){
+    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag) {
+        static target_ulong process_to_schedule = 0; 
+        if( current_pc == INSERT_WORK && sys_need_red == 1 && !is_interrupt){
             is_insert_work = 1;
+            qemu_log("(insert_work)");
         }
 
         if(is_insert_work == 0){
+            no_red_schedule(current_pc);
+        }else if (sys_need_red == 1){
 
-            if( sys_need_red == 1 && a == schedule_addr) {
-                set_sys_need_red(0);
-                //get ret address for future redirect again.
-                if(ret_addr == 0)
-                    cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
+            /* if (current_pc == DEC_NR_RUNNING){ */
+            /*     int nr_running = 0; */
+            /*     vmac_memory_read(EBX + 4, &nr_running, 4); */
+            /*     if( nr_running <= 0) { */
+            /*         nr_running = 1; */
+            /*         vmac_memory_write(EBX + 4, &nr_running, 4); */
+            /*         qemu_log("(nr_running <= 0)"); */
+            /*     } */
+            /* } */
+
+            //if nr_running <= 0, make sure nr_running > 0
+            if (current_pc == ACCOUNT_ENTITY_DEQUEUE){
+                int nr_running = 0;
+                vmac_memory_read(EBX + 0x48, &nr_running, 4);
+                if( nr_running <= 0) {
+                    nr_running = 1;
+                    vmac_memory_write(EBX + 0x48, &nr_running, 4);
+                    qemu_log("(cfs_rq->nr_running <= 0)");
+                }
             }
-    
-            //if schedule() ret, need redirect again
-            if (current_pc == ret_addr && sys_need_red == 0){
-                set_sys_need_red(1);
-                ret_addr = 0;
+
+            if (current_pc == TRY_TO_WAKE_UP){
+                process_to_schedule = EAX;
+                qemu_log("(%s,%x)","store task address", process_to_schedule);
             }
-        }else{
 
             //second times, recover it.
             static int schedule_count = 0;
-            if (current_pc == schedule_addr){
+            if (current_pc == SCHEDULE){
                 schedule_count ++;
                 qemu_log(" schedule_count %d ", schedule_count);
             }
+
+            //set work_thread 
+            if(current_pc == PICK_NEXT_TASK_RET && schedule_count == 1){
+                EAX = process_to_schedule;
+                qemu_log("(set work_thread task to EAX, %x)", EAX);
+            }
+
           
-            if(current_pc == 0xc125e1e4 && schedule_count == 2){
+            if(current_pc == PICK_NEXT_TASK_RET && schedule_count == 2){
                 EAX = current_task;
+                qemu_log("(switch back to main task %x)", EAX);
                 is_insert_work = 0;  //out of work_thread
                 schedule_count = 0;  //reset schedule_count, because
                                      //of multi-work_thread
             }
+
+
         }
     }
     //yufei.end
@@ -6311,34 +6350,6 @@ void helper_inst_hook(int a)
 
 
     //yufei.begin
-    /*
-      if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
-      && sys_need_red ==1 && a == 0xc110a257 ) {
-      //change value from 2c to 29
-      char buff[20];
-      target_ulong v_address = EAX;
-      
-      vmac_memory_read(v_address, buff, 20);
-      qemu_log("name:%s", buff);
-      }
-
-      //this function is executed before instruction execution, and EDX
-      //already have the memory address.
-      if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] 
-      && sys_need_red ==1 && a == 0xc147c2e5 ) {
-      //change value from 2c to 29
-      int value;
-      target_ulong flag_address = EDX;
-      
-      vmac_memory_read(flag_address, &value, 4);
-      //      qemu_log("value:0x%08x", value);
-
-      if(value ==0x0000002c ) 
-      value = 0x00000029;
-
-      vmac_memory_write(flag_address, &value , 4);
-      }
-    */
     
     /*
     //get name of kthread
@@ -6348,38 +6359,6 @@ void helper_inst_hook(int a)
     qemu_log(" kthread name: %s ", kthread_name);
     }
     */  
-
-    /*  
-    //schedule no redx
-    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag){
-            
-    //start from function schedule(), no redirect data
-    //int schedule_addr = 0xc147b621;  // 2.6.32-rc8
-    target_ulong schedule_addr = 0xc125dcff;  //2.6.32.8
-    if( sys_need_red == 1 && a == schedule_addr) {
-
-    set_sys_need_red(0);
-    //get ret address for future redirect again.
-    if(ret_addr == 0)
-    cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
-    }
-
-
-    //worker_thread, need red, switch to kthread.
-    target_ulong worker_thread_addr = 0xc103e870; //2.6.32.8
-    if (sys_need_red == 0 && ( current_pc == worker_thread_addr || current_pc == 0xc103e850 ) ){
-    getKthread();
-    //TODO 
-    set_sys_need_red(1);
-    }
-    
-    //if schedule() ret, need redirect again
-    if (current_pc == ret_addr && sys_need_red == 0){
-    set_sys_need_red(1);
-    ret_addr = 0;
-    }
-    }
-    */
     //yufei.end
 
 #ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
@@ -6403,11 +6382,6 @@ void helper_inst_hook(int a)
     uint8_t buf[15];
     char str[128];
 	 
-//	 if(
-//		take_snapshot==1
-//	    &&(cpu_single_env->hflags & HF_CPL_MASK) == 3
-//	   )
-//		 save_snapshot();
 		 
     if(
 		take_snapshot_esp==1
@@ -6423,7 +6397,6 @@ void helper_inst_hook(int a)
     }
 	 
     if(vmmi_start
-//		&&((cpu_single_env->hflags &HF_CPL_MASK)!=3)
        &&vmmi_process_cr3 ==cpu_single_env->cr[3]
         )
     {
@@ -6443,7 +6416,7 @@ void helper_inst_hook(int a)
             //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
             //qemu_log("%s",str); //yufei
             my_monitor_disas(a); 
-            qemu_log(" Recx %x, eax %x, edx %x", ECX, EAX, EDX);//yufei
+            qemu_log(" (ECX %x EAX %x EDX %x)", ECX, EAX, EDX);//yufei
         }
 
         if (xed_error == XED_ERROR_NONE) {
