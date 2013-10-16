@@ -341,6 +341,10 @@ void code_preprocess(Mem * mem, unsigned pageSize, range * c, int *dsmPage)
                     && *(inst + 2) == 0xe5)
                 || (*inst == 0x55 && *(inst + 1) == 0x8b
                     && *(inst + 2) == 0xec)
+                || (*inst == 0x55 && *(inst + 1) == 0x8b
+                    && *(inst + 2) == 0x6c)
+                || (*inst == 0x51 && *(inst + 1) == 0x83
+                    && *(inst + 2) == 0xc0)
                 ) {
                 offset_insert(1 << 20 - 1, pc - start);
                 //                              printf("new pc is %x\n", pc);
@@ -554,9 +558,10 @@ int is_code_page(Mem * mem, unsigned vaddr, unsigned pageSize,
         //      if ((page[i] == 0x8b && page[i + 1] == 0xff && page[i
         //      + 2] == 0x55
         if ((page[i] == 0x55 && page[i + 1] == 0x8b && page[i + 2] == 0xec)
-            || (page[i] == 0x55 && page[i + 1] == 0x89
-                && page[i + 2] == 0xe5) || (page[i] == 0x55 && page[i + 1] == 0x57
-                && page[i + 2] == 0x56 && page[i+3] == 0x89)  ) {
+            || (page[i] == 0x55 && page[i + 1] == 0x89 && page[i + 2] == 0xe5) 
+            || (page[i] == 0x55 && page[i + 1] == 0x57 && page[i + 2] == 0x56 && page[i+3] == 0x89)
+            || (page[i] == 0x55 && page[i + 1] == 0x8b && page[i + 2] == 0x6c)
+            || (page[i] == 0x51 && page[i + 1] == 0x83 && page[i + 2] == 0xc0) ) {
             res = 0;
             set_page(vaddr, pageIndex, pageSize);
             virtualAddrs[pageIndex] = vaddr;

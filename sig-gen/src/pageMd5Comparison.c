@@ -473,10 +473,10 @@ void gen_md5_signature(Mem * mem)
         for (vAddr = clusters[cluster_idx].start;
              vAddr < clusters[cluster_idx].end; vAddr += 0x1000) {
             unsigned pAddr = vtop(mem->mem, mem->mem_size, mem->pgd, vAddr);
-            //puts("here");
-            //if ( vAddr== 0xd0c5a000)
+#if 0
             if( pAddr != -1)
                 printf("vaddr: %x, paddr: %x\n", vAddr, pAddr);
+#endif
 
             if (vAddr == out_pc)
                 code_init(mem, vAddr, pageSize, dsmPages, virtualAddrs, 1,
