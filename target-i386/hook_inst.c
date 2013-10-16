@@ -770,6 +770,15 @@ uint32_t pre_reg_value = 0;
 //yufei.end
 
 static void Instrument_CALL_NEAR(INS ins) {
+    //yufei.begin
+    //record parameters, read 3 parameters
+    uint32_t param1, param2, param3;
+    cpu_memory_rw_debug(cpu_single_env, ESP, &param1, 4, 0);
+    cpu_memory_rw_debug(cpu_single_env, ESP + 4, &param2, 4, 0);
+    cpu_memory_rw_debug(cpu_single_env, ESP + 8, &param3, 4, 0);
+    qemu_log("parameters: %x %x %x", param1, param2, param3);
+    //yufei.end
+
 	if(get_reg_taint(XED_REG_ESP))
 	set_kernel_stack_address(cpu_single_env->regs[R_ESP]-4);
 	is_call = 1;
