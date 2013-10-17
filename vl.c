@@ -2105,7 +2105,6 @@ static void free_and_trace(gpointer mem)
     trace_qemu_free(mem);
     free(mem);
 }
-int vmmi_init();
 
 int main(int argc, char **argv, char **envp)
 {

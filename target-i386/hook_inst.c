@@ -763,24 +763,37 @@ static void Instrument_BSWAP(INS ins) {
 
 //yufei.begin
 int is_module_need_red = 0; 
-
 int reg_name_modified ; 
 int is_reg_module_modified = 0; 
 uint32_t pre_reg_value = 0; 
+int is_func_called = 0;
 //yufei.end
+
+extern int match_task_struct(target_ulong t1, target_ulong task_struct);
 
 static void Instrument_CALL_NEAR(INS ins) {
     //yufei.begin
     //record parameters, read 3 parameters
-    uint32_t param1, param2, param3;
-    cpu_memory_rw_debug(cpu_single_env, ESP, &param1, 4, 0);
-    cpu_memory_rw_debug(cpu_single_env, ESP + 4, &param2, 4, 0);
-    cpu_memory_rw_debug(cpu_single_env, ESP + 8, &param3, 4, 0);
-    qemu_log("parameters: %x %x %x", param1, param2, param3);
+    if(vmmi_start &&vmmi_process_cr3 == cpu_single_env->cr[3]) {
+        uint32_t param1, param2, param3;
+        cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ESP], &param1, 4, 0);
+        cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ESP] + 4, &param2, 4, 0);
+        cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ESP] + 8, &param3, 4, 0);
+        extern target_ulong current_task;
+        int is_param1_task = match_task_struct(param1, current_task);
+        int is_param2_task = match_task_struct(param2, current_task);
+        int is_param3_task = match_task_struct(param3, current_task);
+        qemu_log("\nparameters: %x\t%dtask\t%x\t%dtask\t%x\t%dtask\n", 
+                 param1, is_param1_task, 
+                 param2, is_param2_task,
+                 param3, is_param3_task);
+        
+        is_func_called = 1;
+    }
     //yufei.end
 
 	if(get_reg_taint(XED_REG_ESP))
-	set_kernel_stack_address(cpu_single_env->regs[R_ESP]-4);
+        set_kernel_stack_address(cpu_single_env->regs[R_ESP]-4);
 	is_call = 1;
 	const xed_operand_t *op = xed_inst_operand(ins, 0);
 	xed_operand_enum_t op_name  = xed_operand_name(op);
@@ -789,10 +802,10 @@ static void Instrument_CALL_NEAR(INS ins) {
 	unsigned int pc;
 	xed_reg_enum_t reg_id;
 /*
-	if(operand_is_mem(op_name, &mem_addr, 0, &taint)){
-		taint = taint | get_mem_taint(mem_addr);
-		set_mem_taint(mem_addr, taint);
-	}*/
+  if(operand_is_mem(op_name, &mem_addr, 0, &taint)){
+  taint = taint | get_mem_taint(mem_addr);
+  set_mem_taint(mem_addr, taint);
+  }*/
 	if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
 		char buf[4];
 		cpu_memory_rw_debug(cpu_single_env, mem_addr, buf,4, 0);

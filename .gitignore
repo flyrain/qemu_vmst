@@ -1,0 +1,8 @@
+/bin/log
+*.o
+*.d
+/bin/cr3
+/bin/de-target
+/bin/debug_log
+/i386-softmmu/qemu
+/qemu-ga

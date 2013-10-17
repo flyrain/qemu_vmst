@@ -6249,11 +6249,10 @@ int is_insert_work = 0;
 #define INSERT_WORK 0xc103ea47
 #define TRY_TO_WAKE_UP 0xc102abfa
 #define PICK_NEXT_TASK_RET 0xc125e1e4
-//#define DEC_NR_RUNNING 0xc101fa26
 #define ACCOUNT_ENTITY_DEQUEUE 0xc1025588
 
 //start from function schedule(), no redirect data
-void no_red_schedule(target_ulong current_PC){
+static void no_red_schedule(target_ulong current_PC){
     static target_ulong ret_addr = 0; 
     if( sys_need_red == 1 && current_PC == SCHEDULE) {
         set_sys_need_red(0);
@@ -6269,10 +6268,81 @@ void no_red_schedule(target_ulong current_PC){
     }
 }
 //yufei.end
+static int is_kernel_address(target_ulong addr){
+    if(addr <= 0xc0000000 || addr == 0xffffffff)
+        return 0;
+    else 
+        return 1;
+}
 
-void helper_inst_hook(int a)
+int pc_needed = 0;
+
+int match_task_struct(target_ulong t1, target_ulong task_struct) {
+    if(t1 <= 0xc0000000 || t1 == 0xffffffff)
+        return 0;
+
+    int i;
+    int mismatch_count = 0;
+    for(i = 0; i < 512; i += 4){
+        target_ulong data_t1 = 0;
+        cpu_memory_rw_debug(cpu_single_env, t1 + i, &data_t1, 4, 0);
+        target_ulong data_task_struct = 0;
+        cpu_memory_rw_debug(cpu_single_env, task_struct + i, &data_task_struct, 4, 0);
+        
+        int data_t1_is_kernel_addr = is_kernel_address(data_t1);
+        int data_task_struct_is_kernel_addr = is_kernel_address(data_task_struct);
+
+        if(pc_needed == 0xc125e1e4){
+            qemu_log("%d:\t%x %x, %d %d\n", i, data_t1, data_task_struct, data_t1_is_kernel_addr, data_task_struct_is_kernel_addr );
+        }
+
+        if(data_t1_is_kernel_addr == 0 && data_task_struct_is_kernel_addr == 1 ||
+           (data_t1_is_kernel_addr == 1 && data_task_struct_is_kernel_addr == 0)) {
+            mismatch_count ++;
+            if(mismatch_count > 10)
+                return 0;
+        }
+    }
+    return 1;
+}
+
+
+static target_ulong get_return_value(target_ulong current_pc) {
+
+    target_ulong return_value = -1;
+
+    extern int is_func_called;
+    static target_ulong func_ret_addrs[100] = {}; 
+    static int func_ret_addr_idx = 0;
+
+    if(is_func_called == 1) {
+        qemu_log("(current_pc %x)", current_pc);
+        //read function return address
+        cpu_memory_rw_debug(cpu_single_env, ESP, func_ret_addrs + func_ret_addr_idx, 4, 0);
+        func_ret_addr_idx ++;
+        assert(func_ret_addr_idx < 100);
+        is_func_called = 0;
+    }
+        
+    if(current_pc == func_ret_addrs[func_ret_addr_idx - 1]) {
+        func_ret_addr_idx --;
+        return_value = EAX;
+        pc_needed = current_pc;
+
+        if(match_task_struct(return_value, current_task))
+            qemu_log("\nreturn: %x\t%x\ttask_struct\n",  return_value, current_task);
+        else
+            qemu_log("\nreturn: %x\t%x\n",  return_value, current_task);
+    }
+
+    return return_value;
+}
+
+void helper_inst_hook(int current_pc)
 {
-    current_pc = a;
+    if(vmmi_start &&vmmi_process_cr3 == cpu_single_env->cr[3]) {
+        get_return_value(current_pc); //yufei
+    }
 
     //yufei.begin
     if (is_reg_module_modified == 1){
@@ -6293,16 +6363,6 @@ void helper_inst_hook(int a)
         if(is_insert_work == 0){
             no_red_schedule(current_pc);
         }else if (sys_need_red == 1){
-
-            /* if (current_pc == DEC_NR_RUNNING){ */
-            /*     int nr_running = 0; */
-            /*     vmac_memory_read(EBX + 4, &nr_running, 4); */
-            /*     if( nr_running <= 0) { */
-            /*         nr_running = 1; */
-            /*         vmac_memory_write(EBX + 4, &nr_running, 4); */
-            /*         qemu_log("(nr_running <= 0)"); */
-            /*     } */
-            /* } */
 
             //if nr_running <= 0, make sure nr_running > 0
             if (current_pc == ACCOUNT_ENTITY_DEQUEUE){
@@ -6347,20 +6407,6 @@ void helper_inst_hook(int a)
     }
     //yufei.end
 
-
-
-    //yufei.begin
-    
-    /*
-    //get name of kthread
-    if (vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] &&  current_pc == 0xc1041256){
-    char kthread_name[16] = {};
-    cpu_memory_rw_debug(cpu_single_env, EAX + 536 , kthread_name, 16, 0);
-    qemu_log(" kthread name: %s ", kthread_name);
-    }
-    */  
-    //yufei.end
-
 #ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
 	if(!is_interrupt && iret_handle!=NULL){
         if(qemu_log_enabled())
@@ -6400,7 +6446,7 @@ void helper_inst_hook(int a)
        &&vmmi_process_cr3 ==cpu_single_env->cr[3]
         )
     {
-        cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
+        cpu_memory_rw_debug(cpu_single_env, current_pc, buf,15, 0);
         xed_decoded_inst_zero_set_mode(&xedd_g, &dstate);
 
         xed_error_enum_t xed_error = xed_decode(&xedd_g,
@@ -6415,7 +6461,7 @@ void helper_inst_hook(int a)
         {
             //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
             //qemu_log("%s",str); //yufei
-            my_monitor_disas(a); 
+            my_monitor_disas(current_pc); 
             qemu_log(" (ECX %x EAX %x EDX %x)", ECX, EAX, EDX);//yufei
         }
 
@@ -6431,7 +6477,7 @@ void helper_inst_hook(int a)
                 //		   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
                 //			&&!is_interrupt
                 //			&&(log_eip==0x5deafa1a|| start_log)
-				&&a==0xc0106bc0 || start_log
+				&&current_pc==0xc0106bc0 || start_log
                 )
 			{
 				
@@ -6446,7 +6492,7 @@ void helper_inst_hook(int a)
 // 				fprintf(vmac_log, "%s\n",str);
 				
 				unsigned int i;
-				fprintf(logfile,"0x%08x: ", a);
+				fprintf(logfile,"0x%08x: ", current_pc);
 				for (i = 0; i < size; i++)
 					fprintf(logfile, "%02x ", buf[i]);
 				for (; i< 8; i++)
@@ -6460,16 +6506,12 @@ void helper_inst_hook(int a)
 					for(i=0;i<strlen(opname);i++)
 						opname[i]=opname[i]-('A'-'a');
 					opname[4]='\0';
-					uint32_t pc = a+size+branch;
+					uint32_t pc = current_pc + size + branch;
 					sprintf(str,"%s 0x%08x",opname, pc);
 
 				}
 				fprintf(logfile, "%s\n", str);
-	
-
 			}
-
-
 
 			if(
 				0
@@ -6479,7 +6521,7 @@ void helper_inst_hook(int a)
 				&&!is_interrupt
                 )
 			{
-				my_monitor_disas(a);
+				my_monitor_disas(current_pc);
                 //	uint32_t esp0, esp1,esp2;
                 //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
                 //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
@@ -6489,9 +6531,9 @@ void helper_inst_hook(int a)
 
 			}
 #ifdef MONITOR_INST
-			if(qemu_log_enabled()&&a>=vmmi_mon_start &&a<=vmmi_mon_end						
+			if(qemu_log_enabled()&& current_pc>=vmmi_mon_start &&a<=vmmi_mon_end						
                 ){
-				my_monitor_disas(a);
+				my_monitor_disas(current_pc);
 				uint32_t esp0, esp1,esp2;
 				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
 				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
@@ -6515,7 +6557,7 @@ void helper_inst_hook(int a)
                 )
 			{
 				if(current_syscall==102)
-					fprintf(inst_dis_log,"%x:%x\n", current_syscall, a);
+					fprintf(inst_dis_log,"%x:%x\n", current_syscall, current_pc);
 				
 				uint32_t esp0, esp1,esp2;
 				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
@@ -6523,7 +6565,7 @@ void helper_inst_hook(int a)
 				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
 				if(qemu_log_enabled())
 					qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
-				my_monitor_disas(a);
+				my_monitor_disas(current_pc);
 				//for socket do_ipt_get_ctl return value : for iptabls
                 //			if(a==0xc11f290e)
                 //				cpu_single_env->regs[R_EAX]=0;
@@ -6534,7 +6576,7 @@ void helper_inst_hook(int a)
                 //				cpu_single_env->regs[R_EAX]=0;
                 //			if(a==0xc100321e)
                 //				start_trace=0;
-				if(a==0xc1055e6d){
+				if(current_pc==0xc1055e6d){
 					char buf[100];
 					uint64_t addr = (uint64_t)vmmi_mem_shadow + vmmi_vtop(cpu_single_env->regs[R_EAX]+0xc);
                     //			cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EAX]+0xc, buf, 100, 0);
@@ -6597,12 +6639,11 @@ void helper_inst_hook(int a)
 		
 
     }
-    prev_pc=a;
-		
+
+    prev_pc = current_pc;
 }
 
-int vmmi_init()
-{
+int vmmi_init(void) {
 	xed_decoded_inst_set_mode(&xedd_g, XED_MACHINE_MODE_LEGACY_32,
                               XED_ADDRESS_WIDTH_32b);
 	
