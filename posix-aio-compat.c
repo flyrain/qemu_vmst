@@ -209,6 +209,11 @@ static ssize_t handle_aiocb_rw_vector(struct qemu_paiocb *aiocb)
     return len;
 }
 
+//yufei.begin
+uint32_t global_buf;
+int global_buf_len;
+//yufei.end
+
 /*
  * Read/writes the data to/from a given linear buffer.
  *
@@ -219,7 +224,7 @@ static ssize_t handle_aiocb_rw_linear(struct qemu_paiocb *aiocb, char *buf)
 {
     ssize_t offset = 0;
     ssize_t len;
-
+    
     while (offset < aiocb->aio_nbytes) {
          if (aiocb->aio_type & QEMU_AIO_WRITE)
              len = pwrite(aiocb->aio_fildes,
@@ -236,6 +241,14 @@ static ssize_t handle_aiocb_rw_linear(struct qemu_paiocb *aiocb, char *buf)
          extern uint32_t sys_need_red;
          if(sys_need_red)  
            qemu_log("handle_aiocb_rw_linear, 0x%08lx", aiocb->aio_offset);
+
+         if(len > 0){
+             //extern int qemu_ram_addr_from_host(void *ptr, ram_addr_t *ram_addr);
+             //get guest physicial address
+             qemu_ram_addr_from_host(buf, &global_buf);
+             global_buf_len = len;
+             qemu_log("(record the io buf and len)");
+         }
          //yufei.end
 
          if (len == -1 && errno == EINTR)

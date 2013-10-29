@@ -2077,6 +2077,7 @@ static void get_min_max_addr()
 
 static void do_vmmi_start(Monitor *mon, const QDict *qdict)
 {
+
     const char *snapshot_fname = qdict_get_str(qdict, "snapshot_fname");
     sprintf(sname, "%s_update", snapshot_fname);
     const char *cr3_fname = qdict_get_str(qdict, "cr3_fname");
@@ -2107,20 +2108,7 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
     monitor_printf(mon, "cr3 = %x\n", vmmi_cr3);
     fclose(f);
 
-/*	
-    f = fopen("esp","r");
-	if(f==NULL){
-		monitor_printf(mon, "file esp not exist %x\n", cr3_fname);
-		return;
-	}
-    fscanf(f,"%x", &vmmi_esp);
-    monitor_printf(mon, "esp = %x\n", vmmi_esp);
-    fclose(f);
-*/	
-    
-	
     vmmi_mode = 1;
-
 
     struct stat fstat;
     int ret;
@@ -2129,7 +2117,7 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
     if (stat(snapshot_fname, &fstat) != 0)
     {
         monitor_printf(mon, "No such snapshot : %s\n", snapshot_fname);
-		return ;
+        return ;
     }
 
     size = fstat.st_size;
@@ -2137,20 +2125,20 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
 
     vmmi_mem = valloc(size);
     if (vmmi_mem == NULL)
-	{
+    {
         monitor_printf(mon, "cannot allocate memory : %lx\n", size);
         return ;
-	}
+    }
     
-	//yang.begin
+    //yang.begin
     vmmi_mem_shadow_index = 0;
     vmmi_mem_shadow = valloc(size);
     if (vmmi_mem_shadow == NULL)
-	{
+    {
         monitor_printf(mon, "cannot allocate memory : %lx\n", size);
         return ;
-	}	
-	//yang.end
+    }	
+    //yang.end
 
     f = fopen(snapshot_fname, "r");
     ret = fread(vmmi_mem, 1, size, f); 

@@ -6023,6 +6023,12 @@ void helper_store(target_ulong value, target_ulong addr, int size)
 	}
 }
 
+
+//yufei.begin
+extern uint32_t global_buf;
+extern int global_buf_len;
+//yufei.end
+
 void helper_load(target_ulong addr, int size)
 {
 	if(size == 3)size++;
@@ -6030,6 +6036,15 @@ void helper_load(target_ulong addr, int size)
 	if(is_ins_log())
 	{
 		if(addr >= 0xc0000000){
+            //yufei.begin
+            //get physicial address
+            target_ulong page = addr & TARGET_PAGE_MASK;
+            target_phys_addr_t phys_addr = cpu_get_phys_page_debug(env, page);
+            phys_addr += addr & (TARGET_PAGE_SIZE - 1);
+            if(global_buf_len > 0 && phys_addr >= global_buf && phys_addr <  global_buf + global_buf_len){
+                qemu_log("load the io buf");
+            }
+            //yufei.end
             uint32_t new = vmmi_vtop2(addr, size); 
             uint32_t old;
             char buf[4];
@@ -6268,7 +6283,7 @@ static void no_red_schedule(target_ulong current_PC){
     }
 }
 //yufei.end
-static int is_kernel_address(target_ulong addr){
+int is_kernel_address(target_ulong addr){
     if(addr <= 0xc0000000 || addr == 0xffffffff)
         return 0;
     else 
@@ -6307,42 +6322,73 @@ int match_task_struct(target_ulong t1, target_ulong task_struct) {
 }
 
 
+struct call_struct call_stack[100] = {}; 
+int call_stack_idx = -1;
+
 static target_ulong get_return_value(target_ulong current_pc) {
-
     target_ulong return_value = -1;
-
     extern int is_func_called;
-    static target_ulong func_ret_addrs[100] = {}; 
-    static int func_ret_addr_idx = 0;
 
     if(is_func_called == 1) {
-        qemu_log("(current_pc %x)", current_pc);
         //read function return address
-        cpu_memory_rw_debug(cpu_single_env, ESP, func_ret_addrs + func_ret_addr_idx, 4, 0);
-        func_ret_addr_idx ++;
-        assert(func_ret_addr_idx < 100);
+        uint32_t ret_addr = 0;
+        cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr, 4, 0);
+        call_stack[call_stack_idx].ret_addr = ret_addr;
         is_func_called = 0;
     }
         
-    if(current_pc == func_ret_addrs[func_ret_addr_idx - 1]) {
-        func_ret_addr_idx --;
+    if(current_pc ==  call_stack[call_stack_idx].ret_addr) {
+        call_stack_idx --;
         return_value = EAX;
         pc_needed = current_pc;
-
-        if(match_task_struct(return_value, current_task))
-            qemu_log("\nreturn: %x\t%x\ttask_struct\n",  return_value, current_task);
-        else
-            qemu_log("\nreturn: %x\t%x\n",  return_value, current_task);
+        extern target_ulong my_current_task;
+        if(is_kernel_address(return_value) && return_value != my_current_task) {
+            if(match_task_struct(return_value, my_current_task))
+                qemu_log("\nreturn: %x: %x\ttask_struct\n", current_pc, return_value, my_current_task);
+            else
+                qemu_log("\nreturn: %x: %x\n", current_pc, return_value, my_current_task);
+        }
     }
 
     return return_value;
 }
 
-void helper_inst_hook(int current_pc)
-{
-    if(vmmi_start &&vmmi_process_cr3 == cpu_single_env->cr[3]) {
-        get_return_value(current_pc); //yufei
+void print_call_stack(){
+    int i;
+    for(i = 0; i <= call_stack_idx; i++)
+        qemu_log("call stack: %d 0x%x 0x%x\n",i, call_stack[i].func_addr, call_stack[i].ret_addr);
+}
+
+uint32_t g_task;
+
+uint32_t get_current_task() {
+    uint32_t stack= env->regs[R_ESP]&0xffffe000;
+    uint32_t task;
+    cpu_memory_rw_debug(env, stack, &task, 4,0);
+    //If the current task_struct changes, print out the new task_struct and print
+    //the call stack.
+    if (task != g_task) {  
+        g_task = task;
+        if(is_kernel_address(task)){
+            qemu_log("context switch to: 0x%x)", task);
+            print_call_stack();
+        }
     }
+    return task;
+}
+
+void helper_inst_hook(int PC)
+{
+    current_pc = PC; //set global variable current_pc
+
+    //yufei.begin
+    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3]) {
+        get_current_task();
+        get_return_value(current_pc); 
+        if (current_pc == SCHEDULE)
+            qemu_log("\nschedule() 0x%x\n", current_pc);
+    }
+    //yufei.end
 
     //yufei.begin
     if (is_reg_module_modified == 1){
@@ -6350,7 +6396,6 @@ void helper_inst_hook(int current_pc)
         is_reg_module_modified = 0;
     }
     //yufei.end
-
 
     //yufei.begin
     if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag) {

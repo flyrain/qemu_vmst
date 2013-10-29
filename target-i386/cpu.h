@@ -1107,4 +1107,12 @@ extern FILE *inst_dis_log;
 
 //yang.end
 //zlin.end
+
+//yufei.begin
+struct call_struct {
+    uint32_t func_addr;
+    uint32_t ret_addr;
+};
+//yufei.end
+
 #endif /* CPU_I386_H */

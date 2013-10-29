@@ -647,8 +647,8 @@ uint32_t is_ins_log()
 		&&qemu_log_enabled()\
 		&&(cpu_single_env->cr[3] == vmmi_process_cr3) 
 	   && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-                //       &&!is_interrupt
-                //	   &&sys_need_red
+        //       &&!is_interrupt
+        //	   &&sys_need_red
 //	   && current_syscall == 42
 	 ) 
     	return 1;
@@ -750,6 +750,27 @@ uint32_t sys_con_w;
 uint32_t other;
 extern uint32_t	is_syscall;
 extern uint32_t cond_res;
+target_ulong my_current_task;
+
+
+//#define LINUX2_6_32_8  
+#define LINUX2_6_30  
+//2.6.32.8 task_struct offsets and memo
+#ifdef LINUX2_6_32_8  
+#define TASK_STRUCT_COMM 536
+#define TASK_STRUCT_MM 256
+#define TASK_STRUCT_TASKS 228
+#define MM_STRUCT_PGD  36
+#endif
+
+#ifdef LINUX2_6_30  
+//2.6.30 in ~/qemu/ubuntu-8.10-3.img
+#define TASK_STRUCT_COMM 760
+#define TASK_STRUCT_MM 484
+#define TASK_STRUCT_TASKS 456
+#define MM_STRUCT_PGD  36
+#endif
+
 
 void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 {
@@ -784,16 +805,16 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
         next=task;
 
         do{
-            cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
+            cpu_memory_rw_debug(env, next+ TASK_STRUCT_COMM, comm, 16,0);
             comm[15]='\0';
 
             //	cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
             if(strcmp(comm, vmmi_process_name)==0)
             {
-                cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
+                cpu_memory_rw_debug(env, next+TASK_STRUCT_MM, &mm, 4,0);
                 //print the task
                 if(mm!=0){
-                    cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
+                    cpu_memory_rw_debug(env, mm+ MM_STRUCT_PGD, &pgd, 4,0);
                     vmmi_process_cr3 = pgd +0x40000000;
                     vmmi_start = 1;
                     vmmi_main_start = 1; //yufei
@@ -802,11 +823,14 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
                         qemu_log("vmmi_process is 0x%08x\n", new_cr3);
                     printf("start monitor\n");
                     printf("find process %x %s %x\n", next, comm, pgd+0x40000000);
+                    my_current_task = next;
+                    printf("(my current task: %x)", my_current_task);
+                    qemu_log("(my current task: %x)", my_current_task);
 #endif
                 }
             }
-            cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
-            next=list-0xe4;
+            cpu_memory_rw_debug(env, next+ TASK_STRUCT_TASKS, &list, 4, 0);
+            next = list - TASK_STRUCT_TASKS;
             i++;
             if(i>100)
                 break;

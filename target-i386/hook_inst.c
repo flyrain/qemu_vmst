@@ -770,25 +770,42 @@ int is_func_called = 0;
 //yufei.end
 
 extern int match_task_struct(target_ulong t1, target_ulong task_struct);
+extern int is_kernel_address(target_ulong addr);
+extern struct call_struct call_stack[100];
+extern int call_stack_idx;
 
 static void Instrument_CALL_NEAR(INS ins) {
     //yufei.begin
     //record parameters, read 3 parameters
     if(vmmi_start &&vmmi_process_cr3 == cpu_single_env->cr[3]) {
+        is_func_called = 1;
+        call_stack_idx ++;
+        assert(call_stack_idx < 100);
+
         uint32_t param1, param2, param3;
         cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ESP], &param1, 4, 0);
         cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ESP] + 4, &param2, 4, 0);
         cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ESP] + 8, &param3, 4, 0);
-        extern target_ulong current_task;
-        int is_param1_task = match_task_struct(param1, current_task);
-        int is_param2_task = match_task_struct(param2, current_task);
-        int is_param3_task = match_task_struct(param3, current_task);
-        qemu_log("\nparameters: %x\t%dtask\t%x\t%dtask\t%x\t%dtask\n", 
-                 param1, is_param1_task, 
-                 param2, is_param2_task,
-                 param3, is_param3_task);
-        
-        is_func_called = 1;
+        extern target_ulong my_current_task;
+        qemu_log("\nparameters: %x:", current_pc);
+        if(is_kernel_address(param1) && param1 != my_current_task) {
+            int is_param1_task = match_task_struct(param1, my_current_task);
+            qemu_log("%x\t%dtask\t", param1, is_param1_task);
+        }
+        if(is_kernel_address(param2) && param2 != my_current_task) {
+            int is_param2_task = match_task_struct(param2, my_current_task);
+            qemu_log("%x\t%dtask\t", param2, is_param2_task);            
+        }
+        if(is_kernel_address(param3) && param3 != my_current_task) {
+            int is_param3_task = match_task_struct(param3, my_current_task);
+            qemu_log("%x\t%dtask\t", param3, is_param3_task);
+        }
+        qemu_log("\n");
+
+        /* qemu_log("\nparameters: %x\t%dtask\t%x\t%dtask\t%x\t%dtask\n",  */
+        /*          param1, is_param1_task,  */
+        /*          param2, is_param2_task, */
+        /*          param3, is_param3_task); */
     }
     //yufei.end
 
@@ -812,6 +829,11 @@ static void Instrument_CALL_NEAR(INS ins) {
 		pc = *( uint32_t *)buf;
 
         //yufei.begin
+        if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3]) 
+            call_stack[call_stack_idx].func_addr = pc; 
+        //yufei.end
+
+        //yufei.begin
         if(sys_need_red)
             is_module_need_red = 1;
         //yufei.end
@@ -819,6 +841,11 @@ static void Instrument_CALL_NEAR(INS ins) {
 	}else if (operand_is_reg(op_name, &reg_id)){
 		int reg  = xed_regmapping[reg_id][0];
 		pc = cpu_single_env->regs[reg];
+
+        //yufei.begin
+        if(vmmi_start &&vmmi_process_cr3 == cpu_single_env->cr[3]) 
+            call_stack[call_stack_idx].func_addr = pc; 
+        //yufei.end
 
         //yufei.begin, save value and reg name, when next ins
         //execute, recover the value.
@@ -831,6 +858,10 @@ static void Instrument_CALL_NEAR(INS ins) {
 
 	}else {
 		pc = xed_decoded_inst_get_branch_displacement(&xedd_g)+current_pc+5;
+        //yufei.begin
+        if(vmmi_start &&vmmi_process_cr3 == cpu_single_env->cr[3]) 
+            call_stack[call_stack_idx].func_addr = pc; 
+        //yufei.end
 	}
 	
 #ifdef DEBUG_VMMI	
