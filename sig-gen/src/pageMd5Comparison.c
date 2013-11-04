@@ -435,7 +435,6 @@ void gen_md5_signature(Mem * mem)
 
     int calledPages[totalPageNumber];
     int dsmPages[totalPageNumber];
-    //record virtual address
     unsigned virtualAddrs[totalPageNumber];
     for (i = 0; i < totalPageNumber; i++) {
         calledPages[i] = 0;
@@ -447,7 +446,7 @@ void gen_md5_signature(Mem * mem)
     int cluster_idx = 0 ;
     int all_page(){
         clusters[0].start = 0xd0000000;
-        clusters[0].end = 0xe0000000;
+        clusters[0].end = 0xf0000000;
         clusters[0].name = "all";
         clusters[0].pageSize = 4096;
         return 1;
@@ -461,17 +460,18 @@ void gen_md5_signature(Mem * mem)
     else
         cluster_len = all_page();
 
+    //Page Md5 Generate
     for(cluster_idx = 0; cluster_idx < cluster_len; cluster_idx++){
+        cluster curr_cluster = clusters[cluster_idx];
+        int page_no= (curr_cluster.end - curr_cluster.start) / 0x1000;
+        printf("%x ~ %x, %s, %d\n",  curr_cluster.start, curr_cluster.end, curr_cluster.name, page_no);
 
-        int page_no= (clusters[cluster_idx].end - clusters[cluster_idx].start) / 0x1000;
-        printf("%x ~ %x, %s, %d\n",  clusters[cluster_idx].start, clusters[cluster_idx].end, clusters[cluster_idx].name, page_no);
-
-        range range_item = gen_range(clusters[cluster_idx]);
+        range range_item = gen_range(curr_cluster);
 
         unsigned codePageNo = 0;
         unsigned vAddr;
-        for (vAddr = clusters[cluster_idx].start;
-             vAddr < clusters[cluster_idx].end; vAddr += 0x1000) {
+        for (vAddr = curr_cluster.start;
+             vAddr < curr_cluster.end; vAddr += 0x1000) {
             unsigned pAddr = vtop(mem->mem, mem->mem_size, mem->pgd, vAddr);
 #if 0
             if( pAddr != -1)

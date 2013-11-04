@@ -16,43 +16,33 @@
 #include <string.h>
 #include <sys/times.h>
 #include <stdint.h>
+#include <stdbool.h>   // only work in C99
 
 int potential_pgd;
 int real_pgd;
 int potential_pgd_time;
 int real_pgd_time;
-//determine whether two memory match each other,
-//if match rate less and equal to 0.02 then return 0 (Match)
-//else return 1 (No match)
-int isEqual(char *mem, unsigned paddr1, unsigned paddr2, int length)
+
+//determine whether two memory match each other, similar to memcmp()
+bool isEqual(unsigned ptr1, unsigned ptr2, int length)
 {
-    int i;
     int noMatchCount = 0;
-    unsigned value1s[512];
-    unsigned value2s[512];
-    int indexs[512];
+    int i;
     for (i = 0; i < length; i = i + 4) {
-        unsigned value1 = *(unsigned *) ((unsigned) mem + paddr1 + i);
-        unsigned value2 = *(unsigned *) ((unsigned) mem + paddr2 + i);
+        unsigned value1 = *(unsigned *) (ptr1 + i);
+        unsigned value2 = *(unsigned *) (ptr2 + i);
         if (value1 != value2) {
-            value1s[noMatchCount] = value1;
-            value2s[noMatchCount] = value2;
-            indexs[noMatchCount] = i;
             noMatchCount++;
         }
     }
-    float matchRate = (float) noMatchCount / (float) (length / 4);
 
-    //rate less than 0.02
-    if (matchRate <= 0.02) {
-//              printf("paddr1:0x%x vs paddr2:0x%x noMatchcount:%d rate:%4.2f\n", paddr1, paddr2,
-//                              noMatchCount, (float) noMatchCount / (float) (length / 4));
-//              for (i = 0; i < noMatchCount; i++) {
-//                      printf("0x%x: %x %x \n", indexs[i]+2048, value1s[i], value2s[i]);
-//              }
-        return 0;
+    float nomatch_rate = (float) noMatchCount / (float) (length / 4);
+
+    //rate less than 0.01, used to be 0.02
+    if (nomatch_rate <= 0.01) {
+        return true;
     } else
-        return 1;
+        return false;
 }
 
 //print pde item in the pgd
@@ -86,21 +76,20 @@ void printPdeItem(unsigned startAddr, char *mem, int mem_size)
 }
 
 void printAllRealPgd(int pgdcount, int countedpages[pgdcount],
-                     int maxIndex, int potengtialPdgArray[pgdcount],
+                     int max_idx, int potengtialPdgArray[pgdcount],
                      int pageSize)
 {
-      int i;
-      //printf all real pgds
-      for (i = 0; i < pgdcount; i++) {
-              if (countedpages[i] == maxIndex) {
-                      printf("pgd physical address:0x%x\n",
-                                      potengtialPdgArray[i] * pageSize);
-              }
-      }
+    int i;
+    for (i = 0; i < pgdcount; i++) {
+        if (countedpages[i] == max_idx || i == max_idx) {
+            printf("pgd physical address:0x%x\n",
+                   potengtialPdgArray[i] * pageSize);
+        }
+    }
 }
 
-//get real pgd from potential pgds
-unsigned getPgdReal(int pgdcount, int potential_PDGs[pgdcount],
+//get real pgds from potential pgds
+unsigned getRealPgd(int pgdcount, int potential_PDGs[pgdcount],
                     int pageSize, char *mem)
 {
     //get real pgd page by compare all field of 3*1024 to 4*1024
@@ -127,7 +116,7 @@ unsigned getPgdReal(int pgdcount, int potential_PDGs[pgdcount],
             continue;
 
         int j;
-        //compare i and i+1,i+2...pgdcount-1
+        //compare i and i+1,i+2, ...pgdcount-1
         for (j = i + 1; j < pgdcount; j++) {
             //if page j is handled, do nothing
             if (countedpages[j] >= 0)
@@ -136,15 +125,13 @@ unsigned getPgdReal(int pgdcount, int potential_PDGs[pgdcount],
             //compare i and j
             int startIndex = 2;
 
-            unsigned paddr1 =
-                potential_PDGs[i] * pageSize + startIndex * 1024;
+            unsigned ptr1 =
+                (unsigned)mem + potential_PDGs[i] * pageSize + startIndex * 1024;
 
-            unsigned paddr2 =
-                potential_PDGs[j] * pageSize + startIndex * 1024;
+            unsigned ptr2 =
+                (unsigned)mem + potential_PDGs[j] * pageSize + startIndex * 1024;
 
-            int ret =
-                isEqual(mem, paddr1, paddr2, (4 - startIndex) * 1024);
-            if (ret == 0) {
+            if (isEqual(ptr1, ptr2, (4 - startIndex) * 1024)) {
                 matchNumber[i]++;
                 countedpages[j] = i;
             }
@@ -165,12 +152,14 @@ unsigned getPgdReal(int pgdcount, int potential_PDGs[pgdcount],
     pgdPhyAddr = potential_PDGs[maxIndex] * pageSize;
 
     //printf all real pgds
-    //    printAllRealPgd(pgdcount, countedpages, maxIndex, potential_PDGs,
-    //                    pageSize);
+#if 0
+    printAllRealPgd(pgdcount, countedpages, maxIndex, potential_PDGs,
+                    pageSize);
+#endif 
 
-    real_pgd = maxMatch + 1;
     printf("Real PGD Number is %d, PGD physical address:0x%x\n",
            maxMatch + 1, pgdPhyAddr);
+
     return pgdPhyAddr;
 }
 
@@ -359,16 +348,18 @@ unsigned getPgd(char *mem, int mem_size)
     printf("difference is %d milliseconds\n", potential_pgd_time);
 
     //print the potential pgd physical address
-//      for (i = 0; i < pgdcount; i++) {
-//              printf("pgd physical address:0x%x\n", potengtialPdgArray[i] * pageSize);
-//      }
+#if 0
+    for (i = 0; i < pgdcount; i++) {
+        printf("pgd physical address:0x%x\n", potengtialPdgArray[i] * pageSize);
+    }
+#endif
 
     //get real pgd page by compare all field of 3*1024 to 4*1024
     if (gettimeofday(&earlier, NULL)) {
         perror("gettimeofday() error");
         exit(1);
     }
-    unsigned pgd = getPgdReal(pgdcount, potengtialPdgArray, pageSize, mem);
+    unsigned pgd = getRealPgd(pgdcount, potengtialPdgArray, pageSize, mem);
     if (gettimeofday(&later, NULL)) {
         perror("gettimeofday() error");
         exit(1);
@@ -385,6 +376,5 @@ unsigned getPgd(char *mem, int mem_size)
     fclose(out_data);
     //end record data
 
-//      printPdeItem(pgd,mem,mem_size);
     return pgd;
 }

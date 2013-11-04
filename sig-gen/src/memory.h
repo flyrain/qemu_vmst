@@ -33,7 +33,7 @@ typedef struct cluster_{
 	unsigned start;
 	unsigned end;
 	unsigned pageSize;
-        char * name;
+    char * name;
 }cluster;
 
 

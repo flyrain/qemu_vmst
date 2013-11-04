@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include "memload.h"
 #include "memory.h"
 
@@ -20,7 +21,9 @@ extern long long timeval_diff(struct timeval *difference,
                               struct timeval *end_time,
                               struct timeval *start_time);
 
+void xed2_init();
 unsigned getPgd(char *mem, int mem_size);
+void gen_md5_signature(Mem * mem);
 
 void usage(int argc, char *argv[])
 {
@@ -67,6 +70,7 @@ Mem *initMem(char *snapshot)
 
     //get pgd
     unsigned pgd = getPgd(mem, mem_size);
+
     printf("pgd is 0x%x\n", pgd);
 
     //construct a struct Mem
