@@ -1,0 +1,6 @@
+/acl.d
+*.o
+*.d
+/i386-softmmu/qemu
+/qemu-ga
+/qemu-options.def

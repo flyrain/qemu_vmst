@@ -26,6 +26,7 @@
 #include "qemu-log.h"
 #include "cpu-defs.h"
 #include "helper.h"
+#include "vmst.h" //yufei
 
 #if !defined(CONFIG_USER_ONLY)
 #include "softmmu_exec.h"
@@ -6244,13 +6245,24 @@ target_ulong current_task;
 int is_insert_work = 0;
 
 
-//2.6.32.8
+#ifdef LINUX2_6_32_8
 #define SCHEDULE 0xc125dcff
 #define INSERT_WORK 0xc103ea47
 #define TRY_TO_WAKE_UP 0xc102abfa
 #define PICK_NEXT_TASK_RET 0xc125e1e4
 //#define DEC_NR_RUNNING 0xc101fa26
 #define ACCOUNT_ENTITY_DEQUEUE 0xc1025588
+#endif
+
+
+#ifdef LINUX3_2_52
+#define SCHEDULE 0xc129af5d
+#define INSERT_WORK 0xc104020f
+#define TRY_TO_WAKE_UP 0xc102cdbb
+#define PICK_NEXT_TASK_RET 0xc129aa84
+#define ACCOUNT_ENTITY_DEQUEUE 0xc1025588
+#endif
+
 
 //start from function schedule(), no redirect data
 void no_red_schedule(target_ulong current_PC){
@@ -6347,19 +6359,6 @@ void helper_inst_hook(int a)
     }
     //yufei.end
 
-
-
-    //yufei.begin
-    
-    /*
-    //get name of kthread
-    if (vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] &&  current_pc == 0xc1041256){
-    char kthread_name[16] = {};
-    cpu_memory_rw_debug(cpu_single_env, EAX + 536 , kthread_name, 16, 0);
-    qemu_log(" kthread name: %s ", kthread_name);
-    }
-    */  
-    //yufei.end
 
 #ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
 	if(!is_interrupt && iret_handle!=NULL){

@@ -25,6 +25,7 @@
 #include "cpu.h"
 #include "qemu-common.h"
 #include "kvm.h"
+#include "vmst.h" //yufei
 #ifndef CONFIG_USER_ONLY
 #include "sysemu.h"
 #include "monitor.h"
@@ -751,6 +752,31 @@ uint32_t other;
 extern uint32_t	is_syscall;
 extern uint32_t cond_res;
 
+//2.6.32.8 task_struct offsets and memo
+#ifdef LINUX2_6_32_8  
+#define TASK_STRUCT_COMM 536
+#define TASK_STRUCT_MM 256
+#define TASK_STRUCT_TASKS 228
+#define MM_STRUCT_PGD  36
+#endif
+
+#ifdef LINUX2_6_30  
+//2.6.30 in ~/qemu/ubuntu-8.10-3.img
+#define TASK_STRUCT_COMM 760
+#define TASK_STRUCT_MM 484
+#define TASK_STRUCT_TASKS 456
+#define MM_STRUCT_PGD  36
+#endif
+
+#ifdef LINUX3_2_52  
+//3.2.52 in ~/vmware/Debian\ 6-dm/Debian\ 6-dm.vmdk
+#define TASK_STRUCT_COMM 500
+#define TASK_STRUCT_MM 224
+#define TASK_STRUCT_TASKS 196
+#define MM_STRUCT_PGD  40
+#endif
+
+
 void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 {
 //yang.begin
@@ -784,16 +810,16 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
         next=task;
 
         do{
-            cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
+            cpu_memory_rw_debug(env, next+ TASK_STRUCT_COMM, comm, 16,0);
             comm[15]='\0';
 
             //	cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
             if(strcmp(comm, vmmi_process_name)==0)
             {
-                cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
+                cpu_memory_rw_debug(env, next+TASK_STRUCT_MM, &mm, 4,0);
                 //print the task
                 if(mm!=0){
-                    cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
+                    cpu_memory_rw_debug(env, mm+ MM_STRUCT_PGD, &pgd, 4,0);
                     vmmi_process_cr3 = pgd +0x40000000;
                     vmmi_start = 1;
                     vmmi_main_start = 1; //yufei
@@ -805,8 +831,8 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 #endif
                 }
             }
-            cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
-            next=list-0xe4;
+            cpu_memory_rw_debug(env, next+ TASK_STRUCT_TASKS, &list, 4, 0);
+            next = list - TASK_STRUCT_TASKS;
             i++;
             if(i>100)
                 break;

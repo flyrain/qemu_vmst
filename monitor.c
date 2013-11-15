@@ -1736,15 +1736,15 @@ char sname[128];
 //yufei.start
 static int gen_module_offset(Monitor *mon, const char * snapshot_local, const char * snapshot_target){
     char cmd[200];
-    sprintf(cmd, "../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_local, snapshot_local);
+    sprintf(cmd, "../qemu_vmst/sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_local, snapshot_local);
     monitor_printf(mon, "%s\n", cmd);
     system(cmd);
 
-    sprintf(cmd, "../sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_target, snapshot_target);
+    sprintf(cmd, "../qemu_vmst/sig-gen/src/signa -s ./%s 0 0 > %s_md5", snapshot_target, snapshot_target);
     monitor_printf(mon, "%s\n", cmd);
     system(cmd);
 
-    sprintf(cmd, "python ../sig-gen/src/match-module.py ../sig-gen/src/sig-md5 %s_md5 %s_md5 > module_offset",snapshot_local, snapshot_target);
+    sprintf(cmd, "python ../qemu_vmst/sig-gen/src/match-module.py sig-md5 %s_md5 %s_md5 > module_offset",snapshot_local, snapshot_target);
     monitor_printf(mon, "%s\n", cmd);
     system(cmd);
 }
@@ -1836,6 +1836,7 @@ static int get_patch_addrs(char * module_name, target_ulong * addrs, int * addrs
            line[8] == '\0';
            sscanf(line, "%x", addrs + (*addrs_idx));
            (*addrs_idx) ++;
+           assert((*addrs_idx) < 2000);
         }
     }
 
@@ -1861,14 +1862,12 @@ static int module_tb_invalidate(CPUState *env, struct module_info * module){
 // patch/unpatch module, if is_patch is 1, then patch it, else unpatch it.
 static int patch_module(CPUState *env, struct module_info * module, int is_patch)
 {
-    target_ulong addrs[1000]= {};
+    target_ulong addrs[2000]= {};
     int i ;
     int addrs_idx = 0;
-    int ret = get_patch_addrs(module -> name, addrs,  &addrs_idx);
+    int ret = get_patch_addrs(module->name, addrs,  &addrs_idx);
     if(ret != 0)
         return -1;
-    
-    
 
     module_tb_invalidate(env, module);
 
@@ -1943,6 +1942,7 @@ int patch_modules(CPUState *env)
     int i;
     for (i =0 ; i < module_info_idx; i ++){
         struct module_info module = module_infos[i];
+        qemu_log("Before Patch module %s.\n", module.name);
         int ret = -1;
         ret = patch_module(env, &module, is_patched);
         if (ret != 0 ){
@@ -2034,11 +2034,12 @@ static int read_module_offset(Monitor *mon, const char * filename)
             module_infos[module_info_idx].offset = offset;
         }
 
-        monitor_printf(mon, "%s\t%x\t%x\t%x\n", module_infos[module_info_idx].name, module_infos[module_info_idx].start_addr, module_infos[module_info_idx].size, module_infos[module_info_idx].offset);
+        monitor_printf(mon, "%12s\t%x\t%x\t%x\n", module_infos[module_info_idx].name, module_infos[module_info_idx].start_addr, module_infos[module_info_idx].size, module_infos[module_info_idx].offset);
 
         module_info_idx ++;
     }
 
+/*
 //temp for aes_i586
     char * module_name = "aes_i586";
     char * name = malloc(strlen(module_name) + 1);
@@ -2051,7 +2052,7 @@ static int read_module_offset(Monitor *mon, const char * filename)
 
     module_info_idx ++;
 //end 
-    
+*/  
     fclose(file);
 }
 
@@ -2082,17 +2083,6 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
     const char *cr3_fname = qdict_get_str(qdict, "cr3_fname");
     vmmi_profile = qdict_get_int(qdict, "profile");
 
-    //yufei.begin
-    if (vmmi_profile == 1){
-        const char * snapshot_local = "snapshot_local";
-        mem_save(256 * 1024 * 1024, snapshot_local);
-        gen_module_offset(mon, snapshot_local, snapshot_fname);
-        read_module_offset(mon, "module_offset");
-        get_min_max_addr();
-        monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
-    }
-    //yufei.end
-
     FILE *f;
 
     //inst_dis_log = fopen("inst.log", "w");
@@ -2106,21 +2096,8 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
     fscanf(f,"%x", &vmmi_cr3);
     monitor_printf(mon, "cr3 = %x\n", vmmi_cr3);
     fclose(f);
-
-/*	
-    f = fopen("esp","r");
-	if(f==NULL){
-		monitor_printf(mon, "file esp not exist %x\n", cr3_fname);
-		return;
-	}
-    fscanf(f,"%x", &vmmi_esp);
-    monitor_printf(mon, "esp = %x\n", vmmi_esp);
-    fclose(f);
-*/	
-    
 	
     vmmi_mode = 1;
-
 
     struct stat fstat;
     int ret;
@@ -2134,6 +2111,17 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
 
     size = fstat.st_size;
     snapshot_size = size;
+
+    //yufei.begin
+    if (vmmi_profile == 1){
+        const char * snapshot_local = "snapshot_local";
+        mem_save(snapshot_size, snapshot_local);
+        gen_module_offset(mon, snapshot_local, snapshot_fname);
+        read_module_offset(mon, "module_offset");
+        get_min_max_addr();
+        monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
+    }
+    //yufei.end
 
     vmmi_mem = valloc(size);
     if (vmmi_mem == NULL)
@@ -2243,8 +2231,7 @@ extern uint32_t take_snapshot;
 
 static void do_snapshot_save(Monitor *mon, const QDict *qdict)
 {
-
-	FILE *f;
+    FILE *f;
     uint32_t l;
     uint8_t buf[1024];
     uint32_t size = qdict_get_int(qdict, "size");
@@ -2253,15 +2240,8 @@ static void do_snapshot_save(Monitor *mon, const QDict *qdict)
     strcpy(snapshot_name, filename);
     const char *cr3name = qdict_get_str(qdict, "cr3");
     strcpy(cr3_name, cr3name);
-    int ret = -1;
-
-    
-		
-	take_snapshot=1;
-
-
-	return 0;
-
+    take_snapshot=1;
+    return 0;
 }
 
 uint32_t start_trace=0;
