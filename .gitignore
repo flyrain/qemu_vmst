@@ -4,3 +4,15 @@
 /i386-softmmu/qemu
 /qemu-ga
 /qemu-options.def
+/sig-gen/src/TAGS
+/sig-gen/src/signa
+/trace.c
+/trace.c-timestamp
+/trace.h
+/trace.h-timestamp
+/bin/qemu
+/bin/esp
+/bin/cr3
+/TAGS
+/qapi-generated/
+/pc-bios/optionrom/
