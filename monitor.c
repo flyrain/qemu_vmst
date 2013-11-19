@@ -62,6 +62,7 @@
 #endif
 #include "ui/qemu-spice.h"
 
+#include "target-i386/vmst.h"
 //#define DEBUG
 //#define DEBUG_COMPLETION
 
@@ -2056,6 +2057,96 @@ static int read_module_offset(Monitor *mon, const char * filename)
     fclose(file);
 }
 
+static int split_line_to_strs(char * snapshot_line, char ** strs){
+    int str_count = 0;
+    int len = strlen(snapshot_line);
+    int start = 0;
+    snapshot_line[len - 1] = ' ';
+    int i = 0;
+    for(i = 0; i < len; i ++) {
+        if(snapshot_line[i] != ' ')
+            continue;
+
+        //current char is ' '
+        if(start != -1){
+            int size = i - start + 1;
+            char * name = malloc(size);
+            name[size - 1] = '\0';
+            memcpy(name, snapshot_line + start, size - 1);
+            strs[str_count] = name;
+            str_count ++;
+        }
+        if(i+1 < len && snapshot_line[i + 1] != ' ')
+            start = i + 1;
+        else 
+            start = -1;
+    }
+}
+
+
+static int map_modules_info(char * snapshot_modules, char * local_modules)
+{
+    //open the snapshot modules file
+    struct stat fstat;
+    if (stat(snapshot_modules, &fstat) != 0) {
+        return -1;
+    }
+
+    FILE * snapshot_file = fopen(snapshot_modules, "r");
+    if ( snapshot_file == NULL){
+        return -1;
+    }
+    
+    //open the local modules file
+    if (stat(local_modules, &fstat) != 0) {
+        return -1;
+    }
+
+    FILE * local_file = fopen(local_modules, "r");
+    if ( local_file == NULL){
+        return -1;
+    }
+
+    //generate struct module_infos 
+    char snapshot_line[100];
+    char local_line[100];
+    while (fgets(snapshot_line, sizeof snapshot_line, snapshot_file) != NULL && 
+           fgets(local_line, sizeof local_line, local_file) != NULL) {  
+        char * snapshot_strs[20] = {0};
+        split_line_to_strs(snapshot_line, snapshot_strs);
+        char * local_strs[20] = {0};
+        split_line_to_strs(local_line, local_strs);
+        //check whether the names are the same
+        if(strcmp(snapshot_strs[0], local_strs[0]) != 0)
+            continue;
+        module_infos[module_info_idx].name = local_strs[0];
+        module_infos[module_info_idx].size = atoi(local_strs[1]);
+
+        //get the last string
+        char * snapshot_last = NULL; 
+        char * local_last = NULL; 
+        int i = 0;
+        for(i = 0; i < 20; i ++){
+            if(snapshot_strs[i] == NULL || local_strs[i] == NULL)
+                break;
+            snapshot_last = snapshot_strs[i];
+            local_last = local_strs[i];
+        }
+        
+//        printf("%s %s\n", snapshot_last, local_last);
+        target_ulong start_addr;
+        sscanf(snapshot_last, "%x", &start_addr);
+        module_infos[module_info_idx].start_addr = start_addr;
+        target_ulong local_addr;
+        sscanf(local_last, "%x", &local_addr);
+        module_infos[module_info_idx].offset = local_addr - start_addr;
+
+        module_info_idx ++;
+    }
+    return 0;
+}
+
+
 static void get_min_max_addr()
 {
     if (module_info_idx == 0) 
@@ -2074,6 +2165,30 @@ static void get_min_max_addr()
     }
 }
 //yufei.end
+
+static void get_module_info(Monitor *mon){
+    const char * snapshot_local = "snapshot_local";
+    mem_save(snapshot_size, snapshot_local);
+
+#ifdef IDENTIFY_MODULE_BY_SIGNATURES
+    gen_module_offset(mon, snapshot_local, snapshot_fname);
+    read_module_offset(mon, "module_offset");
+#else
+    //sort 
+    system("sort mem-modules > snapshot_modules");
+    system("sort modules-original > local_modules");
+    map_modules_info("snapshot_modules", "local_modules"); 
+#endif
+    //print all module infomations
+    int i = 0;
+    for(i = 0; i < module_info_idx; i ++) 
+        monitor_printf(mon, "%12s\t%x\t%x\t%x\n", module_infos[i].name, module_infos[i].start_addr, module_infos[i].size, module_infos[i].offset);
+
+    //get min and max addresses
+    get_min_max_addr();
+    monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
+
+}
 
 
 static void do_vmmi_start(Monitor *mon, const QDict *qdict)
@@ -2106,7 +2221,7 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
     if (stat(snapshot_fname, &fstat) != 0)
     {
         monitor_printf(mon, "No such snapshot : %s\n", snapshot_fname);
-		return ;
+        return ;
     }
 
     size = fstat.st_size;
@@ -2114,12 +2229,7 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
 
     //yufei.begin
     if (vmmi_profile == 1){
-        const char * snapshot_local = "snapshot_local";
-        mem_save(snapshot_size, snapshot_local);
-        gen_module_offset(mon, snapshot_local, snapshot_fname);
-        read_module_offset(mon, "module_offset");
-        get_min_max_addr();
-        monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
+        get_module_info(mon);
     }
     //yufei.end
 
