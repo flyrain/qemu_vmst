@@ -1957,6 +1957,7 @@ void Instrument(INS ins)
 		return ;
 	}
 	
+    return; //yufei
 
 	if(
 	 	!is_interrupt
