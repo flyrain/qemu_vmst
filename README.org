@@ -1,19 +1,18 @@
-#+TITLE: For file system introspection. 
-# Time-stamp: <2014-02-14 13:35:50 cs3612>
+# Time-stamp: <2014-02-14 13:38:08 cs3612>
 * Introduction
 A customized qemu for file system introspection. This could apply to a
 encrypted file system.
-* Compilation
+* Compile
 #+BEGIN_SRC sh
 ./configure --target-list=i386-softmmu --prefix=`pwd` --disable-vnc --disable-werror --disable-strip
 make install
-cd bin
-./start.sh
 #+END_SRC
    
 * Usage
 #+BEGIN_SRC sh
+cd bin
 ./start.sh
+
 (EXTERIOR) exterior_start de2 cr3 0
 cr3 = c245000
 Snapshot is successfully loaded
