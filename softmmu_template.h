@@ -93,18 +93,18 @@ static inline uint32_t glue(glue(is_io_write,SUFFIX), MMUSUFFIX)(target_ulong ad
     void *retaddr;
 //yang
     
-	index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
- redo:
+    index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
+redo:
     tlb_addr = env->vmmi_tlb_table[mmu_idx][index].addr_write;
     if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
         if (tlb_addr & ~TARGET_PAGE_MASK) {
-			if(is_ins_log())
-				qemu_log(" addr is io");
-			return 0;
+            if(is_ins_log())
+                qemu_log(" addr is io");
+            return 0;
         }
         else
         {
-			return 0;
+            return 0;
         }
     } else {
         /* the page is not in the TLB : fill it */

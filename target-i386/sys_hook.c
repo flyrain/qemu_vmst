@@ -253,8 +253,14 @@ void syscall_hook(uint32_t syscall_op)
 
         //filename is the name of target file       
         //char * target_file = "lab/test";
-        char * target_file = "test/log";
-        if(strcmp(buf, target_file) ==0)
+        char * target_file1 = "test/log";
+        char * target_file2 = "test/test";
+        char * target_file3 = "test/test1k";
+        char * target_file4 = "test/test1M";
+        if(strcmp(buf, target_file1) == 0
+           || strcmp(buf, target_file2) == 0 
+           || strcmp(buf, target_file3) == 0
+           || strcmp(buf, target_file4) == 0)
         {
             file_flag = 1;
             set_sys_need_red(1);
@@ -268,7 +274,7 @@ void syscall_hook(uint32_t syscall_op)
     case 6 : // sys_close
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
-            qemu_log("read file %u flag %u\n", cpu_single_env->regs[R_EBX], get_file_flag(cpu_single_env->regs[R_EBX]));
+            qemu_log("close file %u flag %u\n", cpu_single_env->regs[R_EBX], get_file_flag(cpu_single_env->regs[R_EBX]));
 #endif
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_file_flag(cpu_single_env->regs[R_EBX],0);

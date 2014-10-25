@@ -667,45 +667,44 @@ void helper_check_iol(uint32_t t0)
 
 void helper_outb(uint32_t port, uint32_t data)
 {
-    if(qemu_log_enabled() && sys_need_red) //yufei
-        qemu_log("outb write %x to %x\n", data & 0xff, port);
+    //if(qemu_log_enabled() && sys_need_red) //yufei
+        //   qemu_log("outb write %x to %x\n", data & 0xff, port);
     cpu_outb(port, data & 0xff);
 }
 
 target_ulong helper_inb(uint32_t port)
 {
-    if(qemu_log_enabled() && sys_need_red)
-        qemu_log("inb read %x\n", port);
+//    if(qemu_log_enabled() && sys_need_red)
+//        qemu_log("inb read %x\n", port);
     return cpu_inb(port);
 }
 
 void helper_outw(uint32_t port, uint32_t data)
 {
-    if(qemu_log_enabled() && sys_need_red)
-        qemu_log("outw write %x to %x\n", data & 0xffff, port);
+//    if(qemu_log_enabled() && sys_need_red)
+//        qemu_log("outw write %x to %x\n", data & 0xffff, port);
     cpu_outw(port, data & 0xffff);
 }
 
 target_ulong helper_inw(uint32_t port)
 {
-    if(qemu_log_enabled() && sys_need_red)
-        qemu_log("inw read %x\n", port);
-
+//    if(qemu_log_enabled() && sys_need_red)
+//        qemu_log("inw read %x\n", port);
     return cpu_inw(port);
 }
 
 void helper_outl(uint32_t port, uint32_t data)
 {
-    if(qemu_log_enabled() && sys_need_red)
-        qemu_log("outl write %x to %x\n", data, port);
+//    if(qemu_log_enabled() && sys_need_red)
+//        qemu_log("outl write %x to %x\n", data, port);
 
     cpu_outl(port, data);
 }
 
 target_ulong helper_inl(uint32_t port)
 {
-    if(qemu_log_enabled() && sys_need_red)
-        qemu_log("inl read %x\n", port);
+//    if(qemu_log_enabled() && sys_need_red)
+//        qemu_log("inl read %x\n", port);
 
     return cpu_inl(port);
 }
@@ -6362,20 +6361,20 @@ void helper_inst_hook(int a)
     //yufei.end
 
 #ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
-	if(!is_interrupt && iret_handle!=NULL){
+    if(!is_interrupt && iret_handle!=NULL){
         if(qemu_log_enabled())
             qemu_log("handle call\n");
-		iret_handle();
-		iret_handle=NULL;
-		is_sysenter=0;
-	}	
+        iret_handle();
+        iret_handle=NULL;
+        is_sysenter=0;
+    }	
 #endif
 
 
 #ifdef VMMI_ALL_REDIRCTION
-	if(!is_interrupt&&is_sysenter&&vmmi_profile&&vmmi_start&&sys_need_red){
-		iret_handle = change_esp;
-	}
+    if(!is_interrupt&&is_sysenter&&vmmi_profile&&vmmi_start&&sys_need_red){
+        iret_handle = change_esp;
+    }
 #endif
 
 
@@ -6384,16 +6383,16 @@ void helper_inst_hook(int a)
 	 
 		 
     if(
-		take_snapshot_esp==1
-	    &&(cpu_single_env->hflags & HF_CPL_MASK) != 3
-		&&snapshot_cr3 == cpu_single_env->cr[3]
+        take_snapshot_esp==1
+        &&(cpu_single_env->hflags & HF_CPL_MASK) != 3
+        &&snapshot_cr3 == cpu_single_env->cr[3]
         )
     { 
-		FILE *f;
-	 	f = fopen("./esp","a+");
+        FILE *f;
+        f = fopen("./esp","a+");
         fprintf(f,"%x\n",env->regs[R_ESP]);
         fclose(f);
-		take_snapshot_esp=0;
+        take_snapshot_esp=0;
     }
 	 
     if(vmmi_start
@@ -6424,62 +6423,62 @@ void helper_inst_hook(int a)
 
 #ifdef DEBUG_VMMI	
             if(
-				0&&
-				qemu_log_enabled()
-				&&vmmi_start
-	   			&& ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
+                0&&
+                qemu_log_enabled()
+                &&vmmi_start
+                && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
                 //		   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
                 //			&&!is_interrupt
                 //			&&(log_eip==0x5deafa1a|| start_log)
-				&&a==0xc0106bc0 || start_log
+                &&a==0xc0106bc0 || start_log
                 )
-			{
+            {
 				
-				const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
+                const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
 
-				start_log=1;
-				uint32_t size = xed_decoded_inst_get_length(&xedd_g);
-				xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
-				xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
+                start_log=1;
+                uint32_t size = xed_decoded_inst_get_length(&xedd_g);
+                xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
+                xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
 
 //				fprintf(vmac_log, "0x" TARGET_FMT_lx ":\t", pc);
 // 				fprintf(vmac_log, "%s\n",str);
 				
-				unsigned int i;
-				fprintf(logfile,"0x%08x: ", a);
-				for (i = 0; i < size; i++)
-					fprintf(logfile, "%02x ", buf[i]);
-				for (; i< 8; i++)
-					fprintf(logfile, "   ");
-				const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-				xed_operand_enum_t op_name0 = xed_operand_name(op0);
-				uint32_t branch;
-				if(operand_is_relbr(op_name0, &branch)){
-					char opname[32];
-					strcpy(opname, xed_iclass_enum_t2str(opcode));
-					for(i=0;i<strlen(opname);i++)
-						opname[i]=opname[i]-('A'-'a');
-					opname[4]='\0';
-					uint32_t pc = a+size+branch;
-					sprintf(str,"%s 0x%08x",opname, pc);
+                unsigned int i;
+                fprintf(logfile,"0x%08x: ", a);
+                for (i = 0; i < size; i++)
+                    fprintf(logfile, "%02x ", buf[i]);
+                for (; i< 8; i++)
+                    fprintf(logfile, "   ");
+                const xed_operand_t *op0 = xed_inst_operand(xi, 0);
+                xed_operand_enum_t op_name0 = xed_operand_name(op0);
+                uint32_t branch;
+                if(operand_is_relbr(op_name0, &branch)){
+                    char opname[32];
+                    strcpy(opname, xed_iclass_enum_t2str(opcode));
+                    for(i=0;i<strlen(opname);i++)
+                        opname[i]=opname[i]-('A'-'a');
+                    opname[4]='\0';
+                    uint32_t pc = a+size+branch;
+                    sprintf(str,"%s 0x%08x",opname, pc);
 
-				}
-				fprintf(logfile, "%s\n", str);
+                }
+                fprintf(logfile, "%s\n", str);
 	
 
-			}
+            }
 
 
 
-			if(
-				0
-				&&start_trace
+            if(
+                0
+                &&start_trace
                 //	   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
-	   			&& ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-				&&!is_interrupt
+                && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
+                &&!is_interrupt
                 )
-			{
-				my_monitor_disas(a);
+            {
+                my_monitor_disas(a);
                 //	uint32_t esp0, esp1,esp2;
                 //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
                 //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
@@ -6487,61 +6486,61 @@ void helper_inst_hook(int a)
                 //	if(qemu_log_enabled())
                 //		qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
 
-			}
+            }
 #ifdef MONITOR_INST
-			if(qemu_log_enabled()&&a>=vmmi_mon_start &&a<=vmmi_mon_end						
+            if(qemu_log_enabled()&&a>=vmmi_mon_start &&a<=vmmi_mon_end						
                 ){
-				my_monitor_disas(a);
-				uint32_t esp0, esp1,esp2;
-				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
-				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
-				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
-				if(qemu_log_enabled())
-					qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
-			}
+                my_monitor_disas(a);
+                uint32_t esp0, esp1,esp2;
+                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
+                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
+                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
+                if(qemu_log_enabled())
+                    qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
+            }
 #endif
 
 
-			if(
+            if(
                 //			start_trace&&
                 //	(current_syscall==120 || current_syscall==114 || current_syscall==42 || is_pipe)					
-				0
-				&&qemu_log_enabled()
-				&&vmmi_start
-	   			&& ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-			   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
-				&&!is_interrupt
-				&&sys_need_red==1
+                0
+                &&qemu_log_enabled()
+                &&vmmi_start
+                && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
+                && vmmi_process_cr3 == cpu_single_env->cr[3]
+                &&!is_interrupt
+                &&sys_need_red==1
                 )
-			{
-				if(current_syscall==102)
-					fprintf(inst_dis_log,"%x:%x\n", current_syscall, a);
+            {
+                if(current_syscall==102)
+                    fprintf(inst_dis_log,"%x:%x\n", current_syscall, a);
 				
-				uint32_t esp0, esp1,esp2;
-				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
-				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
-				cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
-				if(qemu_log_enabled())
-					qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
-				my_monitor_disas(a);
-				//for socket do_ipt_get_ctl return value : for iptabls
+                uint32_t esp0, esp1,esp2;
+                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
+                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
+                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
+                if(qemu_log_enabled())
+                    qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
+                my_monitor_disas(a);
+                //for socket do_ipt_get_ctl return value : for iptabls
                 //			if(a==0xc11f290e)
                 //				cpu_single_env->regs[R_EAX]=0;
-				//for ifconfig hook
+                //for ifconfig hook
                 //			if(a==0xc11d85f1)
                 //				cpu_single_env->regs[R_EDX]=0;
                 //			if(a==0xc1055f75)
                 //				cpu_single_env->regs[R_EAX]=0;
                 //			if(a==0xc100321e)
                 //				start_trace=0;
-				if(a==0xc1055e6d){
-					char buf[100];
-					uint64_t addr = (uint64_t)vmmi_mem_shadow + vmmi_vtop(cpu_single_env->regs[R_EAX]+0xc);
+                if(a==0xc1055e6d){
+                    char buf[100];
+                    uint64_t addr = (uint64_t)vmmi_mem_shadow + vmmi_vtop(cpu_single_env->regs[R_EAX]+0xc);
                     //			cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EAX]+0xc, buf, 100, 0);
-					memcpy(buf, addr, 99);
-					buf[99]='\0';
-					printf("module is %x %s\n", cpu_single_env->regs[R_EAX], buf);
-				}
+                    memcpy(buf, addr, 99);
+                    buf[99]='\0';
+                    printf("module is %x %s\n", cpu_single_env->regs[R_EAX], buf);
+                }
 /*
   xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
   fprintf(logfile, "\n");
@@ -6555,14 +6554,14 @@ void helper_inst_hook(int a)
   for( i=0;i<size;i++)
   fprintf(logfile, "%02x ", buf[i]);
 */	
-			}
-			/*
+            }
+            /*
               if( 
               0
               &&qemu_log_enabled()
               &&vmmi_start
               && vmmi_process_cr3 == cpu_single_env->cr[3]
-			  )
+              )
               {
               xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
               fprintf(inst_dis_log, "\n");
@@ -6570,25 +6569,25 @@ void helper_inst_hook(int a)
               fprintf(inst_dis_log, "0x" TARGET_FMT_lx "\t", a);
               fprintf(inst_dis_log, "%s",str);
               }
-			*/
+            */
 
 #endif
 
-			xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
-		    const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
+            xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
+            const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
 
             if(
-			   	vmmi_start
-			   	&&!is_print
-			   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
+                vmmi_start
+                &&!is_print
+                && vmmi_process_cr3 == cpu_single_env->cr[3]
                 )
-			{	
+            {	
 			     
-			    Instrument(xi);
-	   			if((cpu_single_env->hflags & HF_CPL_MASK) == 3)
-					FD_Instrument(xi);
+                Instrument(xi);
+                if((cpu_single_env->hflags & HF_CPL_MASK) == 3)
+                    FD_Instrument(xi);
 
-			}
+            }
 
 #ifdef VMMI_KERNEL
             prev_opcode = opcode;
@@ -6603,17 +6602,17 @@ void helper_inst_hook(int a)
 
 int vmmi_init()
 {
-	xed_decoded_inst_set_mode(&xedd_g, XED_MACHINE_MODE_LEGACY_32,
+    xed_decoded_inst_set_mode(&xedd_g, XED_MACHINE_MODE_LEGACY_32,
                               XED_ADDRESS_WIDTH_32b);
 	
-	setup_inst_hook();
-	setup_inst_hook_fd();
-	xed2_init();
+    setup_inst_hook();
+    setup_inst_hook_fd();
+    xed2_init();
 
-	taintInit();
-	pc_taintInit();
+    taintInit();
+    pc_taintInit();
 	
-	return 0;
+    return 0;
 }
 
 //yang.end

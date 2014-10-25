@@ -1,1 +1,1 @@
-/home/cs3612/fs_traverse/qemu_vmst/Makefile.user
+/home/cs3612/qemu_vmst/Makefile.user

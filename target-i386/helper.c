@@ -642,18 +642,17 @@ inline uint32_t is_global_data(uint32_t addr)
 }
 uint32_t is_ins_log()
 {
-	
-	if(	vmmi_start\
-		&&qemu_log_enabled()\
-		&&(cpu_single_env->cr[3] == vmmi_process_cr3) 
-	   && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-                //       &&!is_interrupt
-                //	   &&sys_need_red
+    if(	vmmi_start\
+        &&qemu_log_enabled()\
+        &&(cpu_single_env->cr[3] == vmmi_process_cr3) 
+        && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
+        //       &&!is_interrupt
+        &&sys_need_red
 //	   && current_syscall == 42
-	 ) 
+        ) 
     	return 1;
-	else
-		return 0;
+    else
+        return 0;
 }
 inline uint32_t is_shadow_page_exist(uint32_t pte)
 {
