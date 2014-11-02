@@ -2044,9 +2044,10 @@ static int read_module_offset(Monitor *mon, const char * filename)
     char * name = malloc(strlen(module_name) + 1);
     memcpy(name, module_name, strlen(module_name) + 1);
     module_infos[module_info_idx].name = name;
-    module_infos[module_info_idx].start_addr = 0xd0aa6000;
+    module_infos[module_info_idx].start_addr = 0xd0aa6000; //de-target
+    // module_infos[module_info_idx].start_addr = 0xd0a9c000; //new-mem
     module_infos[module_info_idx].size = 6816;
-    module_infos[module_info_idx].offset = 0x1000;
+    module_infos[module_info_idx].offset = 0xd0aa7000 -  module_infos[module_info_idx].start_addr ;
     monitor_printf(mon, "%s\t%x\t%x\t%x\n", module_infos[module_info_idx].name, module_infos[module_info_idx].start_addr, module_infos[module_info_idx].size, module_infos[module_info_idx].offset);
 
     module_info_idx ++;

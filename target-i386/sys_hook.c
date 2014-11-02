@@ -179,6 +179,21 @@ extern int patch_modules(CPUState *env); //yufei
 extern target_ulong current_task; //yufei
 extern int is_insert_work;
 
+//yufei.begin, show current time 
+char * syscall_name[] = {"", "exit", "", "read", "write", "open", "close" };
+
+void show_time(int syscall){
+    struct timeval time_toshow;
+    if (gettimeofday(&time_toshow, NULL)) {
+        perror("gettimeofday() error");
+        exit(1);
+    }
+    qemu_log(syscall_name[syscall]);
+    qemu_log(" time: %lld\n", 
+             (1000LL * time_toshow.tv_sec + time_toshow.tv_usec / 1000));
+}
+//yufei.end
+
 void syscall_hook(uint32_t syscall_op)
 {
 
@@ -199,10 +214,12 @@ void syscall_hook(uint32_t syscall_op)
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
             qemu_log(" monitor exit");
+        show_time(1);
 #endif
+
         //yufei.begin
         if (sys_need_red ==1)  
-           patch_modules(cpu_single_env); 
+            patch_modules(cpu_single_env); 
         //yufei.end
 
         set_sys_need_red(0);
@@ -222,6 +239,8 @@ void syscall_hook(uint32_t syscall_op)
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
             qemu_log("read file %u flag %u\n", cpu_single_env->regs[R_EBX], get_file_flag(cpu_single_env->regs[R_EBX]));
+
+        show_time(3);
 #endif
         if(cpu_single_env->regs[R_EBX] == 6)
             is_pipe = 1;
@@ -248,6 +267,8 @@ void syscall_hook(uint32_t syscall_op)
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
             qemu_log("open file %s\n", buf);
+
+        show_time(5);
 #endif
         buf[1023]='\0';
 
@@ -255,12 +276,14 @@ void syscall_hook(uint32_t syscall_op)
         //char * target_file = "lab/test";
         char * target_file1 = "test/log";
         char * target_file2 = "test/test";
+        char * target_file5 = "test/test1"; //19k
         char * target_file3 = "test/test1k";
         char * target_file4 = "test/test1M";
         if(strcmp(buf, target_file1) == 0
            || strcmp(buf, target_file2) == 0 
            || strcmp(buf, target_file3) == 0
-           || strcmp(buf, target_file4) == 0)
+           || strcmp(buf, target_file4) == 0
+           || strcmp(buf, target_file5) == 0)
         {
             file_flag = 1;
             set_sys_need_red(1);
@@ -275,6 +298,8 @@ void syscall_hook(uint32_t syscall_op)
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
             qemu_log("close file %u flag %u\n", cpu_single_env->regs[R_EBX], get_file_flag(cpu_single_env->regs[R_EBX]));
+
+        show_time(6);
 #endif
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_file_flag(cpu_single_env->regs[R_EBX],0);
@@ -1124,9 +1149,9 @@ void syscall_hook(uint32_t syscall_op)
 
         //	 cpu_memory_rw_debug(cpu_single_env, vmmi_mon_start, inst_buff, 5, 1);
         /*delete module
-        cpu_memory_rw_debug(cpu_single_env, 0xc1055efc, inst_buff2, 5, 1);
-         cpu_memory_rw_debug(cpu_single_env, 0xc1055cca, inst_buff3, 5, 1);
-         */
+          cpu_memory_rw_debug(cpu_single_env, 0xc1055efc, inst_buff2, 5, 1);
+          cpu_memory_rw_debug(cpu_single_env, 0xc1055cca, inst_buff3, 5, 1);
+        */
         vmmi_start = 0;
         vmmi_main_start = 0;
         set_sys_need_red(0);

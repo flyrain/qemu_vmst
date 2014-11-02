@@ -754,17 +754,17 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 {
 //yang.begin
 #ifdef DEBUG_VMMI
-	if(vmmi_mode)
-		if(qemu_log_enabled()){
-		  	qemu_log("process is 0x%08x, 0x%08x, 0x%08x\n", vmmi_process_cr3, new_cr3,cpu_single_env->cr[3] );
-		}
+    if(vmmi_mode)
+        if(qemu_log_enabled()){
+            qemu_log("process is 0x%08x, 0x%08x, 0x%08x\n", vmmi_process_cr3, new_cr3,cpu_single_env->cr[3] );
+        }
 #endif			
 
 
-	if( 
+    if( 
         //	vmmi_main_start
         vmmi_mode
-		&&!vmmi_start
+        &&!vmmi_start
         //   &&vmmi_process_cr3 == cpu_single_env->cr[3]
         //	&&vmmi_process_cr3 != new_cr3
         )
@@ -800,6 +800,14 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
                     if(qemu_log_enabled())
                         qemu_log("vmmi_process is 0x%08x\n", new_cr3);
                     printf("start monitor\n");
+
+                    struct timeval time_cr3;
+                    if (gettimeofday(&time_cr3, NULL)) {
+                        perror("gettimeofday() error");
+                        exit(1);
+                    }
+                    qemu_log("cr3 update time: %lld\n", 
+                             (1000LL * time_cr3.tv_sec + time_cr3.tv_usec / 1000));
                     printf("find process %x %s %x\n", next, comm, pgd+0x40000000);
 #endif
                 }
