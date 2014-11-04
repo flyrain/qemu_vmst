@@ -1537,81 +1537,82 @@ void update_esp()
 
 static void Instrument_IRETD(INS ins)
 {
-	if(is_interrupt){
-  		vmmi_interrupt_stack--;
-  		if(vmmi_interrupt_stack == 0){
-	  		is_interrupt=0;
+    if(is_interrupt){
+        vmmi_interrupt_stack--;
+        if(vmmi_interrupt_stack == 0){
+            is_interrupt=0;
 			
 #ifdef VMMI_ALL_REDIRCTION
-			if(iret_handle==NULL&&vmmi_profile&&sys_need_red)
-				iret_handle = update_esp;
+            if(iret_handle==NULL&&vmmi_profile&&sys_need_red)
+                iret_handle = update_esp;
 #endif
 
 #ifdef DEBUG_VMMI
-			if(qemu_log_enabled())
-	  		qemu_log("exit interrupt\n");
+            if(qemu_log_enabled())
+                qemu_log("exit interrupt\n");
 #endif
-		if(!is_syscall)
-			cond_res=0;
-		}
-  	}else{
-		if(is_sysenter)
-			return;
+            if(!is_syscall)
+                cond_res=0;
+        }
+    }else{
+        if(is_sysenter)
+            return;
 
 
 #ifdef VMMI_ALL_REDIRCTION
-		if(sys_need_red&&vmmi_profile)
-    	cpu_single_env->regs[R_ESP] = origin_esp;
+        if(sys_need_red&&vmmi_profile)
+            cpu_single_env->regs[R_ESP] = origin_esp;
 #endif
 		
-		if(current_syscall == 5 || current_syscall ==102){
+        if(current_syscall == 5 || current_syscall ==102){
 #ifdef DEBUG_VMMI
-		   if(qemu_log_enabled())
-			qemu_log("open file (%x %u)\n",cpu_single_env->regs[R_EAX], file_flag);
+            if(qemu_log_enabled())
+                qemu_log("open file (%x %u)\n",cpu_single_env->regs[R_EAX], file_flag);
 #endif
-			set_file_flag(cpu_single_env->regs[R_EAX], file_flag);
+            set_file_flag(cpu_single_env->regs[R_EAX], file_flag);
 			
-			if(file_flag)
-				set_reg_taint_fd(XED_REG_EAX, FDTAINTED);
-		}
+            if(file_flag)
+                set_reg_taint_fd(XED_REG_EAX, FDTAINTED);
+        }
 
 #ifdef DEBUG_VMMI
-		if(current_syscall == 3){
-                  char buf[4192];
-                  int maxnum;
-                  if(cpu_single_env->regs[R_EAX]<4192)
-                    maxnum = cpu_single_env->regs[R_EAX];
-                  else
-                    maxnum = 4191;
+        if(current_syscall == 3){
+            char buf[4192];
+            int maxnum;
+            if(cpu_single_env->regs[R_EAX]<4192)
+                maxnum = cpu_single_env->regs[R_EAX];
+            else
+                maxnum = 4191;
 
-                  cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ECX] , buf, maxnum, 0);
-                  buf[maxnum]='\0';
-                  if(qemu_log_enabled())
-                    qemu_log("Fd %x: data:%s",cpu_single_env->regs[R_EBX],buf);
+            cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ECX] , buf, maxnum, 0);
+            buf[maxnum]='\0';
+            if(qemu_log_enabled())
+                qemu_log("Fd %x: data:%s",cpu_single_env->regs[R_EBX],buf);
 			
-		}
+        }
 #endif
 
-                is_syscall=0;
-                cond_res=0;
+        is_syscall=0;
+        cond_res=0;
 #ifdef DEBUG_VMMI
-                if(qemu_log_enabled())
-                  qemu_log("sys exit\n");
+        if(qemu_log_enabled())
+            qemu_log("sys exit\n");
+        show_time(0);
 #endif
-		set_sys_need_red(0);
-	}
+        set_sys_need_red(0);
+    }
 
 #ifdef DEBUG_VMMI	
-	uint32_t stack= cpu_single_env->regs[R_ESP]&0xffffe000;
-	uint32_t task;
-	uint32_t pid;
-	char comm[128];
-	cpu_memory_rw_debug(cpu_single_env, stack, &task, 4,0);
-	cpu_memory_rw_debug(cpu_single_env, task+0x224, comm, 128,0);
-	cpu_memory_rw_debug(cpu_single_env, task+0x12c, &pid, 4,0);
-	comm[127]='\0';
-        if(qemu_log_enabled())
-          qemu_log("task is  %x  %x %s\n", cpu_single_env->cr[3],pid, comm);
+    uint32_t stack= cpu_single_env->regs[R_ESP]&0xffffe000;
+    uint32_t task;
+    uint32_t pid;
+    char comm[128];
+    cpu_memory_rw_debug(cpu_single_env, stack, &task, 4,0);
+    cpu_memory_rw_debug(cpu_single_env, task+0x224, comm, 128,0);
+    cpu_memory_rw_debug(cpu_single_env, task+0x12c, &pid, 4,0);
+    comm[127]='\0';
+    if(qemu_log_enabled())
+        qemu_log("task is  %x  %x %s\n", cpu_single_env->cr[3],pid, comm);
 #endif
 
 }
@@ -1632,66 +1633,69 @@ static void Instrument_SYSENTER(INS ins)
 	syscall_hook(cpu_single_env->regs[R_EAX]);
 }
 
+extern void show_time(int syscall); //yufei
+
 char  inst_buff[16];
 static void Instrument_SYSEXIT(INS ins)
 {
 	     
 #ifdef DEBUG_VMMI	
-  uint32_t stack= cpu_single_env->regs[R_ESP]&0xffffe000;
-  uint32_t task;
-  uint32_t pid;
-  char comm[128];
-  cpu_memory_rw_debug(cpu_single_env, stack, &task, 4,0);
-  cpu_memory_rw_debug(cpu_single_env, task+0x224, comm, 128,0);
-  cpu_memory_rw_debug(cpu_single_env, task+0x12c, &pid, 4,0);
-  comm[127]='\0';
-  if(qemu_log_enabled())
-    qemu_log("task is  %x  %x %s\n", cpu_single_env->cr[3],pid, comm);
+    uint32_t stack= cpu_single_env->regs[R_ESP]&0xffffe000;
+    uint32_t task;
+    uint32_t pid;
+    char comm[128];
+    cpu_memory_rw_debug(cpu_single_env, stack, &task, 4,0);
+    cpu_memory_rw_debug(cpu_single_env, task+0x224, comm, 128,0);
+    cpu_memory_rw_debug(cpu_single_env, task+0x12c, &pid, 4,0);
+    comm[127]='\0';
+    if(qemu_log_enabled())
+        qemu_log("task is  %x  %x %s\n", cpu_single_env->cr[3],pid, comm);
 #endif
 
 
-  set_sys_need_red(0);
-  is_syscall=0;
-  cond_res=0;
-  is_sysenter = 0;
-  is_pipe =0;
+    set_sys_need_red(0);
+    is_syscall=0;
+    cond_res=0;
+    is_sysenter = 0;
+    is_pipe =0;
 
 
-#ifdef DEBUG_VMMI
-  if(qemu_log_enabled())
-    qemu_log("sys exit\n");
-#endif
-  if(current_syscall == 5 || current_syscall ==102){
 #ifdef DEBUG_VMMI
     if(qemu_log_enabled())
-      qemu_log("open file (%u %u)\n",cpu_single_env->regs[R_EAX], file_flag);
+        qemu_log("sys exit\n");
+    show_time(0);
 #endif
-    set_file_flag(cpu_single_env->regs[R_EAX], file_flag);
+    if(current_syscall == 5 || current_syscall ==102){
+#ifdef DEBUG_VMMI
+        if(qemu_log_enabled())
+            qemu_log("open file (%u %u)\n",cpu_single_env->regs[R_EAX], file_flag);
+#endif
+        set_file_flag(cpu_single_env->regs[R_EAX], file_flag);
 		
-    if(file_flag)
-      set_reg_taint_fd(XED_REG_EAX, FDTAINTED);
-  }
+        if(file_flag)
+            set_reg_taint_fd(XED_REG_EAX, FDTAINTED);
+    }
 
 #ifdef VMMI_ALL_REDIRCTION
-  if(sys_need_red&&vmmi_profile)
-    cpu_single_env->regs[R_ESP] = origin_esp;
+    if(sys_need_red&&vmmi_profile)
+        cpu_single_env->regs[R_ESP] = origin_esp;
 #endif
 
 #ifdef DEBUG_VMMI
-  if(current_syscall == 3){
-    char buf[4192];
-    int maxnum;
-    if(cpu_single_env->regs[R_EAX]<4192)
-      maxnum = cpu_single_env->regs[R_EAX];
-    else
-      maxnum = 4191;
+    if(current_syscall == 3){
+        char buf[4192];
+        int maxnum;
+        if(cpu_single_env->regs[R_EAX]<4192)
+            maxnum = cpu_single_env->regs[R_EAX];
+        else
+            maxnum = 4191;
 
-    cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ECX] , buf, maxnum, 0);
-    buf[maxnum]='\0';
-    if(qemu_log_enabled())
-      qemu_log("Fd %x:data:%s",cpu_single_env->regs[R_EBX],buf);
+        cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ECX] , buf, maxnum, 0);
+        buf[maxnum]='\0';
+        if(qemu_log_enabled())
+            qemu_log("Fd %x:data:%s",cpu_single_env->regs[R_EBX],buf);
 			
-  }
+    }
 #endif
 
 }
@@ -1941,65 +1945,65 @@ void taint_reset();
 
 void Instrument(INS ins)
 {
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr;
-	UChar   taint;
-	uint32_t nop;
+    xed_reg_enum_t reg_id;
+    uint32_t mem_addr;
+    UChar   taint;
+    uint32_t nop;
 
-	taint_reset();
-	nop = xed_decoded_inst_noperands(&xedd_g);
+    taint_reset();
+    nop = xed_decoded_inst_noperands(&xedd_g);
 	
-	xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
+    xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
 
-	if (opcode == XED_ICLASS_SYSENTER || opcode == XED_ICLASS_SYSEXIT || opcode == XED_ICLASS_IRETD)
-	{
-	   	(*instrument_functions[opcode]) (ins);
-		return ;
-	}
+    if (opcode == XED_ICLASS_SYSENTER || opcode == XED_ICLASS_SYSEXIT || opcode == XED_ICLASS_IRETD)
+    {
+        (*instrument_functions[opcode]) (ins);
+        return ;
+    }
 	
 
-	if(
-	 	!is_interrupt
+    if(
+        !is_interrupt
      	&& sys_need_red 
 	)
-	{
+    {
 
-		const xed_operand_t *op = xed_inst_operand(ins, 0);
-		xed_operand_enum_t op_name = xed_operand_name(op);
-		
-
-		if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
-			if(taint == TAINTED){
-				if(opcode == XED_ICLASS_POP &&basereg == XED_REG_ESP)
-					mem_addr+=4;
-				set_kernel_stack_address(mem_addr);
-			}
-		
-		} 
-		
-		const xed_operand_t *op0 = xed_inst_operand(ins, 1);
-		xed_operand_enum_t op0_name = xed_operand_name(op0);
+        const xed_operand_t *op = xed_inst_operand(ins, 0);
+        xed_operand_enum_t op_name = xed_operand_name(op);
 		
 
-		if (operand_is_mem(op0_name, &mem_addr, 1, &taint)) {
-			if(taint == TAINTED)
-					set_kernel_stack_address(mem_addr);
+        if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
+            if(taint == TAINTED){
+                if(opcode == XED_ICLASS_POP &&basereg == XED_REG_ESP)
+                    mem_addr+=4;
+                set_kernel_stack_address(mem_addr);
+            }
+		
+        } 
+		
+        const xed_operand_t *op0 = xed_inst_operand(ins, 1);
+        xed_operand_enum_t op0_name = xed_operand_name(op0);
+		
+
+        if (operand_is_mem(op0_name, &mem_addr, 1, &taint)) {
+            if(taint == TAINTED)
+                set_kernel_stack_address(mem_addr);
 #ifdef VMMI_ALL_REDIRCTION
-		    if(!is_interrupt&&is_sysenter&&vmmi_profile&&vmmi_start&&sys_need_red){
-				uint64_t phaddr = (uint64_t)vmmi_mem_shadow+vmmi_vtop(mem_addr);
-				vmmi_esp2 = *(uint32_t *)phaddr;
-			}
+            if(!is_interrupt&&is_sysenter&&vmmi_profile&&vmmi_start&&sys_need_red){
+                uint64_t phaddr = (uint64_t)vmmi_mem_shadow+vmmi_vtop(mem_addr);
+                vmmi_esp2 = *(uint32_t *)phaddr;
+            }
 #endif
-		}
+        }
 
 
 #ifdef DEBUG_VMMI
   	if(qemu_log_enabled())
-		qemu_log(" op:%s", xed_iclass_enum_t2str(opcode));
+            qemu_log(" op:%s", xed_iclass_enum_t2str(opcode));
 #endif
    	(*instrument_functions[opcode]) (ins);
 
-	}
+    }
 }
 
 

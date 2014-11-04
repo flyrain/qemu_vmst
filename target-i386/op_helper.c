@@ -6024,11 +6024,11 @@ void helper_store(target_ulong value, target_ulong addr, int size)
 
 void helper_load(target_ulong addr, int size)
 {
-	if(size == 3)size++;
+    if(size == 3)size++;
 
-	if(is_ins_log())
-	{
-		if(addr >= 0xc0000000){
+    if(is_ins_log())
+    {
+        if(addr >= 0xc0000000){
             uint32_t new = vmmi_vtop2(addr, size); 
             uint32_t old;
             char buf[4];
@@ -6045,8 +6045,8 @@ void helper_load(target_ulong addr, int size)
             }else {
                 qemu_log(" LD:0x%08x new %d ", addr, new);
             }
-		}
-	}
+        }
+    }
 }
 
 uint32_t snapshot_size;

@@ -180,7 +180,7 @@ extern target_ulong current_task; //yufei
 extern int is_insert_work;
 
 //yufei.begin, show current time 
-char * syscall_name[] = {"", "exit", "", "read", "write", "open", "close" };
+char * syscall_name[] = {"sys exit", "exit", "", "read", "write", "open", "close", "fstat64" };
 
 void show_time(int syscall){
     struct timeval time_toshow;
@@ -1018,6 +1018,10 @@ void syscall_hook(uint32_t syscall_op)
         break;
     case 197 : // sys_fstat64
         //fprintf(logfile,"PID %3d (%16s)[sys_fstat64 197]\n", pid, command);
+#ifdef DEBUG_VMMI
+        show_time(7);
+#endif
+
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
         break;
