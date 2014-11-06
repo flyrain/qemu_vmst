@@ -236,179 +236,116 @@ int operand_is_mem(const xed_operand_enum_t op_name, uint32_t * mem_addr,
 		   int operand_i, UChar * taint)
 {
 
-	*taint = 0;
-	switch (op_name) {
-		/* Memory */
-	case XED_OPERAND_AGEN:
-	case XED_OPERAND_MEM0:
-	case XED_OPERAND_MEM1:{
-			unsigned long base = 0;
-			unsigned long index = 0;
-			unsigned long scale = 1;
-			unsigned long segbase = 0;
-			unsigned short segsel = 0;
-			unsigned long displacement = 0;
-			unsigned int j;
-			size_t remaining = 0;
+    *taint = 0;
+    switch (op_name) {
+        /* Memory */
+    case XED_OPERAND_AGEN:
+    case XED_OPERAND_MEM0:
+    case XED_OPERAND_MEM1:{
+        unsigned long base = 0;
+        unsigned long index = 0;
+        unsigned long scale = 1;
+        unsigned long segbase = 0;
+        unsigned short segsel = 0;
+        unsigned long displacement = 0;
+        unsigned int j;
+        size_t remaining = 0;
 
-			/* Set memory index */
-			int mem_idx = 0;
-			if (op_name == XED_OPERAND_MEM1)
-				mem_idx = 1;
+        /* Set memory index */
+        int mem_idx = 0;
+        if (op_name == XED_OPERAND_MEM1)
+            mem_idx = 1;
 
-			unsigned int memlen =
-			    xed_decoded_inst_operand_length(&xedd_g, operand_i);
+        unsigned int memlen =
+            xed_decoded_inst_operand_length(&xedd_g, operand_i);
 
-			/* Initialization */
-			base = 0;
-			index = 0;
-			scale = 1;
-			segbase = 0;
-			segsel = 0;
-			displacement = 0;
+        /* Initialization */
+        base = 0;
+        index = 0;
+        scale = 1;
+        segbase = 0;
+        segsel = 0;
+        displacement = 0;
 
-			// Get Segment register
-			xed_reg_enum_t seg_regid =
-			    xed_decoded_inst_get_seg_reg(&xedd_g, mem_idx);
+        // Get Segment register
+        xed_reg_enum_t seg_regid =
+            xed_decoded_inst_get_seg_reg(&xedd_g, mem_idx);
 
-			if (seg_regid != XED_REG_INVALID) {
-				const xed_operand_values_t *xopv =
-				    xed_decoded_inst_operands_const(&xedd_g);
-				xed_bool_t default_segment =
-				    xed_operand_values_using_default_segment
-				    (xopv, mem_idx);
+        if (seg_regid != XED_REG_INVALID) {
+            const xed_operand_values_t *xopv =
+                xed_decoded_inst_operands_const(&xedd_g);
+            xed_bool_t default_segment =
+                xed_operand_values_using_default_segment
+                (xopv, mem_idx);
 
-				if (!default_segment) {
-					int segmentreg =
-					    xed_regmapping[seg_regid][0];
+            if (!default_segment) {
+                int segmentreg =
+                    xed_regmapping[seg_regid][0];
 
-					segbase =
-					    cpu_single_env->segs[segmentreg].base;
-					segsel =
-					    cpu_single_env->segs[segmentreg].selector;
-				}
-//          fprintf(tracelog,"memlen %d SEG %d %s, default_seg %d segbase %x, segsel %d ",memlen, seg_regid, \
-				xed_reg_enum_t2str(seg_regid), default_segment,\
-				    segbase, segsel);
-			}
+                segbase =
+                    cpu_single_env->segs[segmentreg].base;
+                segsel =
+                    cpu_single_env->segs[segmentreg].selector;
+            }
 
-			// Get Base register
-			xed_reg_enum_t base_regid =
-			    xed_decoded_inst_get_base_reg(&xedd_g, mem_idx);
+        }
+
+        // Get Base register
+        xed_reg_enum_t base_regid =
+            xed_decoded_inst_get_base_reg(&xedd_g, mem_idx);
 			
-			basereg = base_regid;
+        basereg = base_regid;
 			
 			
-			if (base_regid != XED_REG_INVALID) {
-				int basereg =
-				    xed_regmapping[base_regid][0];
+        if (base_regid != XED_REG_INVALID) {
+            int basereg =
+                xed_regmapping[base_regid][0];
 
-				base = cpu_single_env->regs[basereg];
+            base = cpu_single_env->regs[basereg];
 				
-				*taint =  *taint | get_reg_taint(base_regid);
+            *taint =  *taint | get_reg_taint(base_regid);
 #ifdef DEBUG_VMMI
-				if(is_ins_log())
-					qemu_log("(reg %x taint %x)", base_regid, *taint);
+            if(is_ins_log())
+                qemu_log("(reg %x taint %x)", base_regid, *taint);
 #endif
 //          fprintf(tracelog,"BASE_REG %d %s, base %x ",base_regid, xed_reg_enum_t2str(base_regid), base);
-			}
-			// Get Index register and Scale
-			xed_reg_enum_t index_regid =
-			    xed_decoded_inst_get_index_reg(&xedd_g, mem_idx);
-			if (mem_idx == 0 && index_regid != XED_REG_INVALID) {
-				int indexreg =
-				    xed_regmapping[index_regid][0];
+        }
+        // Get Index register and Scale
+        xed_reg_enum_t index_regid =
+            xed_decoded_inst_get_index_reg(&xedd_g, mem_idx);
+        if (mem_idx == 0 && index_regid != XED_REG_INVALID) {
+            int indexreg =
+                xed_regmapping[index_regid][0];
 
-				index = cpu_single_env->regs[indexreg];
+            index = cpu_single_env->regs[indexreg];
 
-				// Get Scale (AKA width) (only have a scale if the index exists)
-				if (xed_decoded_inst_get_scale
-				    (&xedd_g, operand_i) != 0) {
-					scale =
-					    (unsigned long)
-					    xed_decoded_inst_get_scale(&xedd_g,
-								       mem_idx);
-				}
-			//	*taint =  *taint | get_reg_taint(index_regid);
-			}
+            // Get Scale (AKA width) (only have a scale if the index exists)
+            if (xed_decoded_inst_get_scale
+                (&xedd_g, operand_i) != 0) {
+                scale =
+                    (unsigned long)
+                    xed_decoded_inst_get_scale(&xedd_g,
+                                               mem_idx);
+            }
+            //	*taint =  *taint | get_reg_taint(index_regid);
+        }
 
-			// Get displacement (AKA offset)
-			displacement =
-			    (unsigned long)
-			    xed_decoded_inst_get_memory_displacement(&xedd_g,
-								     mem_idx);
-	//		if(base_regid == XED_REG_INVALID)	
-	//		*taint =  *taint | get_mem_taint(displacement);
-	
+        // Get displacement (AKA offset)
+        displacement =
+            (unsigned long)
+            xed_decoded_inst_get_memory_displacement(&xedd_g,
+                                                     mem_idx);
 
-			
-//        fprintf(tracelog,"INDEX_REG %d %s, index %x, scale %x, disp %x\n",index_regid,xed_reg_enum_t2str(index_regid), index, scale, displacement);
-			/*
-			   // Fix displacement for:
-			   //   1) Any instruction that pushes into the stack, since ESP is 
-			   //        decremented before memory operand is written using ESP. 
-			   //        Affects: ENTER,PUSH,PUSHA,PUSHF,CALL
-			   if (is_stackpush) {
-			   stackpushpop_acc += eh->operand[op_idx].length;
-			   displacement = displacement - stackpushpop_acc -j;
-			   }
-			   //   2) Pop instructions where the 
-			   //      destination operand is a memory location that uses ESP 
-			   //        as base or index register. 
-			   //      The pop operations increments ESP and the written memory 
-			   //        location address needs to be adjusted.
-			   //      Affects: pop (%esp)
-			   else if ((category == XED_CATEGORY_POP) && (!is_stackpop)) {
-			   if ((eh->memregs[op_idx][1].addr == esp_reg) || 
-			   (eh->memregs[op_idx][2].addr == esp_reg)) 
-			   {
-			   displacement = displacement + eh->operand[op_idx].length;
-			   }
-			   }
+        // Calculate memory address accessed
+        *mem_addr =
+            segbase + base + index * scale + displacement;
 
-			 */
-			// Calculate memory address accessed
-			*mem_addr =
-			    segbase + base + index * scale + displacement;
-		//	if(displacement>=0xc0000000&&base_regid!=XED_REG_ESP)
-		//		*taint=0;
-		
-			/*	
-			if(is_kernel_stack(*mem_addr) 
-					&& base_regid != XED_REG_INVALID
-					&& !(base_regid == XED_REG_ESP || base_regid == XED_REG_EBP)) 
-				qemu_log("unnormal stack address");
-			*/
-			
-			/*
-			   // Special handling for LEA instructions
-			   if (op_name == XED_OPERAND_AGEN) {
-			   eh->operand[op_idx].type = TMemAddress;
-			   eh->operand[op_idx].length = 4;
-			   has_page_fault = 0; // LEA won't trigger page fault
-			   }
-			   else {
-			   has_page_fault = TEMU_read_mem(eh->operand[op_idx].addr,
-			   (int)(eh->operand[op_idx].length), 
-			   (uint8_t *)&(eh->operand[op_idx].value));
-			   }
+        return 1;
+    }
 
-			   // Check if instruction accesses user memory
-			   // kernel_mem_start defined in shared/read_linux.c
-			   if ((eh->operand[op_idx].addr < kernel_mem_start) &&
-			   (op_name != XED_OPERAND_AGEN))
-			   {
-			   access_user_mem = 1;
-			   }
-			   if (ignore_taint == 0) set_operand_data(&(eh->operand[op_idx]));
-			 */
-
-			return 1;
-		}
-
-	default:
-		return 0;
-	}
+    default:
+        return 0;
+    }
 
 }
 
@@ -1941,7 +1878,13 @@ void setup_inst_hook() {
 //	instrument_functions[XED_ICLASS_BTS] = &Instrument_BT;	//653
 
 }
-void taint_reset();
+
+void taint_reset()
+{
+    num_stack_address=0;
+    is_ret=0;
+    is_call=0;
+}
 
 void Instrument(INS ins)
 {
@@ -2007,51 +1950,43 @@ void Instrument(INS ins)
 }
 
 
-
 void set_kernel_stack_address(target_ulong addr)
 {
 
 #ifdef DEBUG_VMMI
-	qemu_log("set kernel stack address %x",addr);
+    qemu_log("set kernel stack address %x",addr);
 #endif
 
-	stack_address[num_stack_address++]=addr;
-
-}
-void taint_reset()
-{
-	num_stack_address=0;
-	is_ret=0;
-	is_call=0;
+    stack_address[num_stack_address++]=addr;
 }
 
 uint32_t is_kernel_stack(target_ulong addr)
 {
-	uint32_t i=0;
-	uint32_t res;
+    uint32_t i=0;
+    uint32_t res;
 	
-	res =0;
+    res =0;
 	
-	if(num_stack_address >0)
-		for(i=0; i<num_stack_address; i++)
-			if(stack_address[i] == addr)
-				res = 1;	
+    if(num_stack_address >0)
+        for(i=0; i<num_stack_address; i++)
+            if(stack_address[i] == addr)
+                res = 1;	
 	
 #ifdef DEBUG_VMMI
-	if(qemu_log_enabled())
-		qemu_log("check addrss %x %x %x %x",addr, num_stack_address, stack_address[0], res);
-	if(get_reg_taint(XED_REG_ESP)){
-		if(((cpu_single_env->regs[R_ESP]&0xffffe000)==(addr&0xffffe000))^(res==1))
-			if(qemu_log_enabled())
-				qemu_log("translate error(%x, %x, %x)", cpu_single_env->regs[R_ESP], addr, res);
-	}else if(res==1){
-			if(qemu_log_enabled())
-				qemu_log("translate error(%x, %x, %x)", cpu_single_env->regs[R_ESP], addr, res);
+    if(qemu_log_enabled())
+        qemu_log("check addrss %x %x %x %x",addr, num_stack_address, stack_address[0], res);
+    if(get_reg_taint(XED_REG_ESP)){
+        if(((cpu_single_env->regs[R_ESP]&0xffffe000)==(addr&0xffffe000))^(res==1))
+            if(qemu_log_enabled())
+                qemu_log("translate error(%x, %x, %x)", cpu_single_env->regs[R_ESP], addr, res);
+    }else if(res==1){
+        if(qemu_log_enabled())
+            qemu_log("translate error(%x, %x, %x)", cpu_single_env->regs[R_ESP], addr, res);
 
-	}
+    }
 #endif
 
-   return res;
+    return res;
 }
 
 int is_pc_redirect()
