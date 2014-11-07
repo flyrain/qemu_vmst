@@ -1923,6 +1923,8 @@ static int patch_module(CPUState *env, struct module_info * module, int is_patch
     return 0;
 }
 
+extern void show_time(int syscall);
+
 //patch all modules
 int patch_modules(CPUState *env)
 {
@@ -1933,12 +1935,15 @@ int patch_modules(CPUState *env)
     if (!(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3]))
         return;
 
-    if(is_patched == 0 )
+    if(is_patched == 0 ){
         is_patched = 1;
-    else 
+        qemu_log("Patch modules\n");
+    }else{ 
         is_patched = 0;
+        qemu_log("Unpatch modules\n");
+    }
 
-    qemu_log("Patch modules\n");
+    show_time(8);
 
     int i;
     for (i =0 ; i < module_info_idx; i ++){
@@ -1951,20 +1956,7 @@ int patch_modules(CPUState *env)
         else
             qemu_log("Patch module %s %d success.\n", module.name, is_patched);
     }
-
-    /*
-    char * modules[] = {"ext3", "dm_mod", "dm_crypt", "ide_core", "ide_gd_mod"};
-
-    int i; 
-    for(i = 0; i < sizeof(modules)/4; i ++){
-        int ret = -1;
-        ret = patch_module(modules[i], is_patched);
-        if (ret != 0 )
-            qemu_log("Patch module %s %d failed.\n", modules[i], is_patched);
-        else
-            qemu_log("Patch module %s %d success.\n", modules[i], is_patched);
-    }
-    */
+    show_time(8);
 }
 
 static int read_module_offset(Monitor *mon, const char * filename)
@@ -2181,26 +2173,26 @@ static void do_vmmi_stop(Monitor *mon, const QDict *qdict)
 
 static void do_vmmi_moncmd(Monitor *mon, const QDict *qdict)
 {
-	if(vmmi_mode){
+    if(vmmi_mode){
 		
-		sys_hook_init();
+        sys_hook_init();
 		
-		const char *filename = qdict_get_str(qdict, "filename");
-		strcpy(vmmi_process_name, filename);	
-		vmmi_process_cr3 = 0xffffffff;
-		printf("moniter process %s\n", filename);
+        const char *filename = qdict_get_str(qdict, "filename");
+        strcpy(vmmi_process_name, filename);	
+        vmmi_process_cr3 = 0xffffffff;
+        printf("moniter process %s\n", filename);
 		
-		if(trace_log!=NULL)
-			fclose(trace_log);
-		if(pc_log!=NULL)
-			fclose(pc_log);
-	 	char str[1024];
-		sprintf(str, "trace/%s_trace", filename);
-   		trace_log = fopen(str, "w");
-		sprintf(str, "trace/%s_pc", filename);
-		pc_log = fopen(str, "w");
+        if(trace_log!=NULL)
+            fclose(trace_log);
+        if(pc_log!=NULL)
+            fclose(pc_log);
+        char str[1024];
+        sprintf(str, "trace/%s_trace", filename);
+        trace_log = fopen(str, "w");
+        sprintf(str, "trace/%s_pc", filename);
+        pc_log = fopen(str, "w");
 
-	}
+    }
 }
 
 static void do_vmmi_kill(Monitor *mon, const QDict *qdict)

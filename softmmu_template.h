@@ -197,7 +197,7 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* unaligned/aligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem_shadow), vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem_shadow), vmmi_vtop(addr), env->regs[4]);
 			#endif
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
             res = module_revise(res);//yufei
@@ -330,7 +330,7 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* unaligned/aligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in SLOW LD vmmi paddr %x, old paddr %x esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem_shadow),vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in SLOW LD vmmi paddr %x, old paddr %x esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem_shadow),vmmi_vtop(addr), env->regs[4]);
 			#endif
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
 
@@ -493,11 +493,11 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in ST vmmi paddr %lx, old paddr %x value %x\n",addr+addend, vmmi_vtop(addr), val);
+            //	fprintf(vmmi_log,"in ST vmmi paddr %lx, old paddr %x value %x\n",addr+addend, vmmi_vtop(addr), val);
 			#endif
             glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"after %x %x\n", *(uint32_t *)(addend+addr), vmmi_vtop2(addr,4));
+            //	fprintf(vmmi_log,"after %x %x\n", *(uint32_t *)(addend+addr), vmmi_vtop2(addr,4));
 			#endif
         }
     } else {
@@ -603,7 +603,7 @@ static void glue(glue(slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* aligned/unaligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem_shadow,vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem_shadow,vmmi_vtop(addr), env->regs[4]);
 			#endif
             glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
         }
@@ -693,7 +693,7 @@ DATA_TYPE REGPARM glue(glue(vmmi__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* unaligned/aligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem), vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem), vmmi_vtop(addr), env->regs[4]);
 			#endif
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
         }
@@ -760,7 +760,7 @@ static DATA_TYPE glue(glue(vmmi_slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* unaligned/aligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in SLOW LD vmmi paddr %x, old paddr %x esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem),vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in SLOW LD vmmi paddr %x, old paddr %x esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem),vmmi_vtop(addr), env->regs[4]);
 			#endif
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
         }
@@ -816,7 +816,7 @@ void REGPARM glue(glue(vmmi__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in ST vmmi paddr %x, old paddr %x esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in ST vmmi paddr %x, old paddr %x esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
 			#endif
             glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
         }
@@ -872,7 +872,7 @@ static void glue(glue(vmmi_slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* aligned/unaligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
+            //		fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
 			#endif
             glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
         }
@@ -927,7 +927,7 @@ DATA_TYPE REGPARM glue(glue(vmmi__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* unaligned/aligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem), vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem), vmmi_vtop(addr), env->regs[4]);
 			#endif
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
         }
@@ -1044,7 +1044,7 @@ static DATA_TYPE glue(glue(vmmi_slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* unaligned/aligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in SLOW LD vmmi paddr %x, old paddr %x esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem),vmmi_vtop(addr), env->regs[4]);
+            //		fprintf(vmmi_log,"in SLOW LD vmmi paddr %x, old paddr %x esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem),vmmi_vtop(addr), env->regs[4]);
 			#endif
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
         }
@@ -1137,7 +1137,7 @@ void REGPARM glue(glue(vmmi__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in ST vmmi paddr %x, old paddr %x esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
+            //		fprintf(vmmi_log,"in ST vmmi paddr %x, old paddr %x esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
 			#endif
             glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
         }
@@ -1232,7 +1232,7 @@ static void glue(glue(vmmi_slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
             /* aligned/unaligned access in the same page */
             addend = env->vmmi_tlb_table[mmu_idx][index].addend;
 			#ifdef DEBUG_VMMI
-			fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
+            //	fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
 			#endif
             glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
         }

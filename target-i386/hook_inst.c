@@ -1589,6 +1589,9 @@ static void Instrument_SYSEXIT(INS ins)
         qemu_log("task is  %x  %x %s\n", cpu_single_env->cr[3],pid, comm);
 #endif
 
+    if(file_flag && 
+       ( current_syscall == 3 || current_syscall == 5 || current_syscall == 197) )
+        patch_modules(cpu_single_env); //unpatch modules, yufei
 
     set_sys_need_red(0);
     is_syscall=0;

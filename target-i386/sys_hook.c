@@ -1,3 +1,6 @@
+/* This file is to set system call hooking and interrupt hooking.
+ * Modified by yufei
+ */
 #include "qemu-common.h"
 #include "cpu.h"
 #include "sys_hook.h"
@@ -5,7 +8,7 @@
 #define KERNEL_STACK  (8192-1)
 #define KERNEL_STACK_MASK (~KERNEL_STACK)
 
-uint32_t file_flag ;
+uint32_t file_flag ; //if current file is the target file.
 uint32_t sys_need_red ;
 uint32_t io_need_red;
 uint32_t is_interrupt;
@@ -180,7 +183,8 @@ extern target_ulong current_task; //yufei
 extern int is_insert_work;
 
 //yufei.begin, show current time 
-char * syscall_name[] = {"sys exit", "exit", "", "read", "write", "open", "close", "fstat64" };
+char * syscall_name[] = {"SYSEXIT/IRET", "sys_exit", "", "read", 
+                         "write", "open", "close", "fstat64", "module patch" };
 
 void show_time(int syscall){
     struct timeval time_toshow;
@@ -188,9 +192,14 @@ void show_time(int syscall){
         perror("gettimeofday() error");
         exit(1);
     }
-    qemu_log(syscall_name[syscall]);
-    qemu_log(" time: %lld\n", 
+
+    fprintf(vmmi_log, syscall_name[syscall]);
+    fprintf(vmmi_log, " time: %lld\n", 
              (1000LL * time_toshow.tv_sec + time_toshow.tv_usec / 1000));
+
+//    qemu_log(syscall_name[syscall]);
+//    qemu_log(" time: %lld\n", 
+//             (1000LL * time_toshow.tv_sec + time_toshow.tv_usec / 1000));
 }
 //yufei.end
 
@@ -217,11 +226,6 @@ void syscall_hook(uint32_t syscall_op)
         show_time(1);
 #endif
 
-        //yufei.begin
-        if (sys_need_red ==1)  
-            patch_modules(cpu_single_env); 
-        //yufei.end
-
         set_sys_need_red(0);
         vmmi_start = 0;
         vmmi_main_start = 0;
@@ -247,6 +251,10 @@ void syscall_hook(uint32_t syscall_op)
 
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+        if(file_flag == 1){
+            patch_modules(cpu_single_env); //yufei
+        }
+            
         break;
     case 4 : // sys_write
 #ifdef DEBUG_VMMI
@@ -1024,6 +1032,9 @@ void syscall_hook(uint32_t syscall_op)
 
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+
+        if(file_flag)
+            patch_modules(cpu_single_env);
         break;
     case 198 : // sys_lchown32
         break;

@@ -672,7 +672,7 @@ inline uint64_t get_shadow_page(target_ulong  page_size)
 
 	vmmi_mem_shadow_index = paddr + page_size - (uint64_t)vmmi_mem_shadow;
 
-	fprintf(vmmi_log, "new vmmi_mem_shadow start %lx allocate %lx\n", vmmi_mem_shadow, paddr);
+//	fprintf(vmmi_log, "new vmmi_mem_shadow start %lx allocate %lx\n", vmmi_mem_shadow, paddr);
 	fflush(vmmi_log);
 
 	return  paddr;	
@@ -806,7 +806,9 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
                         perror("gettimeofday() error");
                         exit(1);
                     }
-                    qemu_log("cr3 update time: %lld\n", 
+
+                    fprintf(vmmi_log, "---------------------------\n");
+                    fprintf(vmmi_log, "cr3 update time: %lld\n", 
                              (1000LL * time_cr3.tv_sec + time_cr3.tv_usec / 1000));
                     printf("find process %x %s %x\n", next, comm, pgd+0x40000000);
 #endif
@@ -1988,7 +1990,7 @@ uint32_t vmmi_vtop(uint32_t addr)
 
     if (pde_addr > snapshot_size)
     {
-        fprintf(vmmi_log,"ERROR 1 addr %x pde %x\n", addr, pde_addr);
+        //  fprintf(vmmi_log,"ERROR 1 addr %x pde %x\n", addr, pde_addr);
         return -1;
     }
     uint32_t pde = *(uint32_t*)((uint64_t)vmmi_mem_shadow + pde_addr);
@@ -2039,7 +2041,7 @@ uint32_t vmmi_vtop2(uint32_t addr, uint32_t size)
 
     if (pde_addr > snapshot_size)
     {
-        fprintf(vmmi_log,"ERROR 1 addr %x pde %x\n", addr, pde_addr);
+        // fprintf(vmmi_log,"ERROR 1 addr %x pde %x\n", addr, pde_addr);
         return -1;
     }
     uint32_t pde = *(uint32_t*)((uint64_t)vmmi_mem_shadow + pde_addr);
