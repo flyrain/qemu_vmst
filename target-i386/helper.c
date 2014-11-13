@@ -807,7 +807,7 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
                         exit(1);
                     }
 
-                    fprintf(vmmi_log, "---------------------------\n");
+                    fprintf(vmmi_log, "-------------------------- %s\n", vmmi_process_name);
                     fprintf(vmmi_log, "cr3 update time: %lld\n", 
                              (1000LL * time_cr3.tv_sec + time_cr3.tv_usec / 1000));
                     printf("find process %x %s %x\n", next, comm, pgd+0x40000000);

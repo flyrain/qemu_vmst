@@ -1901,13 +1901,11 @@ static int patch_module(CPUState *env, struct module_info * module, int is_patch
                 struct module_info module_item = module_infos[j];
                 if (value >= module_item.start_addr + module_item.offset 
                     && value < module_item.start_addr + module_item.size + module_item.offset){
-                    //qemu_log("(%x -> ", value);
                     //apply offset
                     if (is_patch)
                         value = value - module_item.offset;
                     else 
                         value = value + module_item.offset;
-                    //qemu_log("%x)\n", value);
                     //write into memory
                     cpu_memory_rw_debug(cpu_single_env, addr, &value, 4, 1);
 
@@ -1919,7 +1917,7 @@ static int patch_module(CPUState *env, struct module_info * module, int is_patch
         }
     }
     
-    qemu_log("(total %d, in %d, out %d)", addrs_idx, in_module_count, out_module_count);
+    qemu_log("%d\tin\t%d\tout\t%d\t", addrs_idx, in_module_count, out_module_count);
     return 0;
 }
 
@@ -1954,7 +1952,7 @@ int patch_modules(CPUState *env)
             //qemu_log("Patch module %s %d failed.\n", module.name, is_patched);
         }
         else
-            qemu_log("Patch module %s %d success.\n", module.name, is_patched);
+            qemu_log("%s\t%d patch success.\n", module.name, is_patched);
     }
     show_time(8);
 }
