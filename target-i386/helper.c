@@ -571,64 +571,30 @@ inline void set_io_need_red(){
 }
 //yufei.end
 
-inline uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr)
+uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr)
 {
+    if((vmmi_start) \
+       && (cpu_single_env->cr[3] == vmmi_process_cr3) \
+       && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
+       && (is_interrupt !=1 || need_interrupt == 1)  \     
+       && addr >=0xc0000000
+       && sys_need_red
+        )return vmmi_profile;
 
-	if((vmmi_start) \
-		&& (cpu_single_env->cr[3] == vmmi_process_cr3) \
-		&& ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
-                && (is_interrupt !=1 || need_interrupt == 1)  \     
-		&&addr >=0xc0000000
-//		&&addr<0xf8000000
-//		&&!is_printr
-#ifdef VMMI_ALL_REDIRCTION
-		&&!is_sysenter
-#endif
-		&& sys_need_red
-		)
-	{ 
-
-		if(!is_kernel_stack(addr))
-		{
-			return vmmi_profile;
-	    }
-		else
-		{
-			return 0;
-		}
-	}
-	else
-		return 0;
-
+    return 0;
 }
-inline uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr)
+
+uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr)
 {
+    if((vmmi_start) \
+       && (cpu_single_env->cr[3] == vmmi_process_cr3) \
+       && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
+       &&  (is_interrupt !=1 || need_interrupt == 1) \  
+       &&addr >=0xc0000000
+       && sys_need_red
+      ) return vmmi_profile;
 
-	if((vmmi_start) \
-		&& (cpu_single_env->cr[3] == vmmi_process_cr3) \
-		&& ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
-                &&  (is_interrupt !=1 || need_interrupt == 1) \  
-		&&addr >=0xc0000000
-//		&&addr<0xf8000000
-//		&&!is_print
-#ifdef VMMI_ALL_REDIRCTION
-		&&!is_sysenter
-#endif
-		&& sys_need_red
-		)
-	{ 
-		if(!is_kernel_stack(addr))
-		{
-			return vmmi_profile;
-	    }
-		else
-		{
-			return 0;
-		}
-
-	}
-	else
-		return 0;
+    return 0;
 }
 
 //yang.begin

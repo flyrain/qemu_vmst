@@ -50,7 +50,7 @@
 
 //#define DEBUG_VMMI
 
-extern target_ulong module_revise(target_ulong snapshot_addr);//yufei
+//extern target_ulong module_revise(target_ulong snapshot_addr);//yufei
 
 //zlin.begin
 
@@ -124,8 +124,8 @@ static inline DATA_TYPE glue(io_read, SUFFIX)(target_phys_addr_t physaddr,
                                               void *retaddr)
 {
 
-			if(is_ins_log())
-				qemu_log(" addr is io 2");
+    if(is_ins_log())
+	qemu_log(" addr is io 2");
     DATA_TYPE res;
     int index;
     index = (physaddr >> IO_MEM_SHIFT) & (IO_MEM_NB_ENTRIES - 1);
@@ -166,61 +166,59 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
  
 
 //////////////////////////////////////////////////////////////////////////////////////
-	//zlin.begin
-//	vmmi_test(addr);
-	
-#ifdef MMUSUFFIX_mmu 
+    //zlin.begin
+//#ifdef MMUSUFFIX_mmu 
     if(is_monitored_vmmi_kernel_data_read(addr) ){
 
-    /* test if there is match for unaligned or IO access */
-    /* XXX: could done more in memory macro in a non portable way */
-    index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
- redo1:
-    tlb_addr = env->vmmi_tlb_table[mmu_idx][index].ADDR_READ;
-    if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
-       if (tlb_addr & ~TARGET_PAGE_MASK) {
-            /* IO access */
-            if ((addr & (DATA_SIZE - 1)) != 0)
-                goto do_unaligned_access1;
-            retaddr = GETPC();
-            ioaddr = env->vmmi_iotlb[mmu_idx][index];
-            set_io_need_red(); //yufei
+        /* test if there is match for unaligned or IO access */
+        /* XXX: could done more in memory macro in a non portable way */
+        index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
+    redo1:
+        tlb_addr = env->vmmi_tlb_table[mmu_idx][index].ADDR_READ;
+        if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
+            if (tlb_addr & ~TARGET_PAGE_MASK) {
+                /* IO access */
+                if ((addr & (DATA_SIZE - 1)) != 0)
+                    goto do_unaligned_access1;
+                retaddr = GETPC();
+                ioaddr = env->vmmi_iotlb[mmu_idx][index];
+                set_io_need_red(); //yufei
 
-            res = glue(io_read, SUFFIX)(ioaddr, addr, retaddr);
-        } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
-            /* slow unaligned access (it spans two pages or IO) */
- do_unaligned_access1:
-         retaddr = GETPC();
-				res = glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(addr,
-                                                         mmu_idx, retaddr);
+                res = glue(io_read, SUFFIX)(ioaddr, addr, retaddr);
+            } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
+                /* slow unaligned access (it spans two pages or IO) */
+            do_unaligned_access1:
+                retaddr = GETPC();
+                res = glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(addr,
+                                                             mmu_idx, retaddr);
+            } else {
+                /* unaligned/aligned access in the same page */
+                addend = env->vmmi_tlb_table[mmu_idx][index].addend;
+#ifdef DEBUG_VMMI
+                //	fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem_shadow), vmmi_vtop(addr), env->regs[4]);
+#endif
+                res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
+                //res = module_revise(res);//yufei
+            }
         } else {
-            /* unaligned/aligned access in the same page */
-            addend = env->vmmi_tlb_table[mmu_idx][index].addend;
-			#ifdef DEBUG_VMMI
-            //	fprintf(vmmi_log,"in LD vmmi paddr %x, old paddr %x, esp %x\n",(uint32_t)(addr+addend-(uint64_t)vmmi_mem_shadow), vmmi_vtop(addr), env->regs[4]);
-			#endif
-            res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
-            res = module_revise(res);//yufei
+            /* the page is not in the TLB : fill it */
+            retaddr = GETPC();
+
+            vmmi_tlb_fill(addr, READ_ACCESS_TYPE, mmu_idx, retaddr);
+            goto redo1;
         }
-    } else {
-        /* the page is not in the TLB : fill it */
-        retaddr = GETPC();
+        return res;
 
-        vmmi_tlb_fill(addr, READ_ACCESS_TYPE, mmu_idx, retaddr);
-        goto redo1;
     }
-    return res;
+//#endif 
 
-	}
-#endif 
-
-	//zlin.end
+    //zlin.end
 //////////////////////////////////////////////////////////////////////////////////////
 
     /* test if there is match for unaligned or IO access */
     /* XXX: could done more in memory macro in a non portable way */
     index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
- redo:
+redo:
     tlb_addr = env->tlb_table[mmu_idx][index].ADDR_READ;
     if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
         if (tlb_addr & ~TARGET_PAGE_MASK) {
@@ -248,22 +246,16 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             }
 #endif
             addend = env->tlb_table[mmu_idx][index].addend;
-		if(0){
+            if(0){
 //		if(is_ins_log()){
-			uint32_t phyaddr= vmmi_vtop(addr);
-			if(phyaddr !=0xffffffff){
-			uint64_t newphyaddr=(uint64_t)vmmi_mem_shadow + (uint64_t)phyaddr;
-			qemu_log("old:%x\nnew:%x\n", *(uint8_t*)((uint64_t)addr+addend), *(uint8_t *)newphyaddr);
-			}else
-				qemu_log("not exit");
-		}
+                uint32_t phyaddr= vmmi_vtop(addr);
+                if(phyaddr !=0xffffffff){
+                    uint64_t newphyaddr=(uint64_t)vmmi_mem_shadow + (uint64_t)phyaddr;
+                    qemu_log("old:%x\nnew:%x\n", *(uint8_t*)((uint64_t)addr+addend), *(uint8_t *)newphyaddr);
+                }else
+                    qemu_log("not exit");
+            }
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
-            
-            //yufei.begin
-            extern uint32_t sys_need_red;
-            if(sys_need_red)
-                 res = module_revise(res);
-            //yufei.end
         }
     } else {
         /* the page is not in the TLB : fill it */
@@ -294,7 +286,7 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 //////////////////////////////////////////////////////////////////
 //zlin.begin
 
-	#ifdef MMUSUFFIX_mmu
+//#ifdef MMUSUFFIX_mmu
 	if(is_monitored_vmmi_kernel_data_read(addr) )
 	{
 
@@ -334,7 +326,7 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 			#endif
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
 
-            res = module_revise(res);//yufei
+//            res = module_revise(res);//yufei
         }
     } else {
         /* the page is not in the TLB : fill it */
@@ -345,7 +337,7 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
     return res;
     }
-#endif
+//#endif
 //zlin.end
 //////////////////////////////////////////////////////////////////
 
@@ -380,9 +372,9 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             addend = env->tlb_table[mmu_idx][index].addend;
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)(long)(addr+addend));
             //yufei.begin
-            extern uint32_t sys_need_red;
-            if(sys_need_red)
-                 res = module_revise(res);
+            /* extern uint32_t sys_need_red; */
+            /* if(sys_need_red) */
+            /*      res = module_revise(res); */
             //yufei.end
         }
     } else {
@@ -453,7 +445,7 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 //zlin.begin
 //if(is_ins_log)
 //		qemu_log(" MMUST:0x%08x", addr);
-#ifdef MMUSUFFIX_mmu
+//#ifdef MMUSUFFIX_mmu
 
 	if(is_monitored_vmmi_kernel_data_write(addr))
 	{
@@ -509,7 +501,7 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
 	return;
     }
-#endif 
+//#endif 
 //zlin.end
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -572,7 +564,7 @@ static void glue(glue(slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
 //////////////////////////////////////////////////////////////////////////////////
 //zlin.begin
-   #ifdef MMUSUFFIX_mmu
+//#ifdef MMUSUFFIX_mmu
     if(is_monitored_vmmi_kernel_data_write(addr)) 
 	{
  redo1:
@@ -614,7 +606,7 @@ static void glue(glue(slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
     }
 	return;
     }
-#endif
+//#endif
 //zlin.end
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -673,9 +665,8 @@ DATA_TYPE REGPARM glue(glue(vmmi__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
 //////////////////////////////////////////////////////////////////////////////////////
 	//zlin.begin
-//	vmmi_test(addr);
 	
-	#ifndef MMUSUFFIX_cmmu
+//	#ifndef MMUSUFFIX_cmmu
 	if(is_monitored_vmmi_kernel_data_read() && (!(glue(glue(is_io_read, SUFFIX), MMUSUFFIX))(addr, mmu_idx)))
 	{
     /* test if there is match for unaligned or IO access */
@@ -709,11 +700,8 @@ DATA_TYPE REGPARM glue(glue(vmmi__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 	}else
 		return glue(glue(__ld, SUFFIX), MMUSUFFIX)(addr, mmu_idx);
 
-#endif 
-
+//#endif 
 	//zlin.end
-//////////////////////////////////////////////////////////////////////////////////////
-
 }
 
 /* handle all unaligned cases */
@@ -730,7 +718,7 @@ static DATA_TYPE glue(glue(vmmi_slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 //////////////////////////////////////////////////////////////////
 //zlin.begin
 
-	#ifndef MMUSUFFIX_cmmu
+//#ifndef MMUSUFFIX_cmmu
 	if(is_monitored_vmmi_kernel_data_read() && (!(glue(glue(is_io_read, SUFFIX), MMUSUFFIX))(addr, mmu_idx)))
 	{
 
@@ -775,9 +763,8 @@ static DATA_TYPE glue(glue(vmmi_slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
     }else
 		return glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(addr,mmu_idx,retaddr);
 
-#endif
+//#endif
 //zlin.end
-//////////////////////////////////////////////////////////////////
 }
 
 #ifndef SOFTMMU_CODE_ACCESS
@@ -831,8 +818,6 @@ void REGPARM glue(glue(vmmi__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 		glue(glue(__st, SUFFIX), MMUSUFFIX)(addr,val,mmu_idx);
 
 //zlin.end
-//////////////////////////////////////////////////////////////////////////////////
-
 }
 
 /* handles all unaligned cases */
@@ -907,9 +892,7 @@ DATA_TYPE REGPARM glue(glue(vmmi__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
 //////////////////////////////////////////////////////////////////////////////////////
 	//zlin.begin
-//	vmmi_test(addr);
-	
-	#ifndef MMUSUFFIX_cmmu
+//#ifndef MMUSUFFIX_cmmu
 	if(is_monitored_vmmi_kernel_data_read() && (!(glue(glue(is_io_read, SUFFIX), MMUSUFFIX))(addr, mmu_idx)))
 	{
     /* test if there is match for unaligned or IO access */
@@ -941,7 +924,7 @@ DATA_TYPE REGPARM glue(glue(vmmi__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
     return res;
 
 	}
-#endif 
+//#endif 
 
 	//zlin.end
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1014,7 +997,7 @@ static DATA_TYPE glue(glue(vmmi_slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 //////////////////////////////////////////////////////////////////
 //zlin.begin
 
-	#ifndef MMUSUFFIX_cmmu
+//#ifndef MMUSUFFIX_cmmu
 	if(is_monitored_vmmi_kernel_data_read() && (!(glue(glue(is_io_read, SUFFIX), MMUSUFFIX))(addr, mmu_idx)))
 	{
 
@@ -1057,7 +1040,7 @@ static DATA_TYPE glue(glue(vmmi_slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
     return res;
     }
-#endif
+//#endif
 //zlin.end
 //////////////////////////////////////////////////////////////////
 
@@ -1122,8 +1105,6 @@ void REGPARM glue(glue(vmmi__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
     index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
 //////////////////////////////////////////////////////////////////////////////////
 //zlin.begin
-//if(is_ins_log)
-//		qemu_log(" MMUST:0x%08x", addr);
 	if(is_monitored_vmmi_kernel_data_write() && (!(glue(glue(is_io_write, SUFFIX), MMUSUFFIX))(addr, mmu_idx)))
 	{
  redo1:

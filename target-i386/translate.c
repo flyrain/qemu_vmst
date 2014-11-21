@@ -7944,10 +7944,10 @@ void restore_state_to_opc(CPUState *env, TranslationBlock *tb, int pc_pos)
     int cc_op;
 #ifdef DEBUG_DISAS
     if (qemu_loglevel_mask(CPU_LOG_TB_OP)) {
-        int i;
 		//yang
 		/*
         qemu_log("RESTORE:\n");
+        int i;
         for(i = 0;i <= pc_pos; i++) {
             if (gen_opc_instr_start[i]) {
                 qemu_log("0x%04x: " TARGET_FMT_lx "\n", i, gen_opc_pc[i]);

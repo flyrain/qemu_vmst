@@ -1078,8 +1078,6 @@ extern uint32_t vmmi_profile;
 
 //uint32_t vmmi_vtop(uint32_t addr);
 
-//extern inline uint32_t is_monitored_vmmi_kernel_data_access(void);
-extern inline uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr);
 
 //yang.begin
 #define SHADOW_PAGE_BIT   11
@@ -1091,7 +1089,7 @@ extern inline uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr);
 //#define VMMI_ALL_REDIRCTION
 //#define VMMI_KERNEL
 
-extern char *vmmi_mem_shadow;
+//extern char *vmmi_mem_shadow;
 extern uint64_t vmmi_mem_shadow_index;
 extern uint32_t is_interrupt;
 extern uint32_t vmmi_interrupt_taint;

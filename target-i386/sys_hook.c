@@ -178,7 +178,6 @@ void pit_send();
 extern char inst_buff[];
 char inst_buff2[16];
 char inst_buff3[16];
-extern int patch_modules(CPUState *env); //yufei
 extern target_ulong current_task; //yufei
 extern int is_insert_work;
 
@@ -251,9 +250,6 @@ void syscall_hook(uint32_t syscall_op)
 
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
-        if(file_flag == 1){
-            patch_modules(cpu_single_env); //yufei
-        }
             
         break;
     case 4 : // sys_write
@@ -295,7 +291,6 @@ void syscall_hook(uint32_t syscall_op)
         {
             file_flag = 1;
             set_sys_need_red(1);
-            patch_modules(cpu_single_env); //yufei
             
             vmac_memory_read(0xc1801454, &current_task, 4);//yufei
         }
@@ -1033,8 +1028,6 @@ void syscall_hook(uint32_t syscall_op)
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
 
-        if(file_flag)
-            patch_modules(cpu_single_env);
         break;
     case 198 : // sys_lchown32
         break;

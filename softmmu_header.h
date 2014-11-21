@@ -74,8 +74,8 @@
 #endif
 
 /* generic load/store macros */
-extern inline uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr);
-extern inline uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr);
+extern uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr);
+extern uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr);
 
 //yang
 extern target_ulong vmmi_process_cr3;
@@ -99,7 +99,7 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
 //zlin.begin
 //	if(is_ins_log())
 //     	qemu_log("LD 0x%08x", ptr);
-#if ACCESS_TYPE == (NB_MMU_MODES)
+//#if ACCESS_TYPE == (NB_MMU_MODES)
     if(is_monitored_vmmi_kernel_data_read(ptr))
     {
         if (unlikely(env->vmmi_tlb_table[mmu_idx][page_index].ADDR_READ !=
@@ -115,7 +115,7 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
         }
         return res;
     }
-#endif
+//#endif
 //zlin.end
 
     if (unlikely(env->tlb_table[mmu_idx][page_index].ADDR_READ !=
@@ -151,10 +151,7 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
     mmu_idx = CPU_MMU_INDEX;
 
 //zlin.begin
-//	if(is_ins_log())
-//     	qemu_log("LD 0x%08x", ptr);
-	
-#if ACCESS_TYPE == (NB_MMU_MODES)
+//#if ACCESS_TYPE == (NB_MMU_MODES)
     if(is_monitored_vmmi_kernel_data_read(ptr))
     {
         vmmi_vtop(addr);
@@ -165,15 +162,14 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
         } else {
             physaddr = addr + env->vmmi_tlb_table[mmu_idx][page_index].addend;
             res = glue(glue(lds, SUFFIX), _raw)((uint8_t *)physaddr);
-            res = module_revise(res);//yufei
-
+            // res = module_revise(res);//yufei
 #ifdef DEBUG_VMMI
             //           fprintf(vmmi_log,"in LDs_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
 #endif
         }
         return res;
     }
-#endif
+//#endif
 //zlin.end
     if (unlikely(env->tlb_table[mmu_idx][page_index].ADDR_READ !=
                  (addr & (TARGET_PAGE_MASK | (DATA_SIZE - 1))))) {
@@ -182,9 +178,9 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
         physaddr = addr + env->tlb_table[mmu_idx][page_index].addend;
         res = glue(glue(lds, SUFFIX), _raw)((uint8_t *)physaddr);
         //yufei.begin
-        extern uint32_t sys_need_red;
-        if(sys_need_red)
-            res = module_revise(res);
+        /* extern uint32_t sys_need_red; */
+        /* if(sys_need_red) */
+        /*     res = module_revise(res); */
         //yufei.end
     }
     return res;
@@ -207,9 +203,7 @@ static inline void glue(glue(st, SUFFIX), MEMSUFFIX)(target_ulong ptr, RES_TYPE 
     mmu_idx = CPU_MMU_INDEX;
 
 //zlin.begin
-//	if(is_ins_log())
-//     	qemu_log("ST 0x%08x ", ptr);
-	#if ACCESS_TYPE == (NB_MMU_MODES)
+//#if ACCESS_TYPE == (NB_MMU_MODES)
 	if(is_monitored_vmmi_kernel_data_write(ptr))
 	{
 			
@@ -237,7 +231,7 @@ static inline void glue(glue(st, SUFFIX), MEMSUFFIX)(target_ulong ptr, RES_TYPE 
 		}
 		return;
 	}
-    #endif
+//    #endif
 //zlin.end
 
     if (unlikely(env->tlb_table[mmu_idx][page_index].addr_write !=
