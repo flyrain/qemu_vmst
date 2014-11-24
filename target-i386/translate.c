@@ -4085,36 +4085,12 @@ static target_ulong disas_insn(DisasContext *s, target_ulong pc_start)
     target_ulong next_eip, tval;
     int rex_w, rex_r;
 
-    //yufei.begin, not work, because kernel need this function to work well.
-    /*
-    if (pc_start == 0xc10d9453){
-      char buf=0xc3;
-      cpu_memory_rw_debug(cpu_single_env, pc_start, &buf , 1 ,1);
-      }*/
-    //yufei.end
 
-	//yang.begin
-//   if (unlikely(qemu_loglevel_mask(CPU_LOG_TB_OP)))
-// 	 if(cpu_single_env->cr[3]==vmmi_process_cr3)
-	{
-		/*
-			TCGv pc1;
-			pc1 = tcg_temp_local_new();
-			tcg_gen_mov_tl(pc1, cpu_T3);
-	
-			tcg_gen_movi_tl(cpu_T3, pc_start);
-			gen_helper_printisn(cpu_T3);
-		    tcg_gen_mov_tl(cpu_T3, pc1);
-		    tcg_temp_free(pc1);
-			*/
-			gen_helper_inst_hook(tcg_const_i32(pc_start));
-
-		//	gen_helper_printisn(cpu_A0);
-	}
-       // 	tcg_gen_debug_insn_start(pc_start);
-   	//yang.end 
+    //yang.begin
+    gen_helper_inst_hook(tcg_const_i32(pc_start));
+    //yang.end 
     
-	s->pc = pc_start;
+    s->pc = pc_start;
     prefixes = 0;
     aflag = s->code32;
     dflag = s->code32;

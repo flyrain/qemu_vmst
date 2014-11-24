@@ -1766,7 +1766,7 @@ extern uint32_t sys_need_red;
 extern uint32_t vmmi_start;
 extern uint32_t vmmi_main_start;
 extern target_ulong vmmi_process_cr3;
-extern int is_module_need_red;
+int is_module_need_red;
 
 target_ulong module_revise(target_ulong snapshot_addr)
 {

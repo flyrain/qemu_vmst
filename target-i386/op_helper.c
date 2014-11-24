@@ -6236,7 +6236,6 @@ static target_ulong getKthread()
 
 //yufei.begin
 extern int reg_name_modified ; 
-extern int is_reg_module_modified; 
 extern uint32_t pre_reg_value;
 extern uint32_t file_flag ; 
 target_ulong current_task;
@@ -6269,96 +6268,10 @@ void no_red_schedule(target_ulong current_PC){
 }
 //yufei.end
 
+//before instruction translate and execute
 void helper_inst_hook(int a)
 {
     current_pc = a;
-
-    //yufei.begin
-    if (is_reg_module_modified == 1){
-        cpu_single_env->regs[reg_name_modified] = pre_reg_value;
-        is_reg_module_modified = 0;
-    }
-    //yufei.end
-
-
-    //yufei.begin
-    if(vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] && vmmi_profile && file_flag) {
-        static target_ulong process_to_schedule = 0; 
-        if( current_pc == INSERT_WORK && sys_need_red == 1 && !is_interrupt){
-            is_insert_work = 1;
-            qemu_log("(insert_work)");
-        }
-
-        if(is_insert_work == 0){
-            no_red_schedule(current_pc);
-        }else if (sys_need_red == 1){
-
-            /* if (current_pc == DEC_NR_RUNNING){ */
-            /*     int nr_running = 0; */
-            /*     vmac_memory_read(EBX + 4, &nr_running, 4); */
-            /*     if( nr_running <= 0) { */
-            /*         nr_running = 1; */
-            /*         vmac_memory_write(EBX + 4, &nr_running, 4); */
-            /*         qemu_log("(nr_running <= 0)"); */
-            /*     } */
-            /* } */
-
-            //if nr_running <= 0, make sure nr_running > 0
-            if (current_pc == ACCOUNT_ENTITY_DEQUEUE){
-                int nr_running = 0;
-                vmac_memory_read(EBX + 0x48, &nr_running, 4);
-                if( nr_running <= 0) {
-                    nr_running = 1;
-                    vmac_memory_write(EBX + 0x48, &nr_running, 4);
-                    qemu_log("(cfs_rq->nr_running <= 0)");
-                }
-            }
-
-            if (current_pc == TRY_TO_WAKE_UP){
-                process_to_schedule = EAX;
-                qemu_log("(%s,%x)","store task address", process_to_schedule);
-            }
-
-            //second times, recover it.
-            static int schedule_count = 0;
-            if (current_pc == SCHEDULE){
-                schedule_count ++;
-                qemu_log(" schedule_count %d ", schedule_count);
-            }
-
-            //set work_thread 
-            if(current_pc == PICK_NEXT_TASK_RET && schedule_count == 1){
-                EAX = process_to_schedule;
-                qemu_log("(set work_thread task to EAX, %x)", EAX);
-            }
-
-          
-            if(current_pc == PICK_NEXT_TASK_RET && schedule_count == 2){
-                EAX = current_task;
-                qemu_log("(switch back to main task %x)", EAX);
-                is_insert_work = 0;  //out of work_thread
-                schedule_count = 0;  //reset schedule_count, because
-                                     //of multi-work_thread
-            }
-
-
-        }
-    }
-    //yufei.end
-
-
-
-    //yufei.begin
-    
-    /*
-    //get name of kthread
-    if (vmmi_start && vmmi_process_cr3 == cpu_single_env->cr[3] &&  current_pc == 0xc1041256){
-    char kthread_name[16] = {};
-    cpu_memory_rw_debug(cpu_single_env, EAX + 536 , kthread_name, 16, 0);
-    qemu_log(" kthread name: %s ", kthread_name);
-    }
-    */  
-    //yufei.end
 
 #ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
     if(!is_interrupt && iret_handle!=NULL){
