@@ -2073,17 +2073,6 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
     const char *cr3_fname = qdict_get_str(qdict, "cr3_fname");
     vmmi_profile = qdict_get_int(qdict, "profile");
 
-    //yufei.begin
-    if (vmmi_profile == 1){
-        const char * snapshot_local = "snapshot_local";
-        mem_save(256 * 1024 * 1024, snapshot_local);
-        gen_module_offset(mon, snapshot_local, snapshot_fname);
-        read_module_offset(mon, "module_offset");
-        get_min_max_addr();
-        monitor_printf(mon, "module min %x, max %x\n", module_min, module_max);
-    }
-    //yufei.end
-
     FILE *f;
 
     //inst_dis_log = fopen("inst.log", "w");

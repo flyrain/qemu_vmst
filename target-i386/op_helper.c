@@ -3042,6 +3042,39 @@ void helper_sysenter(void)
 		syscall_hook(EAX);
 }
 
+//yufei.begin
+//construct a struct timespec in userspace
+target_long contruct_timespec(time_t seconds){
+    target_long vaddr; 
+    for(vaddr = 0x08000000; vaddr < 0xc0000000; vaddr += 4){
+	target_ulong page;
+
+        page = vmmi_vtop(vaddr);
+        if(page==0xffffffff) continue;
+        //set timespec struct 
+        long nanoseconds  = 0;
+        vmac_memory_write(vaddr, &seconds, 4);
+        vmac_memory_write(vaddr, &nanoseconds, 4);
+
+        return vaddr;
+    }
+    return 0;
+}
+
+void return2userspace(){
+    if(vmmi_start 
+       && sys_need_red
+       && vmmi_process_cr3 != cpu_single_env->cr[3]
+        ){
+        EAX = 162; // nanosleep system call number 
+        EBX = contruct_timespec(365*24*3600); //first parameter of nanosleep, sleep
+                            //time: set to one year
+        ECX = 0;  //second parameter 
+        helper_sysenter();
+    }
+}
+//yufei.end
+
 void helper_sysexit(int dflag)
 {
     int cpl;
@@ -3079,6 +3112,8 @@ void helper_sysexit(int dflag)
     }
     ESP = ECX;
     EIP = EDX;
+
+    return2userspace();//yufei
 }
 
 #if defined(CONFIG_USER_ONLY)
@@ -6322,169 +6357,15 @@ void helper_inst_hook(int a)
             !is_interrupt
             && sys_need_red
             && qemu_log_enabled()
-            //                && file_flag
+            // && file_flag
             )
         {
-            //qemu_log("\n0x" TARGET_FMT_lx ":\t", current_pc);//yufei
-            //qemu_log("%s",str); //yufei
             my_monitor_disas(a); 
             qemu_log(" (ECX %x EAX %x EDX %x)", ECX, EAX, EDX);//yufei
         }
 
         if (xed_error == XED_ERROR_NONE) {
             xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
-
-#ifdef DEBUG_VMMI	
-            if(
-                0&&
-                qemu_log_enabled()
-                &&vmmi_start
-                && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-                //		   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
-                //			&&!is_interrupt
-                //			&&(log_eip==0x5deafa1a|| start_log)
-                &&a==0xc0106bc0 || start_log
-                )
-            {
-				
-                const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
-
-                start_log=1;
-                uint32_t size = xed_decoded_inst_get_length(&xedd_g);
-                xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
-                xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
-
-//				fprintf(vmac_log, "0x" TARGET_FMT_lx ":\t", pc);
-// 				fprintf(vmac_log, "%s\n",str);
-				
-                unsigned int i;
-                fprintf(logfile,"0x%08x: ", a);
-                for (i = 0; i < size; i++)
-                    fprintf(logfile, "%02x ", buf[i]);
-                for (; i< 8; i++)
-                    fprintf(logfile, "   ");
-                const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-                xed_operand_enum_t op_name0 = xed_operand_name(op0);
-                uint32_t branch;
-                if(operand_is_relbr(op_name0, &branch)){
-                    char opname[32];
-                    strcpy(opname, xed_iclass_enum_t2str(opcode));
-                    for(i=0;i<strlen(opname);i++)
-                        opname[i]=opname[i]-('A'-'a');
-                    opname[4]='\0';
-                    uint32_t pc = a+size+branch;
-                    sprintf(str,"%s 0x%08x",opname, pc);
-
-                }
-                fprintf(logfile, "%s\n", str);
-	
-
-            }
-
-
-
-            if(
-                0
-                &&start_trace
-                //	   	&& vmmi_process_cr3 == cpu_single_env->cr[3]
-                && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-                &&!is_interrupt
-                )
-            {
-                my_monitor_disas(a);
-                //	uint32_t esp0, esp1,esp2;
-                //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
-                //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
-                //	cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
-                //	if(qemu_log_enabled())
-                //		qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
-
-            }
-#ifdef MONITOR_INST
-            if(qemu_log_enabled()&&a>=vmmi_mon_start &&a<=vmmi_mon_end						
-                ){
-                my_monitor_disas(a);
-                uint32_t esp0, esp1,esp2;
-                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
-                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
-                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
-                if(qemu_log_enabled())
-                    qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
-            }
-#endif
-
-
-            if(
-                //			start_trace&&
-                //	(current_syscall==120 || current_syscall==114 || current_syscall==42 || is_pipe)					
-                0
-                &&qemu_log_enabled()
-                &&vmmi_start
-                && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-                && vmmi_process_cr3 == cpu_single_env->cr[3]
-                &&!is_interrupt
-                &&sys_need_red==1
-                )
-            {
-                if(current_syscall==102)
-                    fprintf(inst_dis_log,"%x:%x\n", current_syscall, a);
-				
-                uint32_t esp0, esp1,esp2;
-                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x4, &esp0,4,0);
-                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0xc, &esp1,4,0);
-                cpu_memory_rw_debug(cpu_single_env, cpu_single_env->tr.base+0x14, &esp2,4,0);
-                if(qemu_log_enabled())
-                    qemu_log("STACK is %x %x %x\n", esp0, esp1,esp2);
-                my_monitor_disas(a);
-                //for socket do_ipt_get_ctl return value : for iptabls
-                //			if(a==0xc11f290e)
-                //				cpu_single_env->regs[R_EAX]=0;
-                //for ifconfig hook
-                //			if(a==0xc11d85f1)
-                //				cpu_single_env->regs[R_EDX]=0;
-                //			if(a==0xc1055f75)
-                //				cpu_single_env->regs[R_EAX]=0;
-                //			if(a==0xc100321e)
-                //				start_trace=0;
-                if(a==0xc1055e6d){
-                    char buf[100];
-                    uint64_t addr = (uint64_t)vmmi_mem_shadow + vmmi_vtop(cpu_single_env->regs[R_EAX]+0xc);
-                    //			cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EAX]+0xc, buf, 100, 0);
-                    memcpy(buf, addr, 99);
-                    buf[99]='\0';
-                    printf("module is %x %s\n", cpu_single_env->regs[R_EAX], buf);
-                }
-/*
-  xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
-  fprintf(logfile, "\n");
-  fprintf(logfile, "0x" TARGET_FMT_lx "\t", cpu_single_env->cr[3]);
-  fprintf(logfile, "0x" TARGET_FMT_lx "\t", a);
-  fprintf(logfile, "%s",str);
-
-  uint32_t size = xed_decoded_inst_get_length(&xedd_g);
-  uint32_t i;
-  fprintf(logfile,"\n");
-  for( i=0;i<size;i++)
-  fprintf(logfile, "%02x ", buf[i]);
-*/	
-            }
-            /*
-              if( 
-              0
-              &&qemu_log_enabled()
-              &&vmmi_start
-              && vmmi_process_cr3 == cpu_single_env->cr[3]
-              )
-              {
-              xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
-              fprintf(inst_dis_log, "\n");
-              fprintf(inst_dis_log, "0x" TARGET_FMT_lx "\t", cpu_single_env->cr[3]);
-              fprintf(inst_dis_log, "0x" TARGET_FMT_lx "\t", a);
-              fprintf(inst_dis_log, "%s",str);
-              }
-            */
-
-#endif
 
             xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
             const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
@@ -6495,7 +6376,6 @@ void helper_inst_hook(int a)
                 && vmmi_process_cr3 == cpu_single_env->cr[3]
                 )
             {	
-			     
                 Instrument(xi);
                 if((cpu_single_env->hflags & HF_CPL_MASK) == 3)
                     FD_Instrument(xi);
@@ -6506,11 +6386,8 @@ void helper_inst_hook(int a)
             prev_opcode = opcode;
 #endif
         }
-		
-
     }
     prev_pc=a;
-		
 }
 
 int vmmi_init()

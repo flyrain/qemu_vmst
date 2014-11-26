@@ -1871,7 +1871,6 @@ void Instrument(INS ins)
      	&& sys_need_red 
 	)
     {
-
         const xed_operand_t *op = xed_inst_operand(ins, 0);
         xed_operand_enum_t op_name = xed_operand_name(op);
 		
