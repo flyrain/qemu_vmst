@@ -437,95 +437,8 @@ int operand_is_imm(const xed_operand_enum_t op_name, uint32_t * value) {
 	}
 
 }
+
 static void Instrument_MOV(INS xi) {
-	xed_reg_enum_t reg_id;
-	uint32_t value;
-	uint32_t mem_addr;
-	UChar taint = 0, taint1=0;
-
-	/* Only check the second operand, whether it is register
-	   memory, or immediate value
-	 */
-
-	const xed_operand_t *op = xed_inst_operand(xi, 1);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-	
-#ifdef DEBUG_VMMI2
-	if(operand_is_mem(op_name, &mem_addr, 1, &taint1)){
-		if(qemu_log_enabled())
-			qemu_log("XED address is 0x%08x\n", mem_addr);
-	}
-#endif
-	
-	taint = 0;
-	taint1=0;
-
-	if (operand_is_reg(op_name, &reg_id)) {
-		
-		taint = get_reg_taint(reg_id);
-
-		const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-		xed_operand_enum_t op_name0 = xed_operand_name(op0);
-		xed_uint_t width =
-		    xed_decoded_inst_get_operand_width(&xedd_g);
-		
-		if (operand_is_mem(op_name0, &mem_addr, 0, &taint1)) {
-			
-	//		if(taint1==TAINTED)
-				set_mem_taint(mem_addr, taint);
-			
-		}
-		else if (operand_is_reg(op_name0, &reg_id)&&reg_id!= XED_REG_ESP) {
-			set_reg_taint(reg_id, taint);
-		}
-
-		
-	//	else if (operand_is_mem(op_name0, &mem_addr, 0, &taint1)) {
-	//		taint = taint | taint1| get_mem_taint(mem_addr);
-	//		set_mem_taint_bysize(mem_addr, taint, width/8)*/;
-	//	}
-
-	} else if (operand_is_imm(op_name, &value)) {
-
-
-		const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-		xed_operand_enum_t op_name0 = xed_operand_name(op0);
-		xed_uint_t width =
-		    xed_decoded_inst_get_immediate_width(&xedd_g);
-
-		if (operand_is_reg(op_name0, &reg_id)) {
-			if(reg_id!= XED_REG_ESP)
-				set_reg_taint(reg_id, UNTAINTED);
-			else{
-				mem_addr = cpu_single_env->regs[R_ESP];
-				uint32_t i;
-				for (i=0; i< value; i++)
-					set_mem_taint(mem_addr+i, UNTAINTED);
-			}
-		}
-		else if (operand_is_mem(op_name0, &mem_addr, 0, &taint1)) {
-			if(taint1 == TAINTED)
-			set_mem_taint_bysize(mem_addr, UNTAINTED, width);
-		}
-	}
-
-	else if (operand_is_mem(op_name, &mem_addr, 1, &taint)) {
-		xed_uint_t width =
-		    xed_decoded_inst_get_operand_width(&xedd_g);
-		
-		taint = get_mem_taint(mem_addr);
-
-		const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-		xed_operand_enum_t op_name0 = xed_operand_name(op0);
-
-		if (operand_is_reg(op_name0, &reg_id)&&(!(reg_id== XED_REG_ESP&&basereg==XED_REG_ESP)))
-			set_reg_taint(reg_id, taint);
-
-	} else {
-		#ifdef DEBUG_TAINT
-		fprintf(tracelog, "%d unknown\n", 1);
-		#endif
-	}
 }
 
 static void Instrument_MUL(INS);
@@ -535,7 +448,6 @@ static void UnimplementedInstruction(INS ins) {
 #ifdef DEBUG_TAINT
 	fprintf(tracelog, "unimplemented: eip=0x%08x \n", *TEMU_cpu_eip);
 #endif
-
 	return;
 }
 
@@ -570,150 +482,25 @@ void replace_esp()
 }
 
 static void Instrument_AND(INS xi) {
-	xed_reg_enum_t reg_id, reg_id0;
-	uint32_t value;
-	uint32_t mem_addr;
-	UChar taint = 0, taint1=0;
-
-
-	const xed_operand_t *op = xed_inst_operand(xi, 1);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-	
-#ifdef DEBUG_VMMI2
-	if(operand_is_mem(op_name, &mem_addr, 1, &taint1)){
-		if(qemu_log_enabled())
-			qemu_log("XED address is 0x%08x\n", mem_addr);
-	}
-#endif
-
-	taint = 0;
-	taint1=0;
-	if (operand_is_reg(op_name, &reg_id)) {
-		
-		taint = get_reg_taint(reg_id);
-
-		const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-		xed_operand_enum_t op_name0 = xed_operand_name(op0);
-	
-		if (operand_is_reg(op_name0, &reg_id0)) {
-			if(reg_id!= XED_REG_ESP){
-				taint =taint | get_reg_taint(reg_id);
-				set_reg_taint(reg_id, taint);
-			}
-			if(reg_id ==XED_REG_ESP)
-				set_reg_taint(reg_id0, get_reg_taint(XED_REG_ESP));
-
-		}
-	
-#ifdef VMMI_STACK_HANDLE	
-		if (operand_is_reg(op_name0, &reg_id0)&&reg_id== XED_REG_ESP) {
-			replace_reg = xed_regmapping[reg_id0][0];
-			if(cpu_single_env->regs[replace_reg] == 0xffffe000)
-				iret_handle = replace_esp;	
-		}
-#endif
-
-	} else if (operand_is_imm(op_name, &value)) {
-		
-#ifdef VMMI_STACK_HANDLE	
-		const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-		xed_operand_enum_t op_name0 = xed_operand_name(op0);
-		if(value == 0xffffe000)
-			if (operand_is_reg(op_name0, &reg_id0)) {
-				replace_reg = xed_regmapping[reg_id0][0];
-				if(cpu_single_env->regs[R_ESP] == cpu_single_env->regs[replace_reg]){
-					iret_handle = replace_esp;		
-					set_reg_taint(reg_id0, 0);
-				}
-			}
-#endif
-		
-	}
-    
-	else if (operand_is_mem(op_name, &mem_addr, 1, &taint)) {
-			
-	} 
-	else {
-		#ifdef DEBUG_TAINT
-		fprintf(tracelog, "%d unknown\n", 1);
-		#endif
-	}
-
-
 }
 
 static void Instrument_ADD(INS xi) {
-	
-	xed_reg_enum_t reg_id;
-	uint32_t value;
-	uint32_t mem_addr;
-	UChar taint = 0, taint1=0;
-
-
-	const xed_operand_t *op = xed_inst_operand(xi, 1);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-	
-#ifdef DEBUG_VMMI2
-	if(operand_is_mem(op_name, &mem_addr, 1, &taint1)){
-		if(qemu_log_enabled())
-			qemu_log("XED address is 0x%08x\n", mem_addr);
-	}
-#endif
-
-	taint = 0;
-	taint1=0;
-	if (operand_is_reg(op_name, &reg_id)) {
-		
-
-	} 
-	else if (operand_is_imm(op_name, &value)) {
-		
-		const xed_operand_t *op0 = xed_inst_operand(xi, 0);
-		xed_operand_enum_t op_name0 = xed_operand_name(op0);
-		xed_uint_t width =
-		    xed_decoded_inst_get_immediate_width(&xedd_g);
-
-		if (operand_is_reg(op_name0, &reg_id)) {
-			if(reg_id== XED_REG_ESP){
-				mem_addr = cpu_single_env->regs[R_ESP];
-				uint32_t i;
-				if(value>0x2000)return;
-				for (i=0; i< value; i++)
-					set_mem_taint(mem_addr+i, UNTAINTED);
-			}
-		}
-
-	}
-	
-	else if (operand_is_mem(op_name, &mem_addr, 1, &taint)) {
-		
-	} else {
-		#ifdef DEBUG_TAINT
-		fprintf(tracelog, "%d unknown\n", 1);
-		#endif
-	}
-
 }
 
 static void Instrument_BSWAP(INS ins) {
 }
 
-
 static void Instrument_CALL_NEAR(INS ins) {
-	if(get_reg_taint(XED_REG_ESP))
-	set_kernel_stack_address(cpu_single_env->regs[R_ESP]-4);
 	is_call = 1;
+ 
+/*
 	const xed_operand_t *op = xed_inst_operand(ins, 0);
 	xed_operand_enum_t op_name  = xed_operand_name(op);
 	uint32_t mem_addr;
 	UChar taint;
 	unsigned int pc;
 	xed_reg_enum_t reg_id;
-/*
-	if(operand_is_mem(op_name, &mem_addr, 0, &taint)){
-		taint = taint | get_mem_taint(mem_addr);
-		set_mem_taint(mem_addr, taint);
-	}*/
+
 	if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
 		char buf[4];
 		cpu_memory_rw_debug(cpu_single_env, mem_addr, buf,4, 0);
@@ -728,21 +515,11 @@ static void Instrument_CALL_NEAR(INS ins) {
 #ifdef DEBUG_VMMI	
 	find_kernel_call(pc);
 #endif
+*/
 }
 
 static void Instrument_CALL_FAR(INS ins) {
-
-	set_kernel_stack_address(cpu_single_env->regs[R_ESP]-4);
-	is_call = 1;
-#if 0
-	is_call_inst = 1;
-
-	#ifdef DEBUG_TAINT
-	xed_uint_t disp = xed_decoded_inst_get_branch_displacement(&xedd_g);
-	disp += xed_decoded_inst_get_length(&xedd_g);
-	fprintf(tracelog, "Call far %x\n", *TEMU_cpu_eip + disp);
-	#endif
-#endif
+    is_call = 1;
 }
 
 static void Instrument_CDQ(INS ins) {
@@ -755,52 +532,7 @@ static void Instrument_CMOVcc(INS ins) {
 }
 
 static void Instrument_CMP(INS ins) {
-
-
-	return;
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr;
-	UChar   taint;
-
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-			
-	uint32_t value;
-	uint32_t addr;
-	int i;
-
-
-
-	if (operand_is_reg(op_name, &reg_id)) {
-		taint=get_reg_taint(reg_id);
-	
-	} else if (operand_is_imm(op_name, &value)) {
-		taint=get_mem_taint(value);
-	
-	}else if (operand_is_mem(op_name, &addr, 0, &taint)) {
-		xed_uint_t width =
-		    xed_decoded_inst_get_operand_width(&xedd_g);
-
-		taint = taint | get_mem_taint(addr);
-
-		set_mem_taint_bysize(addr, taint, width/8); 
-	} else {
-		#ifdef DEBUG_TAINT
-		fprintf(tracelog, "%d unknown\n", 1);
-		#endif
-		return;
-	}
-
-	const xed_operand_t *op0 = xed_inst_operand(ins, 1);
-	xed_operand_enum_t op0_name = xed_operand_name(op0);
-	
-	 if (operand_is_mem(op0_name, &addr, 1, &taint)) {
-		xed_uint_t width =
-		    xed_decoded_inst_get_operand_width(&xedd_g);
-
-		taint = taint | get_mem_taint(addr);
-		set_mem_taint_bysize(addr, taint, width/8); 
-	} 
+ 
 }
 
 static void Instrument_CMPSB(INS ins) {
@@ -833,22 +565,12 @@ static void Instrument_IDIV(INS ins) {
 }
 
 static void Instrument_IMUL(INS ins) {
-	
-	xed_reg_enum_t reg_id;
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-	
-	if(operand_is_reg(op_name, &reg_id))
-		set_reg_taint(reg_id, UNTAINTED);
-
 }
 
 static void Instrument_INC(INS ins) {
-//no changement with the taint tag
 }
 
 static void Instrument_INT(INS ins) {
-	//pass
 }
 
 uint32_t jmp_target_ins_addr;
@@ -858,22 +580,18 @@ unsigned char is_jmp_table_inst;
 unsigned char is_jmp_inst;
 
 static void Instrument_Jcc(INS ins) {
-
- is_call =1;	
+    is_call =1;	
 }
 
 static void Instrument_JMP(INS ins) {
+    /*
     const xed_operand_t *op = xed_inst_operand(ins, 0);
     xed_operand_enum_t op_name  = xed_operand_name(op);
     uint32_t mem_addr;
     UChar taint;
     unsigned int pc;
     xed_reg_enum_t reg_id;
-/*
-	if(operand_is_mem(op_name, &mem_addr, 0, &taint)){
-		taint = taint | get_mem_taint(mem_addr);
-		set_mem_taint(mem_addr, taint);
-	}*/
+
     if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
         char buf[4];
         cpu_memory_rw_debug(cpu_single_env, mem_addr, buf,4, 0);
@@ -885,180 +603,32 @@ static void Instrument_JMP(INS ins) {
     }else {
         pc = xed_decoded_inst_get_branch_displacement(&xedd_g)+current_pc+5;
     }
-	
-
+    */
 }
 
 static void Instrument_LEA(INS xi) {
-
-
-	xed_reg_enum_t reg_id;
-	uint32_t value;
-	uint32_t mem_addr;
-	UChar taint = 0;
-
-
-	const xed_operand_t *op = xed_inst_operand(xi, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-
-	if (operand_is_reg(op_name, &reg_id)) {
-
-		op = xed_inst_operand(xi, 1);
-		op_name = xed_operand_name(op);
-
-		if (operand_is_mem(op_name, &mem_addr, 1, &taint)&&reg_id!= XED_REG_ESP) 
-		{
-		
-#ifdef DEBUG_VMMI2
-			if(qemu_log_enabled())
-			qemu_log("XED address is 0x%08x\n", mem_addr);
-#endif
-			
-			set_reg_taint(reg_id, taint);
-		}
-	}
-
 }
 
-static void Instrument_LEAVE(INS ins) {	//Stack variable life time ends
-	
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr, addr;
-	UChar taint, taint1;
-	
-
-
-	mem_addr = cpu_single_env->regs[R_EBP];
-	taint = get_mem_taint(mem_addr);
-
-	set_reg_taint(XED_REG_EBP, taint);
-
-	
-	set_mem_taint(mem_addr, UNTAINTED);
-	if(get_reg_taint(XED_REG_ESP))
-		set_kernel_stack_address(mem_addr);
-
-	/*
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-	
-	if(operand_is_reg(op_name, &reg_id)){
-		set_reg_taint(reg_id, taint);		
-	}
-	else if (operand_is_mem(op_name, &addr, 0, &taint1)) {
-		if(taint1 == TAINTED)
-		set_mem_taint(mem_addr, taint);	
-		
-
-	}
-	uint32_t i;
-	for(i=0; i< 4;i++)
-		set_mem_taint(mem_addr+i, UNTAINTED);
-
-	set_kernel_stack_address(mem_addr);
-	*/
-
-
+static void Instrument_LEAVE(INS ins) {	
 }
 
 static void Instrument_LDMXCSR(INS ins) {
-//float point instruction
-//pass
 }
 
 
 static void Instrument_MOVSD(INS ins) {
-	if(cpu_single_env->regs[R_ECX]==0&&xed_operand_values_has_rep_prefix(xed_decoded_inst_operands_const(&xedd_g)))
-		return;
-	UChar taint;
-	taint = get_reg_taint(XED_REG_EDI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_EDI]);
-
-	taint = get_reg_taint(XED_REG_ESI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_ESI]);
-
-	set_mem_taint(cpu_single_env->regs[R_EDI], get_mem_taint(cpu_single_env->regs[R_ESI]));
 }
 
 static void Instrument_MOVSW(INS ins) {
-	if(cpu_single_env->regs[R_ECX]==0&&xed_operand_values_has_rep_prefix(xed_decoded_inst_operands_const(&xedd_g)))
-		return;
-	UChar taint;
-	taint = get_reg_taint(XED_REG_EDI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_EDI]);
-
-	taint = get_reg_taint(XED_REG_ESI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_ESI]);
-
-	set_mem_taint(cpu_single_env->regs[R_EDI], get_mem_taint(cpu_single_env->regs[R_ESI]));
 }
 
 static void Instrument_MOVSB(INS ins) {
-	if(cpu_single_env->regs[R_ECX]==0&&xed_operand_values_has_rep_prefix(xed_decoded_inst_operands_const(&xedd_g)))
-		return;
-	UChar taint;
-	taint = get_reg_taint(XED_REG_EDI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_EDI]);
-
-	taint = get_reg_taint(XED_REG_ESI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_ESI]);
-
-	set_mem_taint(cpu_single_env->regs[R_EDI], get_mem_taint(cpu_single_env->regs[R_ESI]));
 }
 
 static void Instrument_MOVSX(INS ins) {
-	return;
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr;
-	UChar   taint;
-
-	const xed_operand_t *op = xed_inst_operand(ins, 1);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-			
-
-	if (operand_is_mem(op_name, &mem_addr, 1, &taint)) {
-		xed_uint_t width =
-		    xed_decoded_inst_get_operand_width(&xedd_g);
-		
-		taint = taint | get_mem_taint(mem_addr);
-
-
-		set_mem_taint_bysize(mem_addr, taint, width/8);
-
-	}
-	
 }
 
 static void Instrument_MOVZX(INS ins) {	// movzx r/m, r
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr;
-	UChar   taint;
-
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-			
-	if(operand_is_reg(op_name, &reg_id))
-		set_reg_taint(reg_id, 0);
-	else if(operand_is_mem(op_name, &mem_addr, 0, &taint))
-		set_mem_taint(mem_addr,0);
-	return;
-	if (operand_is_mem(op_name, &mem_addr, 1, &taint)) {
-		xed_uint_t width =
-		    xed_decoded_inst_get_operand_width(&xedd_g);
-		
-		taint = taint | get_mem_taint(mem_addr);
-
-
-		set_mem_taint_bysize(mem_addr, taint, width/8);
-
-	}
-
 }
 
 static void Instrument_MUL(INS ins) {
@@ -1069,7 +639,6 @@ static void Instrument_NEG(INS ins) {
 }
 
 static void Instrument_NOT(INS ins) {
-//pass
 }
 
 static void Instrument_OR(INS ins) {
@@ -1079,132 +648,27 @@ static void Instrument_PAUSE(INS ins) {
 }
 
 static void Instrument_POP(INS ins) {
-	
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr, addr;
-	UChar taint, taint1;
-	
-
-	mem_addr = cpu_single_env->regs[R_ESP];
-	taint = get_mem_taint(mem_addr);
-
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-	
-	if(operand_is_reg(op_name, &reg_id)){
-		set_reg_taint(reg_id, taint);		
-	}
-	else if (operand_is_mem(op_name, &addr, 0, &taint1)) {
-		if(taint1 == TAINTED)
-		set_mem_taint(mem_addr, taint);	
-		
-
-	}
-	uint32_t i;
-	for(i=0; i< 4;i++)
-		set_mem_taint(mem_addr+i, UNTAINTED);
-
-	if(get_reg_taint(XED_REG_ESP))
-		set_kernel_stack_address(mem_addr);
-
 }
 
 static void Instrument_POPFD(INS ins) {
-	target_ulong mem_addr;
-	mem_addr = cpu_single_env->regs[R_ESP];
-	
-	if(get_reg_taint(XED_REG_ESP))
-	set_kernel_stack_address(mem_addr);
 }
 
 static void Instrument_POPAD(INS ins){ 
-	
-	unsigned int regs[]={XED_REG_EDI, XED_REG_ESI, XED_REG_EBP,XED_REG_ESP,XED_REG_EBX,XED_REG_EDX, XED_REG_ECX, XED_REG_EAX};
-	target_ulong mem_addr;
-	mem_addr = cpu_single_env->regs[R_ESP];
-	unsigned int i=0;
-
-	if(!get_reg_taint(XED_REG_ESP))return;
-	for(i=0;i<8;i++,mem_addr=mem_addr+4){
-		set_reg_taint(regs[i], get_mem_taint(mem_addr));
-		set_mem_taint(mem_addr, UNTAINTED);
-		set_kernel_stack_address(mem_addr);
-	}
 }
 
 static void Instrument_PUSH(INS ins) {
-	
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr;
-	UChar   taint=0;
-
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-			
-	uint32_t value;
-	uint32_t addr;
-	int i;
-
-
-//	fprintf(tracelog, "G 0x%08x %02d\n", esp-4, 4);
-    mem_addr = cpu_single_env->regs[R_ESP]-4;
-
-	if (operand_is_reg(op_name, &reg_id)) {
-		taint=get_reg_taint(reg_id);
-	
-	} else if (operand_is_imm(op_name, &value)) {
-		taint= UNTAINTED;
-	
-	}else if (operand_is_mem(op_name, &addr, 0, &taint)) {
-		if(taint == TAINTED)
-		taint=get_mem_taint(addr);	
-	
-	} else {
-		#ifdef DEBUG_TAINT
-		fprintf(tracelog, "%d unknown\n", 1);
-		#endif
-		return;
-	}
-
-	
-	for(i=0; i< 4; i++)
-	set_mem_taint(mem_addr+i, taint);			
-	
-
-	if(get_reg_taint(XED_REG_ESP))
-		set_kernel_stack_address(mem_addr);
 }
 
 static void Instrument_PUSHFD(INS ins) {
-
-	target_ulong mem_addr;
-	mem_addr = cpu_single_env->regs[R_ESP]-4;
-
-	if(get_reg_taint(XED_REG_ESP))
-	set_kernel_stack_address(mem_addr);
 }
 
 static void Instrument_PUSHAD(INS ins) {
-
-	unsigned int regs[]={XED_REG_EAX, XED_REG_ECX, XED_REG_EDX,XED_REG_EBX,XED_REG_ESP,XED_REG_EBP, XED_REG_ESI, XED_REG_EDI};
-
-	target_ulong mem_addr;
-	mem_addr = cpu_single_env->regs[R_ESP]-4;
-	unsigned int i=0;
-	if(!get_reg_taint(XED_REG_ESP))return;
-	for(i=0;i<8;i++,mem_addr=mem_addr-4){
-		set_mem_taint(mem_addr, get_reg_taint(regs[i]));
-		set_kernel_stack_address(mem_addr);
-	}
 }
 
 static void Instrument_RDTSC(INS ins) {
 }
 
 static void Instrument_RET(INS ins) {
-
-	if(get_reg_taint(XED_REG_ESP))
-		set_kernel_stack_address(cpu_single_env->regs[R_ESP]);
 	is_ret = 1;
 }
 
@@ -1224,7 +688,6 @@ static void Instrument_SHL(INS ins) {
 }
 
 static void Instrument_SHLD(INS ins) {
-
 }
 
 static void Instrument_SHR(INS ins) {
@@ -1240,189 +703,54 @@ static void Instrument_STMXCSR(INS ins) {
 	
 }
 static void Instrument_LODSB(INS ins){
-	UChar taint;
-	taint = get_reg_taint(XED_REG_ESI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_ESI]);
 }
 
 static void Instrument_LODSD(INS ins){
-	UChar taint;
-	taint = get_reg_taint(XED_REG_ESI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_ESI]);
 }
+
 static void Instrument_LODSW(INS ins){
-	UChar taint;
-	taint = get_reg_taint(XED_REG_ESI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_ESI]);
 }
 
 static void Instrument_STOSB(INS ins) {
-	UChar taint;
-	taint = get_reg_taint(XED_REG_EDI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_EDI]);
-
 }
 
 static void Instrument_STOSD(INS ins) {
-	UChar taint;
-	taint = get_reg_taint(XED_REG_EDI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_EDI]);
 }
+
 static void Instrument_STOSW(INS ins) {
-	UChar taint;
-	taint = get_reg_taint(XED_REG_EDI);
-	if( taint == TAINTED)
-		set_kernel_stack_address(cpu_single_env->regs[R_EDI]);
 }
 
 static void Instrument_SUB(INS ins) {
-
-	return;
-	Instrument_ADD(ins);
 }
 
 static void Instrument_TEST(INS ins) {
-
-	return;
-	xed_reg_enum_t reg_id;
-	uint32_t mem_addr;
-	UChar   taint;
-
-	const xed_operand_t *op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-			
-
-	if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
-		xed_uint_t width =
-		    xed_decoded_inst_get_operand_width(&xedd_g);
-		
-		taint = taint | get_mem_taint(mem_addr);
-
-
-		set_mem_taint_bysize(mem_addr, taint, width/8);
-
-	}
-
 }
 
 static void Instrument_XADD(INS ins) {
-
-	uint32_t mem_addr;
-	UChar taint;
-	xed_reg_enum_t reg_id, reg_id0;
-
-	const xed_operand_t * op = xed_inst_operand(ins, 1);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-
-	if (operand_is_reg(op_name, &reg_id)){
-		const xed_operand_t * op0 = xed_inst_operand(ins, 0);
-		xed_operand_enum_t op0_name = xed_operand_name(op0);
-
-		if (operand_is_reg(op0_name, &reg_id0)){
-			taint = get_reg_taint(reg_id);
-			UChar taint0 = get_reg_taint(reg_id0);
-			
-			set_reg_taint(reg_id, get_reg_taint(reg_id0));
-			set_reg_taint(reg_id0, taint | taint0);
-		}else if(operand_is_mem(op0_name,&mem_addr, 0, &taint)){
-
-		}
-	}
-
 }
 
 static void Instrument_XCHG(INS ins) {
-	
-	xed_reg_enum_t reg_id, reg_id0;
-
-	const xed_operand_t * op = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-
-	if (operand_is_reg(op_name, &reg_id)){
-		const xed_operand_t * op0 = xed_inst_operand(ins, 1);
-		xed_operand_enum_t op0_name = xed_operand_name(op0);
-
-		if (operand_is_reg(op0_name, &reg_id0)){
-			UChar taint = get_reg_taint(reg_id);
-
-			set_reg_taint(reg_id, get_reg_taint(reg_id0));
-			set_reg_taint(reg_id0, taint);
-		}
-
-	}
-		
-
 }
 
 static void Instrument_XOR(INS xi) {
-
-
-	xed_reg_enum_t reg_id;
-	uint32_t value;
-	target_ulong mem_addr;
-
-
-	const xed_operand_t *op = xed_inst_operand(xi, 0);
-	xed_operand_enum_t op_name = xed_operand_name(op);
-
-	if (operand_is_reg(op_name, &reg_id)) {
-		op = xed_inst_operand(xi, 1);
-		op_name = xed_operand_name(op);
-
-		xed_reg_enum_t reg_id2;
-
-		if (operand_is_reg(op_name, &reg_id2))
-		{
-			if(reg_id == reg_id2)
-			{
-				set_reg_taint(reg_id, UNTAINTED);
-			}
-		}
-	}
 }
-static void Instrument_DAA(INS ins) {
 
+static void Instrument_DAA(INS ins) {
 }
 
 static void Instrument_DAS(INS ins) {
-
 }
 
 static void Instrument_AAA(INS ins) {
-
 }
 
 static void Instrument_AAS(INS ins) {
-
 }
 
 static void Instrument_ROL(INS ins) {
 }
 
 static void Instrument_BT(INS ins){
-
-	const xed_operand_t *op0 = xed_inst_operand(ins, 0);
-	xed_operand_enum_t op0_name = xed_operand_name(op0);
-	xed_reg_enum_t reg_id;
-	unsigned int mem_addr;
-	unsigned char taint;
-
-	if (operand_is_mem(op0_name, &mem_addr, 0, &taint)) {
-		if(taint == TAINTED){
-			const xed_operand_t *op = xed_inst_operand(ins, 1);
-			xed_operand_enum_t op_name = xed_operand_name(op);
-			if(operand_is_reg(op_name, &reg_id))
-				mem_addr=mem_addr+ cpu_single_env->regs[xed_regmapping[reg_id][0]]/32*4;
-			 
-			set_kernel_stack_address(mem_addr);
-		}
-	}
-
 }
 
 void update_esp()
@@ -1441,11 +769,6 @@ static void Instrument_IRETD(INS ins)
         if(vmmi_interrupt_stack == 0){
             is_interrupt=0;
 			
-#ifdef VMMI_ALL_REDIRCTION
-            if(iret_handle==NULL&&vmmi_profile&&sys_need_red)
-                iret_handle = update_esp;
-#endif
-
 #ifdef DEBUG_VMMI
             if(qemu_log_enabled())
                 qemu_log("exit interrupt\n");
@@ -1458,10 +781,6 @@ static void Instrument_IRETD(INS ins)
             return;
 
 
-#ifdef VMMI_ALL_REDIRCTION
-        if(sys_need_red&&vmmi_profile)
-            cpu_single_env->regs[R_ESP] = origin_esp;
-#endif
 		
         if(current_syscall == 5 || current_syscall ==102){
 #ifdef DEBUG_VMMI
@@ -1495,7 +814,7 @@ static void Instrument_IRETD(INS ins)
         cond_res=0;
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
-            qemu_log("sys exit\n");
+            qemu_log("iret\n");
         show_time(0);
 #endif
         set_sys_need_red(0);
@@ -1523,10 +842,6 @@ static void Instrument_SYSENTER(INS ins)
 		qemu_log("SYSenter call");
 #endif
 	
-#ifdef VMMI_ALL_REDIRCTION
-	if(vmmi_start)
-		is_sysenter =1;
-#endif
 	is_sysenter=1;
 	
 	syscall_hook(cpu_single_env->regs[R_EAX]);
@@ -1537,7 +852,6 @@ extern void show_time(int syscall); //yufei
 char  inst_buff[16];
 static void Instrument_SYSEXIT(INS ins)
 {
-	     
 #ifdef DEBUG_VMMI	
     uint32_t stack= cpu_single_env->regs[R_ESP]&0xffffe000;
     uint32_t task;
@@ -1551,7 +865,6 @@ static void Instrument_SYSEXIT(INS ins)
         qemu_log("task is  %x  %x %s\n", cpu_single_env->cr[3],pid, comm);
 #endif
 
-    set_sys_need_red(0);
     is_syscall=0;
     cond_res=0;
     is_sysenter = 0;
@@ -1569,15 +882,8 @@ static void Instrument_SYSEXIT(INS ins)
             qemu_log("open file (%u %u)\n",cpu_single_env->regs[R_EAX], file_flag);
 #endif
         set_file_flag(cpu_single_env->regs[R_EAX], file_flag);
-		
-        if(file_flag)
-            set_reg_taint_fd(XED_REG_EAX, FDTAINTED);
     }
 
-#ifdef VMMI_ALL_REDIRCTION
-    if(sys_need_red&&vmmi_profile)
-        cpu_single_env->regs[R_ESP] = origin_esp;
-#endif
 
 #ifdef DEBUG_VMMI
     if(current_syscall == 3){
@@ -1592,7 +898,6 @@ static void Instrument_SYSEXIT(INS ins)
         buf[maxnum]='\0';
         if(qemu_log_enabled())
             qemu_log("Fd %x:data:%s",cpu_single_env->regs[R_EBX],buf);
-			
     }
 #endif
 
@@ -1601,243 +906,242 @@ static void Instrument_SYSEXIT(INS ins)
 InstrumentFunction instrument_functions[XED_ICLASS_LAST];
 
 void setup_inst_hook() {
-	// set a default handling function that aborts.  This makes sure I don't
-	// miss instructions in new applications
-	int i;
-	for (i = 0; i < XED_ICLASS_LAST; i++) {
-		instrument_functions[i] = &UnimplementedInstruction;
-	}
-	instrument_functions[XED_ICLASS_ADD] = &Instrument_ADD;	// 1
-	instrument_functions[XED_ICLASS_PUSH] = &Instrument_PUSH;	// 2
-	instrument_functions[XED_ICLASS_POP] = &Instrument_POP;	// 3
-	instrument_functions[XED_ICLASS_OR] = &Instrument_OR;	// 4
+    // set a default handling function that aborts.  This makes sure I don't
+    // miss instructions in new applications
+    int i;
+    for (i = 0; i < XED_ICLASS_LAST; i++) {
+        instrument_functions[i] = &UnimplementedInstruction;
+    }
+    instrument_functions[XED_ICLASS_ADD] = &Instrument_ADD;	// 1
+    instrument_functions[XED_ICLASS_PUSH] = &Instrument_PUSH;	// 2
+    instrument_functions[XED_ICLASS_POP] = &Instrument_POP;	// 3
+    instrument_functions[XED_ICLASS_OR] = &Instrument_OR;	// 4
 
-	instrument_functions[XED_ICLASS_ADC] = &Instrument_ADC;	// 6
-	instrument_functions[XED_ICLASS_SBB] = &Instrument_SBB;	// 7
-	instrument_functions[XED_ICLASS_AND] = &Instrument_AND;	// 8
+    instrument_functions[XED_ICLASS_ADC] = &Instrument_ADC;	// 6
+    instrument_functions[XED_ICLASS_SBB] = &Instrument_SBB;	// 7
+    instrument_functions[XED_ICLASS_AND] = &Instrument_AND;	// 8
 
-	//  instrument_functions[XED_ICLASS_DAA] = &Instrument_DAA; // 11
-	instrument_functions[XED_ICLASS_SUB] = &Instrument_SUB;	// 12
+    //  instrument_functions[XED_ICLASS_DAA] = &Instrument_DAA; // 11
+    instrument_functions[XED_ICLASS_SUB] = &Instrument_SUB;	// 12
 
-	//  instrument_functions[XED_ICLASS_DAS] = &Instrument_DAS; // 14
-	instrument_functions[XED_ICLASS_XOR] = &Instrument_XOR;	// 15
+    //  instrument_functions[XED_ICLASS_DAS] = &Instrument_DAS; // 14
+    instrument_functions[XED_ICLASS_XOR] = &Instrument_XOR;	// 15
 
-	//  instrument_functions[XED_ICLASS_AAA] = &Instrument_AAA; // 17
-	instrument_functions[XED_ICLASS_CMP] = &Instrument_CMP;	// 18
+    //  instrument_functions[XED_ICLASS_AAA] = &Instrument_AAA; // 17
+    instrument_functions[XED_ICLASS_CMP] = &Instrument_CMP;	// 18
 
-	//  instrument_functions[XED_ICLASS_AAS] = &Instrument_AAS; // 20
-	instrument_functions[XED_ICLASS_INC] = &Instrument_INC;	// 21
-	instrument_functions[XED_ICLASS_DEC] = &Instrument_DEC;	// 22
+    //  instrument_functions[XED_ICLASS_AAS] = &Instrument_AAS; // 20
+    instrument_functions[XED_ICLASS_INC] = &Instrument_INC;	// 21
+    instrument_functions[XED_ICLASS_DEC] = &Instrument_DEC;	// 22
 
-	  instrument_functions[XED_ICLASS_PUSHAD] = &Instrument_PUSHAD; // 25
-	  instrument_functions[XED_ICLASS_POPAD] = &Instrument_POPAD; // 27
-	//  instrument_functions[XED_ICLASS_BOUND] = &Instrument_BOUND; // 28
-	//  instrument_functions[XED_ICLASS_ARPL] = &Instrument_ARPL; // 29
+    instrument_functions[XED_ICLASS_PUSHAD] = &Instrument_PUSHAD; // 25
+    instrument_functions[XED_ICLASS_POPAD] = &Instrument_POPAD; // 27
+    //  instrument_functions[XED_ICLASS_BOUND] = &Instrument_BOUND; // 28
+    //  instrument_functions[XED_ICLASS_ARPL] = &Instrument_ARPL; // 29
 
-	instrument_functions[XED_ICLASS_IMUL] = &Instrument_IMUL;	// 35
-	//  instrument_functions[XED_ICLASS_INSB] = &Instrument_INSB; // 36
+    instrument_functions[XED_ICLASS_IMUL] = &Instrument_IMUL;	// 35
+    //  instrument_functions[XED_ICLASS_INSB] = &Instrument_INSB; // 36
 
-	//  instrument_functions[XED_ICLASS_INSD] = &Instrument_INSD; // 38
-	//  instrument_functions[XED_ICLASS_OUTSB] = &Instrument_OUTSB; // 39
+    //  instrument_functions[XED_ICLASS_INSD] = &Instrument_INSD; // 38
+    //  instrument_functions[XED_ICLASS_OUTSB] = &Instrument_OUTSB; // 39
 
-	//  instrument_functions[XED_ICLASS_OUTSD] = &Instrument_OUTSD; // 41
-	instrument_functions[XED_ICLASS_JO] = &Instrument_Jcc;	//42
-	instrument_functions[XED_ICLASS_JNO] = &Instrument_Jcc;	//43
-	instrument_functions[XED_ICLASS_JB] = &Instrument_Jcc;	//43
-	instrument_functions[XED_ICLASS_JNB] = &Instrument_Jcc;	//45
-	instrument_functions[XED_ICLASS_JZ] = &Instrument_Jcc;	//46
-	instrument_functions[XED_ICLASS_JNZ] = &Instrument_Jcc;	//47
-	instrument_functions[XED_ICLASS_JBE] = &Instrument_Jcc;	//48
-	instrument_functions[XED_ICLASS_JNBE] = &Instrument_Jcc;	//49
-	instrument_functions[XED_ICLASS_JS] = &Instrument_Jcc;	//50
-	instrument_functions[XED_ICLASS_JNS] = &Instrument_Jcc;	//51
-	instrument_functions[XED_ICLASS_JP] = &Instrument_Jcc;	//52
-	instrument_functions[XED_ICLASS_JNP] = &Instrument_Jcc;	//53
-	instrument_functions[XED_ICLASS_JL] = &Instrument_Jcc;	//54
-	instrument_functions[XED_ICLASS_JNL] = &Instrument_Jcc;	//55
-	instrument_functions[XED_ICLASS_JLE] = &Instrument_Jcc;	//56
-	instrument_functions[XED_ICLASS_JNLE] = &Instrument_Jcc;	//57
-	instrument_functions[XED_ICLASS_JRCXZ] = &Instrument_Jcc;	//57
+    //  instrument_functions[XED_ICLASS_OUTSD] = &Instrument_OUTSD; // 41
+    instrument_functions[XED_ICLASS_JO] = &Instrument_Jcc;	//42
+    instrument_functions[XED_ICLASS_JNO] = &Instrument_Jcc;	//43
+    instrument_functions[XED_ICLASS_JB] = &Instrument_Jcc;	//43
+    instrument_functions[XED_ICLASS_JNB] = &Instrument_Jcc;	//45
+    instrument_functions[XED_ICLASS_JZ] = &Instrument_Jcc;	//46
+    instrument_functions[XED_ICLASS_JNZ] = &Instrument_Jcc;	//47
+    instrument_functions[XED_ICLASS_JBE] = &Instrument_Jcc;	//48
+    instrument_functions[XED_ICLASS_JNBE] = &Instrument_Jcc;	//49
+    instrument_functions[XED_ICLASS_JS] = &Instrument_Jcc;	//50
+    instrument_functions[XED_ICLASS_JNS] = &Instrument_Jcc;	//51
+    instrument_functions[XED_ICLASS_JP] = &Instrument_Jcc;	//52
+    instrument_functions[XED_ICLASS_JNP] = &Instrument_Jcc;	//53
+    instrument_functions[XED_ICLASS_JL] = &Instrument_Jcc;	//54
+    instrument_functions[XED_ICLASS_JNL] = &Instrument_Jcc;	//55
+    instrument_functions[XED_ICLASS_JLE] = &Instrument_Jcc;	//56
+    instrument_functions[XED_ICLASS_JNLE] = &Instrument_Jcc;	//57
+    instrument_functions[XED_ICLASS_JRCXZ] = &Instrument_Jcc;	//57
 
-	instrument_functions[XED_ICLASS_TEST] = &Instrument_TEST;	//59
-	instrument_functions[XED_ICLASS_XCHG] = &Instrument_XCHG;	//60
-	instrument_functions[XED_ICLASS_MOV] = &Instrument_MOV;	//61
-	instrument_functions[XED_ICLASS_LEA] = &Instrument_LEA;	//62
+    instrument_functions[XED_ICLASS_TEST] = &Instrument_TEST;	//59
+    instrument_functions[XED_ICLASS_XCHG] = &Instrument_XCHG;	//60
+    instrument_functions[XED_ICLASS_MOV] = &Instrument_MOV;	//61
+    instrument_functions[XED_ICLASS_LEA] = &Instrument_LEA;	//62
 
-	instrument_functions[XED_ICLASS_PAUSE] = &Instrument_PAUSE;	//64
+    instrument_functions[XED_ICLASS_PAUSE] = &Instrument_PAUSE;	//64
 
-	instrument_functions[XED_ICLASS_CWDE] = &Instrument_CWDE;	//67
+    instrument_functions[XED_ICLASS_CWDE] = &Instrument_CWDE;	//67
 
-	instrument_functions[XED_ICLASS_CDQ] = &Instrument_CDQ;	//70
-	instrument_functions[XED_ICLASS_CALL_FAR] = &Instrument_CALL_FAR;	//71
-	//  instrument_functions[XED_ICLASS_WAIT] = &Instrument_WAIT; //72
+    instrument_functions[XED_ICLASS_CDQ] = &Instrument_CDQ;	//70
+    instrument_functions[XED_ICLASS_CALL_FAR] = &Instrument_CALL_FAR;	//71
+    //  instrument_functions[XED_ICLASS_WAIT] = &Instrument_WAIT; //72
 
-	instrument_functions[XED_ICLASS_PUSHFD] = &Instrument_PUSHFD;	//74
+    instrument_functions[XED_ICLASS_PUSHFD] = &Instrument_PUSHFD;	//74
 
-	instrument_functions[XED_ICLASS_POPFD] = &Instrument_POPFD;	//77
+    instrument_functions[XED_ICLASS_POPFD] = &Instrument_POPFD;	//77
 
-	//  instrument_functions[XED_ICLASS_POPFD] = &Instrument_SAHF; //79
-	//  instrument_functions[XED_ICLASS_POPFD] = &Instrument_LAHF; //80
-	instrument_functions[XED_ICLASS_MOVSB] = &Instrument_MOVSB;	//81
-	instrument_functions[XED_ICLASS_MOVSW] = &Instrument_MOVSW;	//82
-	instrument_functions[XED_ICLASS_MOVSD] = &Instrument_MOVSD;	//83
+    //  instrument_functions[XED_ICLASS_POPFD] = &Instrument_SAHF; //79
+    //  instrument_functions[XED_ICLASS_POPFD] = &Instrument_LAHF; //80
+    instrument_functions[XED_ICLASS_MOVSB] = &Instrument_MOVSB;	//81
+    instrument_functions[XED_ICLASS_MOVSW] = &Instrument_MOVSW;	//82
+    instrument_functions[XED_ICLASS_MOVSD] = &Instrument_MOVSD;	//83
 
-	instrument_functions[XED_ICLASS_CMPSB] = &Instrument_CMPSB;	//85
+    instrument_functions[XED_ICLASS_CMPSB] = &Instrument_CMPSB;	//85
 
-	//  instrument_functions[XED_ICLASS_CMPSD] = &Instrument_CMPSD; //87
+    //  instrument_functions[XED_ICLASS_CMPSD] = &Instrument_CMPSD; //87
 
-	instrument_functions[XED_ICLASS_STOSB] = &Instrument_STOSB;	//89
-	  instrument_functions[XED_ICLASS_STOSW] = &Instrument_STOSW; //90
-	instrument_functions[XED_ICLASS_STOSD] = &Instrument_STOSD;	//91
+    instrument_functions[XED_ICLASS_STOSB] = &Instrument_STOSB;	//89
+    instrument_functions[XED_ICLASS_STOSW] = &Instrument_STOSW; //90
+    instrument_functions[XED_ICLASS_STOSD] = &Instrument_STOSD;	//91
 
-	  instrument_functions[XED_ICLASS_LODSB] = &Instrument_LODSB; //93
+    instrument_functions[XED_ICLASS_LODSB] = &Instrument_LODSB; //93
 
-	  instrument_functions[XED_ICLASS_LODSD] = &Instrument_LODSD; //95
-	  instrument_functions[XED_ICLASS_LODSD] = &Instrument_LODSW; //95
+    instrument_functions[XED_ICLASS_LODSD] = &Instrument_LODSD; //95
+    instrument_functions[XED_ICLASS_LODSD] = &Instrument_LODSW; //95
 
-	instrument_functions[XED_ICLASS_SCASB] = &Instrument_SCASB;	//97
+    instrument_functions[XED_ICLASS_SCASB] = &Instrument_SCASB;	//97
 
-	//  instrument_functions[XED_ICLASS_SCASD] = &Instrument_SCASD; //99
+    //  instrument_functions[XED_ICLASS_SCASD] = &Instrument_SCASD; //99
 
-	instrument_functions[XED_ICLASS_RET_NEAR] = &Instrument_RET;	//102
-	//  instrument_functions[XED_ICLASS_LES] = &Instrument_LES; //103
-	//  instrument_functions[XED_ICLASS_LDS] = &Instrument_LDS; //104
+    instrument_functions[XED_ICLASS_RET_NEAR] = &Instrument_RET;	//102
+    //  instrument_functions[XED_ICLASS_LES] = &Instrument_LES; //103
+    //  instrument_functions[XED_ICLASS_LDS] = &Instrument_LDS; //104
 
-	//  instrument_functions[XED_ICLASS_ENTER] = &Instrument_ENTER; //106
-	instrument_functions[XED_ICLASS_LEAVE] = &Instrument_LEAVE;	//107
-	  instrument_functions[XED_ICLASS_RET_FAR] = &Instrument_RET; //108
-	//  instrument_functions[XED_ICLASS_INT3] = &Instrument_INT3; //109
-	instrument_functions[XED_ICLASS_INT] = &Instrument_INT;	//110
-	//  instrument_functions[XED_ICLASS_INT0] = &Instrument_INT0; //111
+    //  instrument_functions[XED_ICLASS_ENTER] = &Instrument_ENTER; //106
+    instrument_functions[XED_ICLASS_LEAVE] = &Instrument_LEAVE;	//107
+    instrument_functions[XED_ICLASS_RET_FAR] = &Instrument_RET; //108
+    //  instrument_functions[XED_ICLASS_INT3] = &Instrument_INT3; //109
+    instrument_functions[XED_ICLASS_INT] = &Instrument_INT;	//110
+    //  instrument_functions[XED_ICLASS_INT0] = &Instrument_INT0; //111
 
-	  instrument_functions[XED_ICLASS_IRETD] = &Instrument_IRETD; //113
+    instrument_functions[XED_ICLASS_IRETD] = &Instrument_IRETD; //113
 
-	//  instrument_functions[XED_ICLASS_AAM] = &Instrument_AAM; //115
-	//  instrument_functions[XED_ICLASS_AAD] = &Instrument_AAD; //116
-	//  instrument_functions[XED_ICLASS_SALC] = &Instrument_SALC; //117
-	//  instrument_functions[XED_ICLASS_XLAT] = &Instrument_XLAT; //118
+    //  instrument_functions[XED_ICLASS_AAM] = &Instrument_AAM; //115
+    //  instrument_functions[XED_ICLASS_AAD] = &Instrument_AAD; //116
+    //  instrument_functions[XED_ICLASS_SALC] = &Instrument_SALC; //117
+    //  instrument_functions[XED_ICLASS_XLAT] = &Instrument_XLAT; //118
 
-	//  instrument_functions[XED_ICLASS_LOOPNE] = &Instrument_LOOPNE; //120
-	//  instrument_functions[XED_ICLASS_LOOPE] = &Instrument_LOOPE; //121
-	//  instrument_functions[XED_ICLASS_LOOP] = &Instrument_LOOP; //122
-	instrument_functions[XED_ICLASS_JRCXZ] = &Instrument_Jcc;	//123
-	//  instrument_functions[XED_ICLASS_IN] = &Instrument_IN; //124
-	//  instrument_functions[XED_ICLASS_OUT] = &Instrument_OUT; //125
-	instrument_functions[XED_ICLASS_CALL_NEAR] = &Instrument_CALL_NEAR;	//126
-	instrument_functions[XED_ICLASS_JMP] = &Instrument_JMP;	//127
-	  instrument_functions[XED_ICLASS_JMP_FAR] = &Instrument_JMP; //128
+    //  instrument_functions[XED_ICLASS_LOOPNE] = &Instrument_LOOPNE; //120
+    //  instrument_functions[XED_ICLASS_LOOPE] = &Instrument_LOOPE; //121
+    //  instrument_functions[XED_ICLASS_LOOP] = &Instrument_LOOP; //122
+    instrument_functions[XED_ICLASS_JRCXZ] = &Instrument_Jcc;	//123
+    //  instrument_functions[XED_ICLASS_IN] = &Instrument_IN; //124
+    //  instrument_functions[XED_ICLASS_OUT] = &Instrument_OUT; //125
+    instrument_functions[XED_ICLASS_CALL_NEAR] = &Instrument_CALL_NEAR;	//126
+    instrument_functions[XED_ICLASS_JMP] = &Instrument_JMP;	//127
+    instrument_functions[XED_ICLASS_JMP_FAR] = &Instrument_JMP; //128
 
-	//  instrument_functions[XED_ICLASS_INT_l] = &Instrument_INT_l; //130
+    //  instrument_functions[XED_ICLASS_INT_l] = &Instrument_INT_l; //130
 
-	instrument_functions[XED_ICLASS_HLT] = &Instrument_HLT;	//133
-	//  instrument_functions[XED_ICLASS_CMC] = &Instrument_CMC; //134
+    instrument_functions[XED_ICLASS_HLT] = &Instrument_HLT;	//133
+    //  instrument_functions[XED_ICLASS_CMC] = &Instrument_CMC; //134
 
-	//  instrument_functions[XED_ICLASS_CLC] = &Instrument_CLC; //136
-	//  instrument_functions[XED_ICLASS_STC] = &Instrument_STC; //137
-	//  instrument_functions[XED_ICLASS_CLI] = &Instrument_CLI; //138
-	//  instrument_functions[XED_ICLASS_STI] = &Instrument_STI; //139
-	instrument_functions[XED_ICLASS_CLD] = &Instrument_CLD;	//140
-	instrument_functions[XED_ICLASS_STD] = &Instrument_STD;	//141
+    //  instrument_functions[XED_ICLASS_CLC] = &Instrument_CLC; //136
+    //  instrument_functions[XED_ICLASS_STC] = &Instrument_STC; //137
+    //  instrument_functions[XED_ICLASS_CLI] = &Instrument_CLI; //138
+    //  instrument_functions[XED_ICLASS_STI] = &Instrument_STI; //139
+    instrument_functions[XED_ICLASS_CLD] = &Instrument_CLD;	//140
+    instrument_functions[XED_ICLASS_STD] = &Instrument_STD;	//141
 
-	instrument_functions[XED_ICLASS_RDTSC] = &Instrument_RDTSC;	//169
+    instrument_functions[XED_ICLASS_RDTSC] = &Instrument_RDTSC;	//169
 
-	instrument_functions[XED_ICLASS_CMOVB] = &Instrument_CMOVcc;	//177
-	instrument_functions[XED_ICLASS_CMOVNB] = &Instrument_CMOVcc;	//178
-	instrument_functions[XED_ICLASS_CMOVZ] = &Instrument_CMOVcc;	//179
-	instrument_functions[XED_ICLASS_CMOVNZ] = &Instrument_CMOVcc;	//180
-	instrument_functions[XED_ICLASS_CMOVBE] = &Instrument_CMOVcc;	//181
-	instrument_functions[XED_ICLASS_CMOVNBE] = &Instrument_CMOVcc;	//182
+    instrument_functions[XED_ICLASS_CMOVB] = &Instrument_CMOVcc;	//177
+    instrument_functions[XED_ICLASS_CMOVNB] = &Instrument_CMOVcc;	//178
+    instrument_functions[XED_ICLASS_CMOVZ] = &Instrument_CMOVcc;	//179
+    instrument_functions[XED_ICLASS_CMOVNZ] = &Instrument_CMOVcc;	//180
+    instrument_functions[XED_ICLASS_CMOVBE] = &Instrument_CMOVcc;	//181
+    instrument_functions[XED_ICLASS_CMOVNBE] = &Instrument_CMOVcc;	//182
 
-	//  instrument_functions[XED_ICLASS_EMMS] = &Instrument_EMMS; //216
+    //  instrument_functions[XED_ICLASS_EMMS] = &Instrument_EMMS; //216
 
-	instrument_functions[XED_ICLASS_SETB] = &Instrument_SETcc;	//222
-	instrument_functions[XED_ICLASS_SETNB] = &Instrument_SETcc;	//223
-	instrument_functions[XED_ICLASS_SETZ] = &Instrument_SETcc;	//224
-	instrument_functions[XED_ICLASS_SETNZ] = &Instrument_SETcc;	//225
-	instrument_functions[XED_ICLASS_SETBE] = &Instrument_SETcc;	//226
-	instrument_functions[XED_ICLASS_SETNBE] = &Instrument_SETcc;	//227
-	//  instrument_functions[XED_ICLASS_CPUID] = &Instrument_CPUID; //228
-	instrument_functions[XED_ICLASS_BT] = &Instrument_BT; //229
-	instrument_functions[XED_ICLASS_SHLD] = &Instrument_SHLD;	//230
-	instrument_functions[XED_ICLASS_CMPXCHG] = &Instrument_CMPXCHG;	//231
+    instrument_functions[XED_ICLASS_SETB] = &Instrument_SETcc;	//222
+    instrument_functions[XED_ICLASS_SETNB] = &Instrument_SETcc;	//223
+    instrument_functions[XED_ICLASS_SETZ] = &Instrument_SETcc;	//224
+    instrument_functions[XED_ICLASS_SETNZ] = &Instrument_SETcc;	//225
+    instrument_functions[XED_ICLASS_SETBE] = &Instrument_SETcc;	//226
+    instrument_functions[XED_ICLASS_SETNBE] = &Instrument_SETcc;	//227
+    //  instrument_functions[XED_ICLASS_CPUID] = &Instrument_CPUID; //228
+    instrument_functions[XED_ICLASS_BT] = &Instrument_BT; //229
+    instrument_functions[XED_ICLASS_SHLD] = &Instrument_SHLD;	//230
+    instrument_functions[XED_ICLASS_CMPXCHG] = &Instrument_CMPXCHG;	//231
 
-	instrument_functions[XED_ICLASS_BTR] = &Instrument_BT; //233
+    instrument_functions[XED_ICLASS_BTR] = &Instrument_BT; //233
 
-	instrument_functions[XED_ICLASS_MOVZX] = &Instrument_MOVZX;	//236
-	instrument_functions[XED_ICLASS_XADD] = &Instrument_XADD;	//237
+    instrument_functions[XED_ICLASS_MOVZX] = &Instrument_MOVZX;	//236
+    instrument_functions[XED_ICLASS_XADD] = &Instrument_XADD;	//237
 
-	//  instrument_functions[XED_ICLASS_PSRLQ] = &Instrument_PSRLQ; //250  
-	//  instrument_functions[XED_ICLASS_PADDQ] = &Instrument_PADDQ; //251  
+    //  instrument_functions[XED_ICLASS_PSRLQ] = &Instrument_PSRLQ; //250  
+    //  instrument_functions[XED_ICLASS_PADDQ] = &Instrument_PADDQ; //251  
 
-	//  instrument_functions[XED_ICLASS_MOVQ] = &Instrument_MOVQ; //255  
+    //  instrument_functions[XED_ICLASS_MOVQ] = &Instrument_MOVQ; //255  
 
-	//  instrument_functions[XED_ICLASS_MOVQ2Q] = &Instrument_MOVDQ2Q; //258
+    //  instrument_functions[XED_ICLASS_MOVQ2Q] = &Instrument_MOVDQ2Q; //258
 
-	//  instrument_functions[XED_ICLASS_PSLLQ] = &Instrument_PSLLQ; //272
-	//  instrument_functions[XED_ICLASS_PMULUDQ] = &Instrument_PMULUDQ; //273
+    //  instrument_functions[XED_ICLASS_PSLLQ] = &Instrument_PSLLQ; //272
+    //  instrument_functions[XED_ICLASS_PMULUDQ] = &Instrument_PMULUDQ; //273
 
-	//  instrument_functions[XED_ICLASS_UD2] = &Instrument_UD2; //281
+    //  instrument_functions[XED_ICLASS_UD2] = &Instrument_UD2; //281
 
-	instrument_functions[XED_ICLASS_CMOVS] = &Instrument_CMOVcc;	//307
-	instrument_functions[XED_ICLASS_CMOVNS] = &Instrument_CMOVcc;	//308
+    instrument_functions[XED_ICLASS_CMOVS] = &Instrument_CMOVcc;	//307
+    instrument_functions[XED_ICLASS_CMOVNS] = &Instrument_CMOVcc;	//308
 
-	instrument_functions[XED_ICLASS_CMOVL] = &Instrument_CMOVcc;	//311
-	instrument_functions[XED_ICLASS_CMOVNL] = &Instrument_CMOVcc;	//312
-	instrument_functions[XED_ICLASS_CMOVLE] = &Instrument_CMOVcc;	//313
-	instrument_functions[XED_ICLASS_CMOVNLE] = &Instrument_CMOVcc;	//314
+    instrument_functions[XED_ICLASS_CMOVL] = &Instrument_CMOVcc;	//311
+    instrument_functions[XED_ICLASS_CMOVNL] = &Instrument_CMOVcc;	//312
+    instrument_functions[XED_ICLASS_CMOVLE] = &Instrument_CMOVcc;	//313
+    instrument_functions[XED_ICLASS_CMOVNLE] = &Instrument_CMOVcc;	//314
 
-	//  instrument_functions[XED_ICLASS_MOVD] = &Instrument_MOVD; //350
-	//  instrument_functions[XED_ICLASS_MOVDQU] = &Instrument_MOVDQU; //351
+    //  instrument_functions[XED_ICLASS_MOVD] = &Instrument_MOVD; //350
+    //  instrument_functions[XED_ICLASS_MOVDQU] = &Instrument_MOVDQU; //351
 
-	//  instrument_functions[XED_ICLASS_MOVDQA] = &Instrument_MOVDQA; //354
+    //  instrument_functions[XED_ICLASS_MOVDQA] = &Instrument_MOVDQA; //354
 
-	instrument_functions[XED_ICLASS_SETS] = &Instrument_SETcc;	//361
+    instrument_functions[XED_ICLASS_SETS] = &Instrument_SETcc;	//361
 
-	instrument_functions[XED_ICLASS_SETL] = &Instrument_SETcc;	//365
-	instrument_functions[XED_ICLASS_SETNL] = &Instrument_SETcc;	//366
-	instrument_functions[XED_ICLASS_SETLE] = &Instrument_SETcc;	//367/ire
-	instrument_functions[XED_ICLASS_SETNLE] = &Instrument_SETcc;	//368
+    instrument_functions[XED_ICLASS_SETL] = &Instrument_SETcc;	//365
+    instrument_functions[XED_ICLASS_SETNL] = &Instrument_SETcc;	//366
+    instrument_functions[XED_ICLASS_SETLE] = &Instrument_SETcc;	//367/ire
+    instrument_functions[XED_ICLASS_SETNLE] = &Instrument_SETcc;	//368
 
-	instrument_functions[XED_ICLASS_BTS] = &Instrument_BT; //370
-	instrument_functions[XED_ICLASS_BTC] = &Instrument_BT; //370
-	instrument_functions[XED_ICLASS_SHRD] = &Instrument_SHRD;	//371
+    instrument_functions[XED_ICLASS_BTS] = &Instrument_BT; //370
+    instrument_functions[XED_ICLASS_BTC] = &Instrument_BT; //370
+    instrument_functions[XED_ICLASS_SHRD] = &Instrument_SHRD;	//371
 
-	//  instrument_functions[XED_ICLASS_BSF] = &Instrument_BSF; //376
-	//  instrument_functions[XED_ICLASS_BSR] = &Instrument_BSR; //377
-	instrument_functions[XED_ICLASS_MOVSX] = &Instrument_MOVSX;	//378
-	instrument_functions[XED_ICLASS_BSWAP] = &Instrument_BSWAP;	//379
+    //  instrument_functions[XED_ICLASS_BSF] = &Instrument_BSF; //376
+    //  instrument_functions[XED_ICLASS_BSR] = &Instrument_BSR; //377
+    instrument_functions[XED_ICLASS_MOVSX] = &Instrument_MOVSX;	//378
+    instrument_functions[XED_ICLASS_BSWAP] = &Instrument_BSWAP;	//379
 
-	//  instrument_functions[XED_ICLASS_PAND] = &Instrument_PAND; //383
+    //  instrument_functions[XED_ICLASS_PAND] = &Instrument_PAND; //383
 
-	//  instrument_functions[XED_ICLASS_PSUBSW] = &Instrument_PSUBSW; //389
+    //  instrument_functions[XED_ICLASS_PSUBSW] = &Instrument_PSUBSW; //389
 
-	//  instrument_functions[XED_ICLASS_POR] = &Instrument_POR; //391
+    //  instrument_functions[XED_ICLASS_POR] = &Instrument_POR; //391
 
-	//  instrument_functions[XED_ICLASS_PXOR] = &Instrument_PXOR; //395
+    //  instrument_functions[XED_ICLASS_PXOR] = &Instrument_PXOR; //395
 
-	//  instrument_functions[XED_ICLASS_ROL] = &Instrument_ROL; //472
-	//  instrument_functions[XED_ICLASS_ROR] = &Instrument_ROR; //473
-	//  instrument_functions[XED_ICLASS_RCL] = &Instrument_RCL; //474
-	//  instrument_functions[XED_ICLASS_RCR] = &Instrument_RCR; //475
-	instrument_functions[XED_ICLASS_SHL] = &Instrument_SHL;	//476
-	instrument_functions[XED_ICLASS_SHR] = &Instrument_SHR;	//477
-	instrument_functions[XED_ICLASS_SAR] = &Instrument_SAR;	//478
-	instrument_functions[XED_ICLASS_NOT] = &Instrument_NOT;	//479
-	instrument_functions[XED_ICLASS_NEG] = &Instrument_NEG;	//480
-	instrument_functions[XED_ICLASS_MUL] = &Instrument_MUL;	//481
-	instrument_functions[XED_ICLASS_DIV] = &Instrument_DIV;	//482
-	instrument_functions[XED_ICLASS_IDIV] = &Instrument_IDIV;	//483
+    //  instrument_functions[XED_ICLASS_ROL] = &Instrument_ROL; //472
+    //  instrument_functions[XED_ICLASS_ROR] = &Instrument_ROR; //473
+    //  instrument_functions[XED_ICLASS_RCL] = &Instrument_RCL; //474
+    //  instrument_functions[XED_ICLASS_RCR] = &Instrument_RCR; //475
+    instrument_functions[XED_ICLASS_SHL] = &Instrument_SHL;	//476
+    instrument_functions[XED_ICLASS_SHR] = &Instrument_SHR;	//477
+    instrument_functions[XED_ICLASS_SAR] = &Instrument_SAR;	//478
+    instrument_functions[XED_ICLASS_NOT] = &Instrument_NOT;	//479
+    instrument_functions[XED_ICLASS_NEG] = &Instrument_NEG;	//480
+    instrument_functions[XED_ICLASS_MUL] = &Instrument_MUL;	//481
+    instrument_functions[XED_ICLASS_DIV] = &Instrument_DIV;	//482
+    instrument_functions[XED_ICLASS_IDIV] = &Instrument_IDIV;	//483
 
-	instrument_functions[XED_ICLASS_LDMXCSR] = &Instrument_LDMXCSR;	//507
-	instrument_functions[XED_ICLASS_STMXCSR] = &Instrument_STMXCSR;	//508
+    instrument_functions[XED_ICLASS_LDMXCSR] = &Instrument_LDMXCSR;	//507
+    instrument_functions[XED_ICLASS_STMXCSR] = &Instrument_STMXCSR;	//508
 
-	instrument_functions[XED_ICLASS_FLDCW] = &Instrument_FLDCW;	//527
+    instrument_functions[XED_ICLASS_FLDCW] = &Instrument_FLDCW;	//527
 
-	instrument_functions[XED_ICLASS_FNSTCW] = &Instrument_FNSTCW;	//529
-	instrument_functions[XED_ICLASS_SYSENTER] = &Instrument_SYSENTER;	//652
-	instrument_functions[XED_ICLASS_SYSEXIT] = &Instrument_SYSEXIT;	//653
+    instrument_functions[XED_ICLASS_FNSTCW] = &Instrument_FNSTCW;	//529
+    instrument_functions[XED_ICLASS_SYSENTER] = &Instrument_SYSENTER;	//652
+    instrument_functions[XED_ICLASS_SYSEXIT] = &Instrument_SYSEXIT;	//653
 //	instrument_functions[XED_ICLASS_BTS] = &Instrument_BT;	//653
-
 }
 
 void taint_reset()
@@ -1871,6 +1175,7 @@ void Instrument(INS ins)
      	&& sys_need_red 
 	)
     {
+/*
         const xed_operand_t *op = xed_inst_operand(ins, 0);
         xed_operand_enum_t op_name = xed_operand_name(op);
 		
@@ -1899,7 +1204,7 @@ void Instrument(INS ins)
 #endif
         }
 
-
+*/
 #ifdef DEBUG_VMMI
   	if(qemu_log_enabled())
             qemu_log(" op:%s", xed_iclass_enum_t2str(opcode));

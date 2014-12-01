@@ -3073,10 +3073,19 @@ void return2userspace(){
         helper_sysenter();
     }
 }
+
+target_ulong return_eip = 0; //recorde a return eip 
 //yufei.end
 
+
 void helper_sysexit(int dflag)
-{
+{    
+    if(vmmi_start 
+       && vmmi_process_cr3 == cpu_single_env->cr[3]
+        ){
+        qemu_log("helper_sysexit %x\n", EDX);
+    }
+
     int cpl;
 
     cpl = env->hflags & HF_CPL_MASK;
@@ -3113,7 +3122,20 @@ void helper_sysexit(int dflag)
     ESP = ECX;
     EIP = EDX;
 
-    return2userspace();//yufei
+    //yufei.begin
+    if(vmmi_start 
+       && vmmi_process_cr3 == cpu_single_env->cr[3]
+        ){
+        if(sys_need_red)
+            EIP = return_eip;
+        else
+            return_eip = EIP;
+    }
+
+    set_sys_need_red(0);
+
+    return2userspace();
+    //yufei.end
 }
 
 #if defined(CONFIG_USER_ONLY)
@@ -6308,24 +6330,6 @@ void helper_inst_hook(int a)
 {
     current_pc = a;
 
-#ifdef VMMI_ALL_REDIRCTION or VMMI_STACK_Handle
-    if(!is_interrupt && iret_handle!=NULL){
-        if(qemu_log_enabled())
-            qemu_log("handle call\n");
-        iret_handle();
-        iret_handle=NULL;
-        is_sysenter=0;
-    }	
-#endif
-
-
-#ifdef VMMI_ALL_REDIRCTION
-    if(!is_interrupt&&is_sysenter&&vmmi_profile&&vmmi_start&&sys_need_red){
-        iret_handle = change_esp;
-    }
-#endif
-
-
     uint8_t buf[15];
     char str[128];
 	 
@@ -6361,7 +6365,7 @@ void helper_inst_hook(int a)
             )
         {
             my_monitor_disas(a); 
-            qemu_log(" (ECX %x EAX %x EDX %x)", ECX, EAX, EDX);//yufei
+            qemu_log(" (ECX %x EAX %x EDX %x ESP %x)", ECX, EAX, EDX, ESP);//yufei
         }
 
         if (xed_error == XED_ERROR_NONE) {

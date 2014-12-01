@@ -151,13 +151,12 @@ void regUntainted_fd()
 
 UChar get_reg_taint(xed_reg_enum_t reg)
 {
-
-	return regTaint[reg];
+    return regTaint[reg];
 }
+
 UChar get_reg_taint_fd(xed_reg_enum_t reg)
 {
-
-	return FDregTaint[reg];
+    return FDregTaint[reg];
 }
 
 void set_reg_taint(xed_reg_enum_t reg, UChar bytes)

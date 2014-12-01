@@ -319,19 +319,42 @@ static inline tb_page_addr_t get_page_addr_code(CPUState *env1, target_ulong add
    is the offset relative to phys_ram_base */
 extern uint32_t vmmi_is_ld_code;
 
+//yufei.begin
+extern uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr);
+//yufei.end
+
 static inline tb_page_addr_t get_page_addr_code(CPUState *env1, target_ulong addr)
 {
     int mmu_idx, page_index, pd;
     void *p;
 
-
-
-	//yang
-//	if(is_ins_log())
-//     		qemu_log(" LD 0x%08x", addr);
-
     page_index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
     mmu_idx = cpu_mmu_index(env1);
+
+    //yufei.begin
+    if(is_monitored_vmmi_kernel_data_read(addr)){
+
+        if (unlikely(env1->vmmi_tlb_table[mmu_idx][page_index].addr_code !=
+                     (addr & TARGET_PAGE_MASK))) {
+            ldub_code(addr);
+        }
+        pd = env1->vmmi_tlb_table[mmu_idx][page_index].addr_code & ~TARGET_PAGE_MASK;
+        if (pd > IO_MEM_ROM && !(pd & IO_MEM_ROMD)) {
+#if defined(TARGET_ALPHA) || defined(TARGET_MIPS) || defined(TARGET_SPARC)
+            cpu_unassigned_access(env1, addr, 0, 1, 0, 4);
+#else
+            cpu_abort(env1, "Trying to execute code outside RAM or ROM at 0x" TARGET_FMT_lx "\n", addr);
+#endif
+        }
+        
+        p = (void *)(unsigned long)addr
+            + env1->vmmi_tlb_table[mmu_idx][page_index].addend;
+        
+        return p - (void*)vmmi_mem_shadow; 
+        //  return qemu_ram_addr_from_host_nofail(p);
+    }
+    //yufei.end
+
     if (unlikely(env1->tlb_table[mmu_idx][page_index].addr_code !=
                  (addr & TARGET_PAGE_MASK))) {
         ldub_code(addr);

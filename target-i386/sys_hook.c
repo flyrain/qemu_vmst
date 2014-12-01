@@ -138,30 +138,17 @@ void interrupt_hook(int intno, int is_int, target_ulong next_eip)
 {
     //yufei.begin
     if ( sys_need_red == 1 && intno == 0x3e)
-      need_interrupt = 1;
+        need_interrupt = 1;
     else
-      need_interrupt = 0;
+        need_interrupt = 0;
     //yufei.end
 
     if (intno != 0x80)
     {
-      //yufei.begin
-      if(intno == 0x3e)
-        return;
-      //yufei.end
-#ifdef VMMI_ALL_REDIRCTION
-        if(vmmi_profile&&sys_need_red&&is_interrupt==0&&vmmi_start)
-        {
-            if(qemu_log_enabled())
-                qemu_log("stack esp is %x\n", cpu_single_env->regs[R_ESP]);
-            if(((origin_esp-1)&KERNEL_STACK_MASK)!= (cpu_single_env->regs[R_ESP]&KERNEL_STACK_MASK))
-            {
-                vmmi_save_esp = cpu_single_env->regs[R_ESP];
-                cpu_single_env->regs[R_ESP] = (vmmi_save_esp&KERNEL_STACK)+((origin_esp-1)&KERNEL_STACK_MASK);
-            }
-        }
-#endif
-
+        //yufei.begin
+        if(intno == 0x3e)
+            return;
+        //yufei.end
         vmmi_interrupt_stack++;
         is_interrupt = 1;
 #ifdef DEBUG_VMMI
@@ -1251,20 +1238,6 @@ void syscall_hook(uint32_t syscall_op)
     default:
         break;
     }  //switch
-
-//	if(sys_need_red){
-//		qemu_log("set vmmi_main_start");
-//		vmmi_main_start = 1;
-//	}
-
-#ifdef VMMI_ALL_REDIRCTION
-    if(!is_sysenter&&vmmi_profile&&vmmi_start&&sys_need_red)
-    {
-        if(qemu_log_enabled())
-            qemu_log("start change esp");
-        iret_handle = change_esp;
-    }
-#endif
 }
 
 
@@ -1279,5 +1252,4 @@ void get_process_name(char * buf, char *fname)
 
     len++;
     strcpy(fname, buf+len);
-
 }
