@@ -877,6 +877,8 @@ static void Instrument_SYSEXIT(INS ins)
     show_time(0);
 #endif
     if(current_syscall == 5 || current_syscall ==102){
+        cpu_single_env->regs[R_EAX] |= 1024;//yufei
+
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
             qemu_log("open file (%u %u)\n",cpu_single_env->regs[R_EAX], file_flag);

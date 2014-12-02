@@ -3066,6 +3066,7 @@ void return2userspace(){
        && sys_need_red
        && vmmi_process_cr3 != cpu_single_env->cr[3]
         ){
+        qemu_log("goto sleep\n");
         EAX = 162; // nanosleep system call number 
         EBX = contruct_timespec(365*24*3600); //first parameter of nanosleep, sleep
                             //time: set to one year
@@ -3080,12 +3081,6 @@ target_ulong return_eip = 0; //recorde a return eip
 
 void helper_sysexit(int dflag)
 {    
-    if(vmmi_start 
-       && vmmi_process_cr3 == cpu_single_env->cr[3]
-        ){
-        qemu_log("helper_sysexit %x\n", EDX);
-    }
-
     int cpl;
 
     cpl = env->hflags & HF_CPL_MASK;

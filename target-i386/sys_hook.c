@@ -189,6 +189,13 @@ void show_time(int syscall){
 }
 //yufei.end
 
+void set_sys_need_red_by_fd(){
+    if(cpu_single_env->regs[R_EBX] & 1024 == 1024)
+        set_sys_need_red(1);
+    else
+        set_sys_need_red(0);
+}
+
 void syscall_hook(uint32_t syscall_op)
 {
 
@@ -237,7 +244,9 @@ void syscall_hook(uint32_t syscall_op)
 
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
-            
+        
+        set_sys_need_red_by_fd();//yufei
+
         break;
     case 4 : // sys_write
 #ifdef DEBUG_VMMI
@@ -245,6 +254,9 @@ void syscall_hook(uint32_t syscall_op)
             qemu_log("write file %u flag %u\n", cpu_single_env->regs[R_EBX], get_file_flag(cpu_single_env->regs[R_EBX]));
 #endif
         set_sys_need_red(get_file_taint());
+
+        set_sys_need_red_by_fd();//yufei
+
         break;
     case 5 : // sys_open
     {
@@ -294,6 +306,8 @@ void syscall_hook(uint32_t syscall_op)
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_file_flag(cpu_single_env->regs[R_EBX],0);
         set_sys_need_red(get_file_taint());
+        
+        set_sys_need_red_by_fd();//yufei
         break;
     case 7 : // sys_waitpid
 
@@ -397,6 +411,8 @@ void syscall_hook(uint32_t syscall_op)
     case 12 : // sys_chdir
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+        
+        set_sys_need_red_by_fd(); //yufei
         break;
     case 13 : // sys_time
         //	set_sys_need_red(0);
@@ -437,6 +453,8 @@ void syscall_hook(uint32_t syscall_op)
     case 19 : // sys_lseek
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+        
+        set_sys_need_red_by_fd();//yufei
         break;
     case 20 : // sys_getpid
         break;
@@ -558,11 +576,14 @@ void syscall_hook(uint32_t syscall_op)
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
 
+        set_sys_need_red_by_fd(); //yufei
     }
     break;
     case 55 : // sys_fcntl
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+
+        set_sys_need_red_by_fd(); //yufei
         break;
     case 56 : // sys_mpx
         break;
@@ -742,6 +763,8 @@ void syscall_hook(uint32_t syscall_op)
     case 108 : // sys_fstat
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+
+        set_sys_need_red_by_fd(); //yufei
         break;
     case 109 : // sys_olduname
         break;
@@ -840,10 +863,14 @@ void syscall_hook(uint32_t syscall_op)
     case 140: //sys_llseek
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+        
+        set_sys_need_red_by_fd();//yufei
         break;
     case 141 : // sys_getdents
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+        
+        set_sys_need_red_by_fd();//yufei
         break;
     case 142 : // sys_select
         break;
@@ -854,6 +881,8 @@ void syscall_hook(uint32_t syscall_op)
     case 145: //sys_readv
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+
+        set_sys_need_red_by_fd();//yufei
         break;
     case 146: //sys_writev
         set_sys_need_red(0);
@@ -1015,6 +1044,8 @@ void syscall_hook(uint32_t syscall_op)
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
 
+        set_sys_need_red_by_fd();//yufei
+
         break;
     case 198 : // sys_lchown32
         break;
@@ -1064,10 +1095,14 @@ void syscall_hook(uint32_t syscall_op)
     case 220 : // sys_getdents64
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+        
+        set_sys_need_red_by_fd();//yufei
         break;
     case 221 : // sys_fcntl64
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
+        
+        set_sys_need_red_by_fd();//yufei
         break;
     case 224 : // sys_gettid
         break;
@@ -1227,6 +1262,8 @@ void syscall_hook(uint32_t syscall_op)
     break;
     case 269:  //fstatfs64
         set_sys_need_red(get_file_taint());
+
+        set_sys_need_red_by_fd();//yufei
         break;
     case 311: //set_robust_list
         set_sys_need_red(0);
