@@ -818,6 +818,7 @@ static void Instrument_IRETD(INS ins)
         show_time(0);
 #endif
         set_sys_need_red(0);
+        recover_seg_reg();
     }
 
 #ifdef DEBUG_VMMI	
@@ -902,7 +903,7 @@ static void Instrument_SYSEXIT(INS ins)
             qemu_log("Fd %x:data:%s",cpu_single_env->regs[R_EBX],buf);
     }
 #endif
-
+    recover_seg_reg();
 }
 
 InstrumentFunction instrument_functions[XED_ICLASS_LAST];

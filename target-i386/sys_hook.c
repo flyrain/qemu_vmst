@@ -187,17 +187,33 @@ void show_time(int syscall){
 //    qemu_log(" time: %lld\n", 
 //             (1000LL * time_toshow.tv_sec + time_toshow.tv_usec / 1000));
 }
-//yufei.end
 
 void set_sys_need_red_by_fd(){
-    if(cpu_single_env->regs[R_EBX] & 1024 == 1024)
+    if((cpu_single_env->regs[R_EBX] & 1024) == 1024){
         set_sys_need_red(1);
-    else
+        qemu_log("fd %d need to redirect.", cpu_single_env->regs[R_EBX] );
+        cpu_single_env->regs[R_EBX] &= (~1024); //recover fd number
+    }else{
         set_sys_need_red(0);
+    }
 }
+
+target_ulong gs_base = 0;
+target_ulong fs_base = 0;
+
+//Recover segment registers: gs and fs
+void recover_seg_reg(){
+    cpu_single_env->segs[R_GS].base = gs_base;
+    cpu_single_env->segs[R_FS].base = fs_base;
+}
+//yufei.end
 
 void syscall_hook(uint32_t syscall_op)
 {
+    //yufei.begin record the base of gs and fs
+    gs_base = cpu_single_env->segs[R_GS].base;
+    fs_base = cpu_single_env->segs[R_FS].base;
+    //yufei.end
 
 #ifdef DEBUG_VMMI
     if(qemu_log_enabled())

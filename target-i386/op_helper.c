@@ -5147,7 +5147,7 @@ void tlb_fill(target_ulong addr, int is_write, int mmu_idx, void *retaddr)
 
     ret = cpu_x86_handle_mmu_fault(env, addr, is_write, mmu_idx);
     if (ret) {
-		if(qemu_log_enabled())
+        if(qemu_log_enabled())
             qemu_log("ERROR:real page fault %x, %d\n", addr, env->error_code);
 		
         if (retaddr) {
@@ -5155,14 +5155,14 @@ void tlb_fill(target_ulong addr, int is_write, int mmu_idx, void *retaddr)
             /* now we have a real cpu fault */
             pc = (unsigned long)retaddr;
             tb = tb_find_pc(pc);
-			if (tb) {
+            if (tb) {
                 /* the PC is inside the translated code. It means that we have
                    a virtual CPU fault */
                 cpu_restore_state(tb, env, pc);
             }
         }
 
-		raise_exception_err(env->exception_index, env->error_code);
+        raise_exception_err(env->exception_index, env->error_code);
     }
     env = saved_env;
 }
@@ -5182,12 +5182,12 @@ void vmmi_tlb_fill(target_ulong addr, int is_write, int mmu_idx, void *retaddr)
     ret = vmmi_cpu_x86_handle_mmu_fault(env, addr, is_write, mmu_idx);
 	
 //	#ifdef DEBUG_VMMI
-	if(ret == -1&&qemu_log_enabled())
-		qemu_log("ERROR :vmmi page fault 0x%08x", addr);
-	if(ret){
-		vmmi_main_start =0;
-		vmmi_start =0;
-	}
+    if(ret == -1&&qemu_log_enabled())
+        qemu_log("ERROR :vmmi page fault 0x%08x", addr);
+    if(ret){
+        vmmi_main_start =0;
+        vmmi_start =0;
+    }
 //	#endif
 
     if (ret) {
@@ -6351,6 +6351,17 @@ void helper_inst_hook(int a)
 
         xed_error_enum_t xed_error = xed_decode(&xedd_g,
                                                 STATIC_CAST(const xed_uint8_t *,  buf), 15); 
+
+         if(
+            !is_interrupt
+            && current_pc < 0xc0000000 
+            && qemu_log_enabled()
+            )
+         { //print the userspace instructions.
+            my_monitor_disas(a); 
+//             qemu_log("0x%x 0x%x userspace ", vmmi_process_cr3, current_pc);
+            qemu_log(" (ECX %x EAX %x EDX %x ESP %x)", ECX, EAX, EDX, ESP);//yufei
+            }
 
         if(
             !is_interrupt
