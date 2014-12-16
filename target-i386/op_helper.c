@@ -6059,19 +6059,19 @@ uint32_t helper_cc_compute_c(int op)
 
 void helper_store(target_ulong value, target_ulong addr, int size)
 {
-	if(addr==0xc1003019)
-	{
-		int a;
-		cpu_memory_rw_debug(cpu_single_env, addr, &a, 4,0);
+    if(addr==0xc1003019)
+    {
+        int a;
+        cpu_memory_rw_debug(cpu_single_env, addr, &a, 4,0);
 
-		printf("get it %x %x %x\n", current_pc, value, a);
+        printf("get it %x %x %x\n", current_pc, value, a);
 
-	}
-	if(size ==3) size++;
+    }
+    if(size == 3) size++;
 
     if(is_ins_log()){
         qemu_log(" ST:0x%08x: (0x%08x) pc: %x", addr, value, current_pc);
-	}
+    }
 }
 
 void helper_load(target_ulong addr, int size)
@@ -6248,76 +6248,10 @@ int vmac_memory_write(target_ulong addr, uint8_t *buf, int len)
 
 
 //yufei.begin
-//traverse the whole threads.
-static target_ulong getKthread()
-{
-    int i=0;
-    uint32_t stack= env->regs[R_ESP]&0xffffe000;
-    uint32_t task;
-    uint32_t pid;
-    uint32_t mm;
-    uint32_t pgd;
-    uint32_t next;
-    uint32_t list;
-    char comm[16] = {};
-
-    cpu_memory_rw_debug(env, stack, &task, 4,0);
-    next=task;
-
-    //printf("process is 0x%08x, 0x%08x, 0x%08x\n", vmmi_process_cr3, new_cr3, cpu_single_env->cr[3] );
-    do{
-        cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
-        comm[15]='\0';
-        cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
-        cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
-        //print the task
-        if(strcmp(comm, "kcryptd") == 0){
-            cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
-            qemu_log("find process %x %s %x\n", next, comm, pgd+0x40000000);
-        }
-
-        cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
-        next=list-0xe4;
-        i++;
-        if(i>100)
-            break;
-    }while(next!=task);
-
-}
-//yufei.end
-
-//yufei.begin
 extern int reg_name_modified ; 
 extern uint32_t pre_reg_value;
 extern uint32_t file_flag ; 
 target_ulong current_task;
-int is_insert_work = 0;
-
-
-//2.6.32.8
-#define SCHEDULE 0xc125dcff
-#define INSERT_WORK 0xc103ea47
-#define TRY_TO_WAKE_UP 0xc102abfa
-#define PICK_NEXT_TASK_RET 0xc125e1e4
-//#define DEC_NR_RUNNING 0xc101fa26
-#define ACCOUNT_ENTITY_DEQUEUE 0xc1025588
-
-//start from function schedule(), no redirect data
-void no_red_schedule(target_ulong current_PC){
-    static target_ulong ret_addr = 0; 
-    if( sys_need_red == 1 && current_PC == SCHEDULE) {
-        set_sys_need_red(0);
-        //get ret address for future redirect again.
-        if(ret_addr == 0)
-            cpu_memory_rw_debug(cpu_single_env, ESP, &ret_addr,4, 0);
-    }
-    
-    //if schedule() ret, need redirect again
-    if (current_PC == ret_addr && sys_need_red == 0){
-        set_sys_need_red(1);
-        ret_addr = 0;
-    }
-}
 //yufei.end
 
 //before instruction translate and execute
@@ -6328,7 +6262,6 @@ void helper_inst_hook(int a)
     uint8_t buf[15];
     char str[128];
 	 
-		 
     if(
         take_snapshot_esp==1
         &&(cpu_single_env->hflags & HF_CPL_MASK) != 3
@@ -6352,16 +6285,15 @@ void helper_inst_hook(int a)
         xed_error_enum_t xed_error = xed_decode(&xedd_g,
                                                 STATIC_CAST(const xed_uint8_t *,  buf), 15); 
 
-         if(
-            !is_interrupt
-            && current_pc < 0xc0000000 
+        //print the userspace instructions.
+        if(
+            current_pc < 0xc0000000 
             && qemu_log_enabled()
             )
-         { //print the userspace instructions.
+        {            
             my_monitor_disas(a); 
-//             qemu_log("0x%x 0x%x userspace ", vmmi_process_cr3, current_pc);
-            qemu_log(" (ECX %x EAX %x EDX %x ESP %x)", ECX, EAX, EDX, ESP);//yufei
-            }
+            qemu_log(" (ECX %x EAX %x EDX %x ESP %x)", ECX, EAX, EDX, ESP);
+        }
 
         if(
             !is_interrupt

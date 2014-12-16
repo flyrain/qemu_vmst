@@ -166,7 +166,6 @@ extern char inst_buff[];
 char inst_buff2[16];
 char inst_buff3[16];
 extern target_ulong current_task; //yufei
-extern int is_insert_work;
 
 //yufei.begin, show current time 
 char * syscall_name[] = {"SYSEXIT/IRET", "sys_exit", "", "read", 
@@ -238,7 +237,6 @@ void syscall_hook(uint32_t syscall_op)
         set_sys_need_red(0);
         vmmi_start = 0;
         vmmi_main_start = 0;
-        is_insert_work = 0;
         sys_hook_init();
         run_timer();
         pit_resend();

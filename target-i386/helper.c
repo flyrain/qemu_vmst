@@ -553,7 +553,6 @@ target_ulong vmmi_process_cr3 = 0xffffffff;
 #include "taint.h"
 #include "sys_hook.h"
 uint32_t is_kernel_stack(target_ulong addr);
-inline uint32_t is_global_data(uint32_t addr);
 extern uint32_t is_brk;
 //uint32_t is_schedule = 0;
 uint32_t num_cond_resch = 0;
@@ -589,8 +588,8 @@ uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr)
     if((vmmi_start) \
        && (cpu_single_env->cr[3] == vmmi_process_cr3) \
        && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
-       &&  (is_interrupt !=1 || need_interrupt == 1) \  
-       &&addr >=0xc0000000
+       && (is_interrupt !=1 || need_interrupt == 1) \  
+       && addr >=0xc0000000
        && sys_need_red
       ) return vmmi_profile;
 
@@ -599,102 +598,93 @@ uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr)
 
 //yang.begin
 extern uint32_t vmmi_mode;
-inline uint32_t is_global_data(uint32_t addr)
-{
-	if(addr>=0xc1480000 && addr<=0xc19fb0000)
-		return 1;
-	else return 0;
 
-}
 uint32_t is_ins_log()
 {
     if(	vmmi_start\
-        &&qemu_log_enabled()\
-        &&(cpu_single_env->cr[3] == vmmi_process_cr3) 
+        && qemu_log_enabled()\
+        && (cpu_single_env->cr[3] == vmmi_process_cr3) 
         && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)
-        //       &&!is_interrupt
-        &&sys_need_red
-//	   && current_syscall == 42
+        && !is_interrupt
+        && sys_need_red
         ) 
     	return 1;
     else
         return 0;
 }
+
 inline uint32_t is_shadow_page_exist(uint32_t pte)
 {
-
-	return ((pte&SHADOW_PAGE_MASK)>>SHADOW_PAGE_BIT);
+    return ((pte&SHADOW_PAGE_MASK)>>SHADOW_PAGE_BIT);
 }
 
 inline uint64_t get_shadow_page(target_ulong  page_size)
 {
 
-	uint64_t paddr;
+    uint64_t paddr;
 
-	paddr = (uint64_t)(vmmi_mem_shadow+vmmi_mem_shadow_index+page_size-1);
+    paddr = (uint64_t)(vmmi_mem_shadow+vmmi_mem_shadow_index+page_size-1);
     
-	//align to page_size
-	paddr = paddr & ~(uint64_t)(page_size-1);
+    //align to page_size
+    paddr = paddr & ~(uint64_t)(page_size-1);
 
-	vmmi_mem_shadow_index = paddr + page_size - (uint64_t)vmmi_mem_shadow;
+    vmmi_mem_shadow_index = paddr + page_size - (uint64_t)vmmi_mem_shadow;
 
 //	fprintf(vmmi_log, "new vmmi_mem_shadow start %lx allocate %lx\n", vmmi_mem_shadow, paddr);
-	fflush(vmmi_log);
+    fflush(vmmi_log);
 
-	return  paddr;	
+    return  paddr;	
 }
 
 uint32_t do_copy_page_if_necessary(target_ulong addr)
 {
-	
-	
-	uint32_t pte, pde;
-	uint64_t pde_addr, pte_addr;
+    uint32_t pte, pde;
+    uint64_t pde_addr, pte_addr;
     target_phys_addr_t paddr; 
 
-	uint32_t page_size = 4096;
+    uint32_t page_size = 4096;
 	
-	//page directory
-	CPUState *env = cpu_single_env;
+    //page directory
+    CPUState *env = cpu_single_env;
 
-	pde_addr =((vmmi_cr3 & ~0xfff) + ((addr >> 20) & 0xffc)) &
-            env->a20_mask;
+    pde_addr =((vmmi_cr3 & ~0xfff) + ((addr >> 20) & 0xffc)) &
+        env->a20_mask;
     
-	pde_addr = (uint64_t)vmmi_mem_shadow + pde_addr;
-	pde = *(uint32_t*)pde_addr;
+    pde_addr = (uint64_t)vmmi_mem_shadow + pde_addr;
+    pde = *(uint32_t*)pde_addr;
     
 	
 	
     /* if PSE bit is set, then we use a 4MB page */
-	if ((pde & PG_PSE_MASK) && (env->cr[4] & CR4_PSE_MASK)){
-		if (!is_shadow_page_exist(pde)){
-			page_size = 4096 * 1024;
+    if ((pde & PG_PSE_MASK) && (env->cr[4] & CR4_PSE_MASK)){
+        if (!is_shadow_page_exist(pde)){
+            page_size = 4096 * 1024;
 	   	    
-			*(uint32_t* )pde_addr= *(uint32_t *)pde_addr | SHADOW_PAGE_MASK;
-	  //  	paddr = get_shadow_page(page_size)- (uint64_t)vmmi_mem;	   
-	  //      *(uint32_t* )pde_addr = *(uint32_t *)pde_addr | ((uint32_t)paddr & TARGET_PAGE_MASK);
+            *(uint32_t* )pde_addr= *(uint32_t *)pde_addr | SHADOW_PAGE_MASK;
+            //  	paddr = get_shadow_page(page_size)- (uint64_t)vmmi_mem;	   
+            //      *(uint32_t* )pde_addr = *(uint32_t *)pde_addr | ((uint32_t)paddr & TARGET_PAGE_MASK);
 
-			return 1;
-		}
-	}else{
+            return 1;
+        }
+    }else{
 
-		//page table
-		pte_addr = ((pde & ~0xfff) + ((addr >> 10) & 0xffc)) &
-                	env->a20_mask;
-		pte_addr = pte_addr + (uint64_t) vmmi_mem_shadow;
+        //page table
+        pte_addr = ((pde & ~0xfff) + ((addr >> 10) & 0xffc)) &
+            env->a20_mask;
+        pte_addr = pte_addr + (uint64_t) vmmi_mem_shadow;
 
-		pte = *(uint32_t*)pte_addr;
+        pte = *(uint32_t*)pte_addr;
 	
-		if (!is_shadow_page_exist(pte)){
-	   		*(uint32_t* )pte_addr = *(uint32_t *)pte_addr | SHADOW_PAGE_MASK;
-	//		paddr = get_shadow_page(page_size)-(uint64_t) vmmi_mem;	   
-	//		*(uint32_t* )pte_addr = *(uint32_t *)pte_addr | ((uint32_t)paddr & TARGET_PAGE_MASK);
+        if (!is_shadow_page_exist(pte)){
+            *(uint32_t* )pte_addr = *(uint32_t *)pte_addr | SHADOW_PAGE_MASK;
+            //		paddr = get_shadow_page(page_size)-(uint64_t) vmmi_mem;	   
+            //		*(uint32_t* )pte_addr = *(uint32_t *)pte_addr | ((uint32_t)paddr & TARGET_PAGE_MASK);
 
-			return 1;
-		}
-	}
+            return 1;
+        }
+    }
 
-	return 0;
+    return 0;
 }	
 
 #include "taint.h"
@@ -726,6 +716,12 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
         }
 #endif			
 
+    //yufei.begin
+    if(vmmi_start && new_cr3 == vmmi_cr3){
+        qemu_log("change new cr3 to vmmi_process_cr3\n");
+        new_cr3 = vmmi_process_cr3;
+    }
+    //yufei.end
 
     if( 
         //	vmmi_main_start

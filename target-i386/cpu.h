@@ -1093,7 +1093,6 @@ extern uint32_t vmmi_profile;
 extern uint64_t vmmi_mem_shadow_index;
 extern uint32_t is_interrupt;
 extern uint32_t vmmi_interrupt_taint;
-//extern uint32_t is_schedule;
 extern uint32_t num_cond_resch;
 
 extern inline uint32_t is_shadow_page_exist(uint32_t pte);

@@ -1178,42 +1178,11 @@ void Instrument(INS ins)
      	&& sys_need_red 
 	)
     {
-/*
-        const xed_operand_t *op = xed_inst_operand(ins, 0);
-        xed_operand_enum_t op_name = xed_operand_name(op);
-		
-
-        if (operand_is_mem(op_name, &mem_addr, 0, &taint)) {
-            if(taint == TAINTED){
-                if(opcode == XED_ICLASS_POP &&basereg == XED_REG_ESP)
-                    mem_addr+=4;
-                set_kernel_stack_address(mem_addr);
-            }
-		
-        } 
-		
-        const xed_operand_t *op0 = xed_inst_operand(ins, 1);
-        xed_operand_enum_t op0_name = xed_operand_name(op0);
-		
-
-        if (operand_is_mem(op0_name, &mem_addr, 1, &taint)) {
-            if(taint == TAINTED)
-                set_kernel_stack_address(mem_addr);
-#ifdef VMMI_ALL_REDIRCTION
-            if(!is_interrupt&&is_sysenter&&vmmi_profile&&vmmi_start&&sys_need_red){
-                uint64_t phaddr = (uint64_t)vmmi_mem_shadow+vmmi_vtop(mem_addr);
-                vmmi_esp2 = *(uint32_t *)phaddr;
-            }
-#endif
-        }
-
-*/
 #ifdef DEBUG_VMMI
   	if(qemu_log_enabled())
             qemu_log(" op:%s", xed_iclass_enum_t2str(opcode));
 #endif
    	(*instrument_functions[opcode]) (ins);
-
     }
 }
 
