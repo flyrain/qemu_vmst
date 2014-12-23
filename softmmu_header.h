@@ -206,6 +206,7 @@ static inline void glue(glue(st, SUFFIX), MEMSUFFIX)(target_ulong ptr, RES_TYPE 
 //#if ACCESS_TYPE == (NB_MMU_MODES)
     if(is_monitored_vmmi_kernel_data_write(ptr))
     {
+        qemu_log(" st vmmi ");
         //yang.begin
 #ifdef VMMI_COW
         if (do_copy_page_if_necessary(ptr)){
@@ -225,7 +226,7 @@ static inline void glue(glue(st, SUFFIX), MEMSUFFIX)(target_ulong ptr, RES_TYPE 
             glue(glue(st, SUFFIX), _raw)((uint8_t *)physaddr, v);
 
 #ifdef DEBUG_VMMI
-            //	fprintf(vmmi_log,"in ST_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
+            //    fprintf(vmmi_log,"in ST_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
 #endif
         }
         return;

@@ -1346,25 +1346,22 @@ target_ulong log_eip;
 static void do_interrupt_all(int intno, int is_int, int error_code,
                              target_ulong next_eip, int is_hw)
 {
-
-
-//	if(vmmi_mode&&intno==0x80&&EAX==11)
-	if(!vmmi_main_start&&vmmi_mode&&intno==0x80&&(EAX==11||EAX==37))
-		interrupt_hook(intno, is_int, next_eip);
+    if(!vmmi_main_start&&vmmi_mode&&intno==0x80&&(EAX==11||EAX==37))
+        interrupt_hook(intno, is_int, next_eip);
 	
-	if(vmmi_start && cpu_single_env->cr[3] == vmmi_process_cr3){
+    if(vmmi_start && cpu_single_env->cr[3] == vmmi_process_cr3){
 #ifdef DEBUG_VMMI
-		if(qemu_log_enabled())
-			qemu_log("In interrupt (%x), hw = %d, next_eip is (0x%08x, 0x%08x)", intno, is_hw, next_eip, env->eip);
-		if(qemu_log_enabled())
-			qemu_log(" interrupt stack(%d)", vmmi_interrupt_stack);
+        if(qemu_log_enabled())
+            qemu_log("In interrupt (%x), hw = %d, next_eip is (0x%08x, 0x%08x)", intno, is_hw, next_eip, env->eip);
+        if(qemu_log_enabled())
+            qemu_log(" interrupt stack(%d)", vmmi_interrupt_stack);
 
 #endif
-		interrupt_hook(intno, is_int, next_eip);	
-	}
-	//yang.end
+        interrupt_hook(intno, is_int, next_eip);	
+    }
+    //yang.end
 	
-	if (qemu_loglevel_mask(CPU_LOG_INT)) {
+    if (qemu_loglevel_mask(CPU_LOG_INT)) {
         if ((env->cr[0] & CR0_PE_MASK)) {
             static int count;
             qemu_log("%6d: v=%02x e=%04x i=%d cpl=%d IP=%04x:" TARGET_FMT_lx " pc=" TARGET_FMT_lx " SP=%04x:" TARGET_FMT_lx,
@@ -1420,8 +1417,8 @@ static void do_interrupt_all(int intno, int is_int, int error_code,
 
 #if !defined(CONFIG_USER_ONLY)
     if (env->hflags & HF_SVMI_MASK) {
-	    uint32_t event_inj = ldl_phys(env->vm_vmcb + offsetof(struct vmcb, control.event_inj));
-	    stl_phys(env->vm_vmcb + offsetof(struct vmcb, control.event_inj), event_inj & ~SVM_EVTINJ_VALID);
+        uint32_t event_inj = ldl_phys(env->vm_vmcb + offsetof(struct vmcb, control.event_inj));
+        stl_phys(env->vm_vmcb + offsetof(struct vmcb, control.event_inj), event_inj & ~SVM_EVTINJ_VALID);
     }
 #endif
 	
@@ -2998,6 +2995,21 @@ void helper_iret_protected(int shift, int next_eip)
         helper_ret_protected(shift, 1, 0);
     }
     env->hflags2 &= ~HF2_NMI_MASK;
+    
+    //yufei.begin
+    if(is_interrupt){
+        recover_snapshot_kernel_stack();
+        vmmi_interrupt_stack--;
+        if(vmmi_interrupt_stack == 0){
+            is_interrupt=0;
+			
+#ifdef DEBUG_VMMI
+        if(qemu_log_enabled())
+           qemu_log("exit interrupt\n");
+#endif
+        }
+    }
+    //yufei.end
 }
 
 void helper_lret_protected(int shift, int addend)
@@ -6181,7 +6193,6 @@ void xed2_init()
 typedef void (*fun)();
 fun iret_handle=NULL;
 
-uint32_t cond_res;
 FILE *inst_dis_log;
 xed_iclass_enum_t prev_opcode;
 uint32_t is_print;
@@ -6296,8 +6307,8 @@ void helper_inst_hook(int a)
         }
 
         if(
-            !is_interrupt
-            && sys_need_red
+            //!is_interrupt
+             sys_need_red
             && qemu_log_enabled()
             // && file_flag
             )

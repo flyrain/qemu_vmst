@@ -133,11 +133,39 @@ set_file_flag(uint32_t fd, int flag)
         files[fd]=flag;
 }
 
-int need_interrupt =0;
+int need_interrupt = 0;
+
+//Before enter an interrupt which is no need to redirect, read local
+//stack address from a global address, then give it to current ESP
+target_ulong snapshot_esp = 0; 
+void recover_local_kernel_stack(){
+    if(!sys_need_red) return;
+
+    snapshot_esp = cpu_single_env->regs[R_ESP];
+    target_ulong stack_addr = 0xc1805e04;
+    target_ulong local_esp;
+    cpu_memory_rw_debug(cpu_single_env, stack_addr, &local_esp, 4,0);
+    cpu_single_env->regs[R_ESP] = local_esp; 
+    qemu_log(" change ESP %x to %x ", snapshot_esp, local_esp);
+}
+
+//After exit interrupt, recover snapshot kernel stack
+void recover_snapshot_kernel_stack(){
+    if( vmmi_start
+        && cpu_single_env->cr[3] == vmmi_process_cr3
+        && snapshot_esp > 0xc0000000
+        ){
+        qemu_log(" change ESP %x to %x ", cpu_single_env->regs[R_ESP], snapshot_esp);
+        cpu_single_env->regs[R_ESP] = snapshot_esp; 
+        snapshot_esp = 0;
+    }
+}
+
+
 void interrupt_hook(int intno, int is_int, target_ulong next_eip)
 {
     //yufei.begin
-    if ( sys_need_red == 1 && intno == 0x3e)
+    if (sys_need_red == 1 && intno == 0x3e)
         need_interrupt = 1;
     else
         need_interrupt = 0;
@@ -148,6 +176,8 @@ void interrupt_hook(int intno, int is_int, target_ulong next_eip)
         //yufei.begin
         if(intno == 0x3e)
             return;
+
+        recover_local_kernel_stack();
         //yufei.end
         vmmi_interrupt_stack++;
         is_interrupt = 1;

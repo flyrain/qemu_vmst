@@ -447,57 +447,57 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 //		qemu_log(" MMUST:0x%08x", addr);
 //#ifdef MMUSUFFIX_mmu
 
-	if(is_monitored_vmmi_kernel_data_write(addr))
-	{
-
-		//yang.begin
+    if(is_monitored_vmmi_kernel_data_write(addr))
+    {
+        qemu_log(" __st vmmi ");
+        //yang.begin
 
 #ifdef VMMI_COW
         if (do_copy_page_if_necessary(addr)){
-			void * retaddr;
+            void * retaddr;
 
-			retaddr = GETPC();
-			vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
-        	if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE){
-				do_copy_page_if_necessary(addr+DATA_SIZE-1);
-				vmmi_tlb_fill((addr+DATA_SIZE -1)&TARGET_PAGE_MASK, 1, mmu_idx, retaddr);
-			}
-		}
-#endif
-		//yang.end
- redo1:
-    tlb_addr = env->vmmi_tlb_table[mmu_idx][index].addr_write;
-    if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
-         if (tlb_addr & ~TARGET_PAGE_MASK) {
-            /* IO access */
-            if ((addr & (DATA_SIZE - 1)) != 0)
-                goto do_unaligned_access1;
             retaddr = GETPC();
-            ioaddr = env->vmmi_iotlb[mmu_idx][index];
-            set_io_need_red();//yufei
-            glue(io_write, SUFFIX)(ioaddr, val, addr, retaddr);
-        } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
-         do_unaligned_access1:
-            retaddr = GETPC();
-            glue(glue(slow_st, SUFFIX), MMUSUFFIX)(addr, val,
-                                                   mmu_idx, retaddr);
-        } else {
-
-            addend = env->vmmi_tlb_table[mmu_idx][index].addend;
-			#ifdef DEBUG_VMMI
-            //	fprintf(vmmi_log,"in ST vmmi paddr %lx, old paddr %x value %x\n",addr+addend, vmmi_vtop(addr), val);
-			#endif
-            glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
-			#ifdef DEBUG_VMMI
-            //	fprintf(vmmi_log,"after %x %x\n", *(uint32_t *)(addend+addr), vmmi_vtop2(addr,4));
-			#endif
+            vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
+            if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE){
+                do_copy_page_if_necessary(addr+DATA_SIZE-1);
+                vmmi_tlb_fill((addr+DATA_SIZE -1)&TARGET_PAGE_MASK, 1, mmu_idx, retaddr);
+            }
         }
-    } else {
-        /* the page is not in the TLB : fill it */
-        retaddr = GETPC();
-        vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
-        goto redo1;
-    }
+#endif
+        //yang.end
+    redo1:
+        tlb_addr = env->vmmi_tlb_table[mmu_idx][index].addr_write;
+        if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
+            if (tlb_addr & ~TARGET_PAGE_MASK) {
+                /* IO access */
+                if ((addr & (DATA_SIZE - 1)) != 0)
+                    goto do_unaligned_access1;
+                retaddr = GETPC();
+                ioaddr = env->vmmi_iotlb[mmu_idx][index];
+                set_io_need_red();//yufei
+                glue(io_write, SUFFIX)(ioaddr, val, addr, retaddr);
+            } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
+            do_unaligned_access1:
+                retaddr = GETPC();
+                glue(glue(slow_st, SUFFIX), MMUSUFFIX)(addr, val,
+                                                       mmu_idx, retaddr);
+            } else {
+
+                addend = env->vmmi_tlb_table[mmu_idx][index].addend;
+#ifdef DEBUG_VMMI
+                //	fprintf(vmmi_log,"in ST vmmi paddr %lx, old paddr %x value %x\n",addr+addend, vmmi_vtop(addr), val);
+#endif
+                glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
+#ifdef DEBUG_VMMI
+                //	fprintf(vmmi_log,"after %x %x\n", *(uint32_t *)(addend+addr), vmmi_vtop2(addr,4));
+#endif
+            }
+        } else {
+            /* the page is not in the TLB : fill it */
+            retaddr = GETPC();
+            vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
+            goto redo1;
+        }
 
 	return;
     }
@@ -505,7 +505,7 @@ void REGPARM glue(glue(__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 //zlin.end
 //////////////////////////////////////////////////////////////////////////////////
 
- redo:
+redo:
     tlb_addr = env->tlb_table[mmu_idx][index].addr_write;
     if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
         if (tlb_addr & ~TARGET_PAGE_MASK) {
@@ -566,51 +566,52 @@ static void glue(glue(slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 //zlin.begin
 //#ifdef MMUSUFFIX_mmu
     if(is_monitored_vmmi_kernel_data_write(addr)) 
-	{
- redo1:
-    tlb_addr = env->vmmi_tlb_table[mmu_idx][index].addr_write;
-    if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
-         if (tlb_addr & ~TARGET_PAGE_MASK) {
-            /* IO access */
-            if ((addr & (DATA_SIZE - 1)) != 0)
-                goto do_unaligned_access1;
-            ioaddr = env->vmmi_iotlb[mmu_idx][index];
-            set_io_need_red();//yufei
-            glue(io_write, SUFFIX)(ioaddr, val, addr, retaddr);
-        } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
- do_unaligned_access1:
-            /* XXX: not efficient, but simple */
-            /* Note: relies on the fact that tlb_fill() does not remove the
-             * previous page from the TLB cache.  */
-            for(i = DATA_SIZE - 1; i >= 0; i--) {
+    {
+        qemu_log(" slow_st vmmi");
+    redo1:
+        tlb_addr = env->vmmi_tlb_table[mmu_idx][index].addr_write;
+        if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
+            if (tlb_addr & ~TARGET_PAGE_MASK) {
+                /* IO access */
+                if ((addr & (DATA_SIZE - 1)) != 0)
+                    goto do_unaligned_access1;
+                ioaddr = env->vmmi_iotlb[mmu_idx][index];
+                set_io_need_red();//yufei
+                glue(io_write, SUFFIX)(ioaddr, val, addr, retaddr);
+            } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
+            do_unaligned_access1:
+                /* XXX: not efficient, but simple */
+                /* Note: relies on the fact that tlb_fill() does not remove the
+                 * previous page from the TLB cache.  */
+                for(i = DATA_SIZE - 1; i >= 0; i--) {
 #ifdef TARGET_WORDS_BIGENDIAN
-                glue(slow_stb, MMUSUFFIX)(addr + i, val >> (((DATA_SIZE - 1) * 8) - (i * 8)),
-                                          mmu_idx, retaddr);
+                    glue(slow_stb, MMUSUFFIX)(addr + i, val >> (((DATA_SIZE - 1) * 8) - (i * 8)),
+                                              mmu_idx, retaddr);
 #else
-                glue(slow_stb, MMUSUFFIX)(addr + i, val >> (i * 8),
-                                          mmu_idx, retaddr);
+                    glue(slow_stb, MMUSUFFIX)(addr + i, val >> (i * 8),
+                                              mmu_idx, retaddr);
 #endif
+                }
+            } else {
+                /* aligned/unaligned access in the same page */
+                addend = env->vmmi_tlb_table[mmu_idx][index].addend;
+#ifdef DEBUG_VMMI
+                //	fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem_shadow,vmmi_vtop(addr), env->regs[4]);
+#endif
+                glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
             }
         } else {
-            /* aligned/unaligned access in the same page */
-            addend = env->vmmi_tlb_table[mmu_idx][index].addend;
-			#ifdef DEBUG_VMMI
-            //	fprintf(vmmi_log,"in STraw vmmi paddr %x, old paddr %x, esp %x\n",addr+addend-(uint64_t)vmmi_mem_shadow,vmmi_vtop(addr), env->regs[4]);
-			#endif
-            glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
+            /* the page is not in the TLB : fill it */
+            vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
+            goto redo1;
         }
-    } else {
-        /* the page is not in the TLB : fill it */
-        vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
-        goto redo1;
-    }
 	return;
     }
 //#endif
 //zlin.end
 //////////////////////////////////////////////////////////////////////////////////
 
- redo:
+redo:
     tlb_addr = env->tlb_table[mmu_idx][index].addr_write;
     if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
         if (tlb_addr & ~TARGET_PAGE_MASK) {
@@ -776,8 +777,8 @@ static void glue(glue(vmmi_slow_st, SUFFIX), MMUSUFFIX)(target_ulong addr,
 
 
 void REGPARM glue(glue(vmmi__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
-                                                 DATA_TYPE val,
-                                                 int mmu_idx)
+                                                     DATA_TYPE val,
+                                                     int mmu_idx)
 {
     target_phys_addr_t ioaddr;
     unsigned long addend;
@@ -788,34 +789,32 @@ void REGPARM glue(glue(vmmi__st, SUFFIX), MMUSUFFIX)(target_ulong addr,
     index = (addr >> TARGET_PAGE_BITS) & (CPU_TLB_SIZE - 1);
 //////////////////////////////////////////////////////////////////////////////////
 //zlin.begin
-//if(is_ins_log)
-//		qemu_log(" MMUST:0x%08x", addr);
-	if(is_monitored_vmmi_kernel_data_write() && (!(glue(glue(is_io_write, SUFFIX), MMUSUFFIX))(addr, mmu_idx)))
-	{
- redo1:
-    tlb_addr = env->vmmi_tlb_table[mmu_idx][index].addr_write;
-    if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
-        if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
-            retaddr = GETPC();
-            glue(glue(vmmi_slow_st, SUFFIX), MMUSUFFIX)(addr, val,
-                                                   mmu_idx, retaddr);
-        } else {
+    if(is_monitored_vmmi_kernel_data_write() && (!(glue(glue(is_io_write, SUFFIX), MMUSUFFIX))(addr, mmu_idx)))
+    {
+    redo1:
+        tlb_addr = env->vmmi_tlb_table[mmu_idx][index].addr_write;
+        if ((addr & TARGET_PAGE_MASK) == (tlb_addr & (TARGET_PAGE_MASK | TLB_INVALID_MASK))) {
+            if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
+                retaddr = GETPC();
+                glue(glue(vmmi_slow_st, SUFFIX), MMUSUFFIX)(addr, val,
+                                                            mmu_idx, retaddr);
+            } else {
 
-            addend = env->vmmi_tlb_table[mmu_idx][index].addend;
-			#ifdef DEBUG_VMMI
-            //	fprintf(vmmi_log,"in ST vmmi paddr %x, old paddr %x esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
-			#endif
-            glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
+                addend = env->vmmi_tlb_table[mmu_idx][index].addend;
+#ifdef DEBUG_VMMI
+                //	fprintf(vmmi_log,"in ST vmmi paddr %x, old paddr %x esp %x\n",addr+addend-(uint64_t)vmmi_mem,vmmi_vtop(addr), env->regs[4]);
+#endif
+                glue(glue(st, SUFFIX), _raw)((uint8_t *)(long)(addr+addend), val);
+            }
+        } else {
+            /* the page is not in the TLB : fill it */
+            retaddr = GETPC();
+            vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
+            goto redo1;
         }
-    } else {
-        /* the page is not in the TLB : fill it */
-        retaddr = GETPC();
-        vmmi_tlb_fill(addr, 1, mmu_idx, retaddr);
-        goto redo1;
-    }
 
     }else
-		glue(glue(__st, SUFFIX), MMUSUFFIX)(addr,val,mmu_idx);
+        glue(glue(__st, SUFFIX), MMUSUFFIX)(addr,val,mmu_idx);
 
 //zlin.end
 }

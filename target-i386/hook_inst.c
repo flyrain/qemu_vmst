@@ -226,7 +226,6 @@ void set_kernel_stack_address(target_ulong addr);
 
 typedef void (*fun)();
 extern uint32_t is_syscall;
-extern uint32_t cond_res;
 extern fun iret_handle;
 xed_reg_enum_t basereg;
 extern uint32_t current_pc;
@@ -764,62 +763,45 @@ void update_esp()
 
 static void Instrument_IRETD(INS ins)
 {
-    if(is_interrupt){
-        vmmi_interrupt_stack--;
-        if(vmmi_interrupt_stack == 0){
-            is_interrupt=0;
-			
-#ifdef DEBUG_VMMI
-            if(qemu_log_enabled())
-                qemu_log("exit interrupt\n");
-#endif
-            if(!is_syscall)
-                cond_res=0;
-        }
-    }else{
-        if(is_sysenter)
-            return;
+    if(is_interrupt) return;
+    if(is_sysenter) return;
 
-
-		
-        if(current_syscall == 5 || current_syscall ==102){
-#ifdef DEBUG_VMMI
-            if(qemu_log_enabled())
-                qemu_log("open file (%x %u)\n",cpu_single_env->regs[R_EAX], file_flag);
-#endif
-            set_file_flag(cpu_single_env->regs[R_EAX], file_flag);
-			
-            if(file_flag)
-                set_reg_taint_fd(XED_REG_EAX, FDTAINTED);
-        }
-
-#ifdef DEBUG_VMMI
-        if(current_syscall == 3){
-            char buf[4192];
-            int maxnum;
-            if(cpu_single_env->regs[R_EAX]<4192)
-                maxnum = cpu_single_env->regs[R_EAX];
-            else
-                maxnum = 4191;
-
-            cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ECX] , buf, maxnum, 0);
-            buf[maxnum]='\0';
-            if(qemu_log_enabled())
-                qemu_log("Fd %x: data:%s",cpu_single_env->regs[R_EBX],buf);
-			
-        }
-#endif
-
-        is_syscall=0;
-        cond_res=0;
+    if(current_syscall == 5 || current_syscall ==102){
 #ifdef DEBUG_VMMI
         if(qemu_log_enabled())
-            qemu_log("iret\n");
-        show_time(0);
+            qemu_log("open file (%x %u)\n",cpu_single_env->regs[R_EAX], file_flag);
 #endif
-        set_sys_need_red(0);
-        recover_seg_reg();
+        set_file_flag(cpu_single_env->regs[R_EAX], file_flag);
+			
+        if(file_flag)
+            set_reg_taint_fd(XED_REG_EAX, FDTAINTED);
     }
+
+#ifdef DEBUG_VMMI
+    if(current_syscall == 3){
+        char buf[4192];
+        int maxnum;
+        if(cpu_single_env->regs[R_EAX]<4192)
+            maxnum = cpu_single_env->regs[R_EAX];
+        else
+            maxnum = 4191;
+
+        cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_ECX] , buf, maxnum, 0);
+        buf[maxnum]='\0';
+        if(qemu_log_enabled())
+            qemu_log("Fd %x: data:%s",cpu_single_env->regs[R_EBX],buf);
+			
+    }
+#endif
+
+    is_syscall=0;
+#ifdef DEBUG_VMMI
+    if(qemu_log_enabled())
+        qemu_log("iret\n");
+    show_time(0);
+#endif
+    set_sys_need_red(0);
+    recover_seg_reg();
 
 #ifdef DEBUG_VMMI	
     uint32_t stack= cpu_single_env->regs[R_ESP]&0xffffe000;
@@ -867,7 +849,6 @@ static void Instrument_SYSEXIT(INS ins)
 #endif
 
     is_syscall=0;
-    cond_res=0;
     is_sysenter = 0;
     is_pipe =0;
 
