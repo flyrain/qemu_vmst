@@ -3049,9 +3049,9 @@ void helper_sysenter(void)
     ESP = env->sysenter_esp;
     EIP = env->sysenter_eip;
 
-	//yang
-	if(vmmi_mode&&!vmmi_main_start&&(EAX==11||EAX==37))
-		syscall_hook(EAX);
+    //yang
+    if(vmmi_mode&&!vmmi_main_start&&(EAX==11||EAX==37))
+        syscall_hook(EAX);
 }
 
 //yufei.begin
@@ -6086,10 +6086,22 @@ void helper_store(target_ulong value, target_ulong addr, int size)
     }
 }
 
+extern target_ulong stack_addr;  // a global address
+
 void helper_load(target_ulong addr, int size)
 {
     if(size == 3)size++;
 
+    //yufei.begin
+    if(vmmi_start 
+       && stack_addr == 0 
+       && sys_need_red
+        ){
+        stack_addr = addr;
+        qemu_log(" get the stack addr %x ", stack_addr);
+    }
+    //yufei.end
+        
     if(is_ins_log())
     {
         if(addr >= 0xc0000000){
@@ -6105,7 +6117,8 @@ void helper_load(target_ulong addr, int size)
                 }else{
                     old = *(uint8_t *) buf;
                 }
-                qemu_log(" LD:0x%08x:(0x%08x, 0x%08x) ",addr, old, new);
+                
+                qemu_log(" LD:0x%08x:(0x%08x, 0x%08x) ", addr, old, new);
             }else {
                 qemu_log(" LD:0x%08x new %d ", addr, new);
             }

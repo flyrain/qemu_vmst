@@ -42,36 +42,6 @@ void set_sys_need_red(int flag){
 }
 //yufei.end
 
-void init_syscall_table()
-{
-    return;
-    if(syscall_num!=0)return;
-    FILE *fp =fopen("kall","r");
-    if(fp!=NULL)
-    {
-        char c;
-        char buf[1024];
-        //	while(!feof(fp)&&fscanf(fp, "%x %c %s\n", &syscall_table[syscall_num].pc, &c, syscall_table[syscall_num].fname)!=0){
-        while(fgets(buf,1024, fp)!=NULL)
-        {
-            sscanf(buf,"%x %c %s", &syscall_table[syscall_num].pc, &c, syscall_table[syscall_num].fname);
-            syscall_num++;
-        }
-        fclose(fp);
-    }
-    else
-        printf("can't inital syscall table\n");
-}
-void find_kernel_call(target_ulong pc)
-{
-    uint32_t i;
-    if(!qemu_log_enabled())
-        return;
-    for(i=0; i< syscall_num; i++)
-        if(pc==syscall_table[i].pc)
-            qemu_log("call is %s\n", syscall_table[i].fname);
-}
-
 
 typedef void (*fun)();
 extern fun iret_handle;
@@ -108,7 +78,6 @@ void sys_hook_init()
     int i;
     for(i=0 ; i <1024; i++)
         files[i]=0;
-    init_syscall_table();
     set_sys_need_red(0);
     file_flag = 0;
     is_interrupt = 0;
@@ -127,26 +96,28 @@ int get_file_flag(uint32_t fd)
     return 0;
 }
 
-set_file_flag(uint32_t fd, int flag)
+void set_file_flag(uint32_t fd, int flag)
 {
     if(fd<1024)
         files[fd]=flag;
 }
 
+//yufei.begin
 int need_interrupt = 0;
 
 //Before enter an interrupt which is no need to redirect, read local
 //stack address from a global address, then give it to current ESP
 target_ulong snapshot_esp = 0; 
+target_ulong stack_addr = 0;  // a global address
 void recover_local_kernel_stack(){
-    if(!sys_need_red) return;
-
     snapshot_esp = cpu_single_env->regs[R_ESP];
-    target_ulong stack_addr = 0xc1805e04;
-    target_ulong local_esp;
-    cpu_memory_rw_debug(cpu_single_env, stack_addr, &local_esp, 4,0);
-    cpu_single_env->regs[R_ESP] = local_esp; 
-    qemu_log(" change ESP %x to %x ", snapshot_esp, local_esp);
+    //target_ulong stack_addr = 0xc1805e04;
+    if(stack_addr > 0xc0000000){
+        target_ulong local_esp;
+        cpu_memory_rw_debug(cpu_single_env, stack_addr, &local_esp, 4,0);
+        cpu_single_env->regs[R_ESP] = local_esp; 
+        qemu_log(" change ESP %x to %x ", snapshot_esp, local_esp);
+    }
 }
 
 //After exit interrupt, recover snapshot kernel stack
@@ -160,7 +131,7 @@ void recover_snapshot_kernel_stack(){
         snapshot_esp = 0;
     }
 }
-
+//yufei.end
 
 void interrupt_hook(int intno, int is_int, target_ulong next_eip)
 {
@@ -169,25 +140,26 @@ void interrupt_hook(int intno, int is_int, target_ulong next_eip)
         need_interrupt = 1;
     else
         need_interrupt = 0;
+
+    if(intno == 0x3e)
+        return;
     //yufei.end
 
-    if (intno != 0x80)
-    {
-        //yufei.begin
-        if(intno == 0x3e)
-            return;
-
-        recover_local_kernel_stack();
-        //yufei.end
-        vmmi_interrupt_stack++;
-        is_interrupt = 1;
-#ifdef DEBUG_VMMI
-        if(qemu_log_enabled()&&vmmi_interrupt_stack==1)
-            qemu_log(" enter interrupt\n");
-#endif
-    }
-    else
+    if (intno == 0x80){
         syscall_hook(cpu_single_env->regs[R_EAX]);
+        return;
+    }
+
+    //yufei.begin
+    if(sys_need_red)
+        recover_local_kernel_stack();
+    //yufei.end
+    vmmi_interrupt_stack++;
+    is_interrupt = 1;
+
+#ifdef DEBUG_VMMI
+    qemu_log(" enter interrupt\n");
+#endif
 }
 
 void run_timer();
