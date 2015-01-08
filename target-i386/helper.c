@@ -557,7 +557,6 @@ extern uint32_t is_brk;
 //uint32_t is_schedule = 0;
 uint32_t num_cond_resch = 0;
 extern uint32_t vmmi_profile;
-extern uint32_t is_print;
 extern FILE *trace_log;
 extern FILE *pc_log;
 extern int need_interrupt; //yufei
@@ -570,10 +569,11 @@ inline void set_io_need_red(){
 }
 //yufei.end
 
+target_ulong red_cr3 = 0;
 uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr)
 {
     if((vmmi_start) \
-       && (cpu_single_env->cr[3] == vmmi_process_cr3) \
+       && (cpu_single_env->cr[3] == vmmi_process_cr3 || (red_cr3 != 0 && cpu_single_env->cr[3] == red_cr3  ))     \
        && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
        && (is_interrupt !=1 || need_interrupt == 1)  \     
        && addr >=0xc0000000
@@ -586,7 +586,7 @@ uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr)
 uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr)
 {
     if((vmmi_start) \
-       && (cpu_single_env->cr[3] == vmmi_process_cr3) \
+       && (cpu_single_env->cr[3] == vmmi_process_cr3 || (red_cr3 != 0 && cpu_single_env->cr[3] == red_cr3  ))     \
        && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
        && (is_interrupt !=1 || need_interrupt == 1) \  
        && addr >=0xc0000000
@@ -705,6 +705,7 @@ uint32_t sys_con_w;
 uint32_t other;
 extern uint32_t	is_syscall;
 
+
 void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 {
 //yang.begin
@@ -716,6 +717,13 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 #endif			
 
     //yufei.begin
+    if(sys_need_red && vmmi_start){
+        red_cr3 = new_cr3;
+        qemu_log(" red_cr3 %x\n", red_cr3);
+    }else{
+        red_cr3 = 0;
+    }
+    
     if(vmmi_start && new_cr3 == vmmi_cr3){
         qemu_log("change new cr3 to vmmi_process_cr3\n");
         new_cr3 = vmmi_process_cr3;
@@ -783,8 +791,9 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
         }while(next!=task);
     }
 
-    env->cr[3] = new_cr3;
 //yang.end
+
+    env->cr[3] = new_cr3;
 
     if (env->cr[0] & CR0_PG_MASK) {
 #if defined(DEBUG_MMU)

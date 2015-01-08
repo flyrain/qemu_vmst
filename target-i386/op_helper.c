@@ -6208,7 +6208,6 @@ fun iret_handle=NULL;
 
 FILE *inst_dis_log;
 xed_iclass_enum_t prev_opcode;
-uint32_t is_print;
 uint32_t is_pipe;
 int start_log;
 extern uint32_t start_trace;
@@ -6278,7 +6277,7 @@ extern uint32_t file_flag ;
 target_ulong current_task;
 //yufei.end
 
-//before instruction translate and execute
+//before instruction translation and execution
 void helper_inst_hook(int a)
 {
     current_pc = a;
@@ -6286,21 +6285,8 @@ void helper_inst_hook(int a)
     uint8_t buf[15];
     char str[128];
 	 
-    if(
-        take_snapshot_esp==1
-        &&(cpu_single_env->hflags & HF_CPL_MASK) != 3
-        &&snapshot_cr3 == cpu_single_env->cr[3]
-        )
-    { 
-        FILE *f;
-        f = fopen("./esp","a+");
-        fprintf(f,"%x\n",env->regs[R_ESP]);
-        fclose(f);
-        take_snapshot_esp=0;
-    }
-	 
-    if(vmmi_start
-       &&vmmi_process_cr3 ==cpu_single_env->cr[3]
+    if( vmmi_start
+        // && vmmi_process_cr3 ==cpu_single_env->cr[3]
         )
     {
         cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
@@ -6310,20 +6296,17 @@ void helper_inst_hook(int a)
                                                 STATIC_CAST(const xed_uint8_t *,  buf), 15); 
 
         //print the userspace instructions.
-        if(
-            current_pc < 0xc0000000 
+        if( current_pc < 0xc0000000 
             && qemu_log_enabled()
+            && vmmi_process_cr3 ==cpu_single_env->cr[3]
             )
         {            
             my_monitor_disas(a); 
             qemu_log(" (ECX %x EAX %x EDX %x ESP %x)", ECX, EAX, EDX, ESP);
         }
 
-        if(
-            //!is_interrupt
-             sys_need_red
+        if( sys_need_red
             && qemu_log_enabled()
-            // && file_flag
             )
         {
             my_monitor_disas(a); 
@@ -6336,21 +6319,12 @@ void helper_inst_hook(int a)
             xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
             const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);
 
-            if(
-                vmmi_start
-                &&!is_print
-                && vmmi_process_cr3 == cpu_single_env->cr[3]
-                )
+            if( vmmi_process_cr3 == cpu_single_env->cr[3] )
             {	
                 Instrument(xi);
                 if((cpu_single_env->hflags & HF_CPL_MASK) == 3)
                     FD_Instrument(xi);
-
             }
-
-#ifdef VMMI_KERNEL
-            prev_opcode = opcode;
-#endif
         }
     }
     prev_pc=a;
