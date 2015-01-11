@@ -38,7 +38,11 @@ uint32_t syscall_num=0;
 
 //yufei.begin
 void set_sys_need_red(int flag){
-  sys_need_red = flag;
+    if(flag != 0)
+        qemu_log(" set sys_need_red to %d ", flag);
+    else
+        qemu_log(" set sys_need_red to zero ");
+    sys_need_red = flag;
 }
 //yufei.end
 

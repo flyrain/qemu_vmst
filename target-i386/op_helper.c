@@ -2997,7 +2997,10 @@ void helper_iret_protected(int shift, int next_eip)
     env->hflags2 &= ~HF2_NMI_MASK;
     
     //yufei.begin
-    if(is_interrupt){
+    if(vmmi_start
+       && cpu_single_env->cr[3] == vmmi_process_cr3
+       && is_interrupt)
+    {
         recover_snapshot_kernel_stack();
         vmmi_interrupt_stack--;
         if(vmmi_interrupt_stack == 0){
@@ -3008,6 +3011,17 @@ void helper_iret_protected(int shift, int next_eip)
            qemu_log("exit interrupt\n");
 #endif
         }
+    }
+    
+    if(vmmi_start
+       && sys_need_red
+       && cpu_single_env->cr[3] != vmmi_process_cr3
+       && EIP < 0xc0000000 //return to userspace
+    ){
+        //comment this because when interrupts happen in a system
+        //call, we cannot let it sleep, otherwise, it will last for ever.
+
+        //return2userspace();
     }
     //yufei.end
 }
@@ -3139,9 +3153,21 @@ void helper_sysexit(int dflag)
             return_eip = EIP;
     }
 
-    set_sys_need_red(0);
+    //If this system call is the system call which need rediret and
+    //set sys_need_red to 1.
+    if(vmmi_start
+       && vmmi_process_cr3 == cpu_single_env->cr[3]
+        ){
+        set_sys_need_red(0);
+    }
 
-    return2userspace();
+    if(vmmi_start
+       && sys_need_red
+       && cpu_single_env->cr[3] != vmmi_process_cr3
+       && EIP < 0xc0000000 //return to userspace
+        ){
+        return2userspace();
+    }
     //yufei.end
 }
 
