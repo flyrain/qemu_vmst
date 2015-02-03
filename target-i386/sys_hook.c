@@ -171,7 +171,6 @@ void pit_send();
 extern char inst_buff[];
 char inst_buff2[16];
 char inst_buff3[16];
-extern target_ulong current_task; //yufei
 
 //yufei.begin, show current time 
 char * syscall_name[] = {"SYSEXIT/IRET", "sys_exit", "", "read", 
@@ -284,7 +283,7 @@ void syscall_hook(uint32_t syscall_op)
         memset(buf,0,1024);
         file_flag=0;
         set_sys_need_red(0);
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 1024, 0)!=0)
+        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX], buf, 1024, 0)!=0)
             break;
 
 #ifdef DEBUG_VMMI
@@ -296,22 +295,18 @@ void syscall_hook(uint32_t syscall_op)
         buf[1023]='\0';
 
         //filename is the name of target file       
-        //char * target_file = "lab/test";
+        qemu_log("file name is %s\n", buf);
         char * target_file1 = "test/log";
-        char * target_file2 = "test/test";
-        char * target_file5 = "test/test1"; //19k
-        char * target_file3 = "test/test1k";
+        char * target_file2 = "test/test"; //512
+        char * target_file3 = "test/test1k"; //1k
         char * target_file4 = "test/test1M";
         if(strcmp(buf, target_file1) == 0
            || strcmp(buf, target_file2) == 0 
            || strcmp(buf, target_file3) == 0
            || strcmp(buf, target_file4) == 0
-           || strcmp(buf, target_file5) == 0)
-        {
+            ){
             file_flag = 1;
             set_sys_need_red(1);
-            
-            vmac_memory_read(0xc1801454, &current_task, 4);//yufei
         }
 
     }
@@ -1295,6 +1290,18 @@ void syscall_hook(uint32_t syscall_op)
     default:
         break;
     }  //switch
+
+    /*
+    //yufei.begin
+    if(vmmi_start && sys_need_red){
+        tb_flush(cpu_single_env);
+        //set the gs selector value, which comes from Guest OS'
+        //segment register GS' selector. 0xe0 is recorded when taking snapshot.
+        cpu_single_env->segs[R_GS].selector = 0xe0; 
+        qemu_log(" tb_flush gs setting to 0x%x ", cpu_single_env->segs[R_GS].selector);
+    }
+    //yufei.end
+    */
 }
 
 

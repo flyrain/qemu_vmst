@@ -3064,8 +3064,10 @@ void helper_sysenter(void)
     EIP = env->sysenter_eip;
 
     //yang
-    if(vmmi_mode&&!vmmi_main_start&&(EAX==11||EAX==37))
+    if(vmmi_mode&&!vmmi_main_start&&(EAX==11||EAX==37)){
+        qemu_log("vmmi_mode&&!vmmi_main_start&&(EAX==11||EAX==37)\n");
         syscall_hook(EAX);
+    }
 }
 
 //yufei.begin
@@ -3158,6 +3160,10 @@ void helper_sysexit(int dflag)
     if(vmmi_start
        && vmmi_process_cr3 == cpu_single_env->cr[3]
         ){
+        if(sys_need_red){
+            tb_flush(cpu_single_env);
+            qemu_log(" tb_flush ");
+        }
         set_sys_need_red(0);
     }
 
@@ -6300,7 +6306,6 @@ int vmac_memory_write(target_ulong addr, uint8_t *buf, int len)
 extern int reg_name_modified ; 
 extern uint32_t pre_reg_value;
 extern uint32_t file_flag ; 
-target_ulong current_task;
 //yufei.end
 
 //before instruction translation and execution
@@ -6315,7 +6320,10 @@ void helper_inst_hook(int a)
         // && vmmi_process_cr3 ==cpu_single_env->cr[3]
         )
     {
-        cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
+        if(sys_need_red)
+            vmac_memory_read(a, buf, 15);
+        else
+            cpu_memory_rw_debug(cpu_single_env, a, buf,15, 0);
         xed_decoded_inst_zero_set_mode(&xedd_g, &dstate);
 
         xed_error_enum_t xed_error = xed_decode(&xedd_g,
@@ -6328,9 +6336,9 @@ void helper_inst_hook(int a)
             )
         {            
             my_monitor_disas(a); 
-            qemu_log(" (ECX %x EAX %x EDX %x ESP %x)", ECX, EAX, EDX, ESP);
+            qemu_log(" (EAX %x ECX %x EDX %x ESP %x)", EAX, ECX, EDX, ESP);
         }
-
+/*
         if( sys_need_red
             && qemu_log_enabled()
             )
@@ -6338,9 +6346,19 @@ void helper_inst_hook(int a)
             my_monitor_disas(a); 
             qemu_log(" (ECX %x EAX %x EDX %x ESP %x)", ECX, EAX, EDX, ESP);//yufei
         }
-
+*/
         if (xed_error == XED_ERROR_NONE) {
             xed_decoded_inst_dump_intel_format(&xedd_g, str, sizeof(str), 0);       
+            if( sys_need_red
+                && qemu_log_enabled()
+                )
+            {
+                qemu_log("\n");
+                qemu_log("0x" TARGET_FMT_lx "\t", cpu_single_env->cr[3]);
+                qemu_log("0x" TARGET_FMT_lx "\t", current_pc);
+                qemu_log("%s\t", str);
+                qemu_log(" (EAX %x ECX %x EDX %x ESP %x)", EAX, ECX, EDX, ESP);
+            }
 
             xed_iclass_enum_t opcode = xed_decoded_inst_get_iclass(&xedd_g);
             const xed_inst_t *xi = xed_decoded_inst_inst(&xedd_g);

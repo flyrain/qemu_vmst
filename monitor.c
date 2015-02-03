@@ -1683,6 +1683,10 @@ static int do_physical_memory_save(Monitor *mon, const QDict *qdict,
     fprintf(f,"%x\n",env->regs[R_ESP]);
     fclose(f);
 
+    f = fopen("./gs","a+");
+    fprintf(f,"%x\n", env->segs[R_GS].selector);
+    fclose(f);
+
 //zlin.end
 
     f = fopen(filename, "wb");
