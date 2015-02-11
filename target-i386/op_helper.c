@@ -3060,7 +3060,9 @@ void helper_sysenter(void)
                            DESC_G_MASK | DESC_B_MASK | DESC_P_MASK |
                            DESC_S_MASK |
                            DESC_W_MASK | DESC_A_MASK);
+//    qemu_log("ESP(before sysenter) %x", ESP);
     ESP = env->sysenter_esp;
+//    qemu_log("ESP(after sysenter) %x", ESP);
     EIP = env->sysenter_eip;
 
     //yang

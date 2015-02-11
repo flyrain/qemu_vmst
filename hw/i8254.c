@@ -395,26 +395,26 @@ static void pit_irq_timer_update(PITChannelState *s, int64_t current_time)
 }
 //yang
 PITChannelState *pit_save =NULL;
-extern uint32_t vmmi_main_start;
+extern uint32_t vmmi_start;
 
 static void pit_irq_timer(void *opaque)
 {
     PITChannelState *s = opaque;
 
-    if(vmmi_main_start){
-		pit_save = s;
-		return;
+    if(vmmi_start){
+        pit_save = s;
+        return;
+    }
 
-	}
     pit_irq_timer_update(s, s->next_transition_time);
 }
 
 void pit_resend()
 {
-	if(pit_save!=NULL){
-		pit_irq_timer_update(pit_save, pit_save->next_transition_time);
-		pit_save =NULL;
-	}
+    if(pit_save!=NULL){
+        pit_irq_timer_update(pit_save, pit_save->next_transition_time);
+        pit_save =NULL;
+    }
 }
 
 static const VMStateDescription vmstate_pit_channel = {

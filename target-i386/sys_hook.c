@@ -295,7 +295,6 @@ void syscall_hook(uint32_t syscall_op)
         buf[1023]='\0';
 
         //filename is the name of target file       
-        qemu_log("file name is %s\n", buf);
         char * target_file1 = "test/log";
         char * target_file2 = "test/test"; //512
         char * target_file3 = "test/test1k"; //1k
