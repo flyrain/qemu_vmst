@@ -858,7 +858,7 @@ static void Instrument_SYSEXIT(INS ins)
         qemu_log("sys exit\n");
     show_time(0);
 #endif
-    if(current_syscall == 5 || current_syscall ==102){
+    if(sys_need_red && (current_syscall == 5 || current_syscall ==102)){
         cpu_single_env->regs[R_EAX] |= 1024;//yufei
 
 #ifdef DEBUG_VMMI

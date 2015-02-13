@@ -38,10 +38,7 @@ uint32_t syscall_num=0;
 
 //yufei.begin
 void set_sys_need_red(int flag){
-    if(flag != 0)
-        qemu_log(" set sys_need_red to %d ", flag);
-    else
-        qemu_log(" set sys_need_red to zero ");
+    qemu_log("set sys_need_red to %d ", flag);
     sys_need_red = flag;
 }
 //yufei.end
@@ -200,6 +197,60 @@ void set_sys_need_red_by_fd(){
     }else{
         set_sys_need_red(0);
     }
+}
+
+int str_start_with(char *str, char *pattern){
+    int len = strlen(pattern);
+    int i = 0;
+    for(; i < len; i++){
+        if(pattern[i] != str[i]) return -1;
+    }
+    return 0;
+}
+
+//for file stat system call: stat, fstat, lstat, fstatat  
+void handle_file_stat_syscall(char * syscall_name){
+    char buf[256];
+    memset(buf,0,256);
+    file_flag=0;
+    set_sys_need_red(0);
+    //read file name
+    if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 256, 0)!=0)
+        return;
+
+    if(qemu_log_enabled())
+        qemu_log("%s file %s\n", syscall_name, buf);
+
+    char * target_file1 = "test/log";
+    char * target_file2 = "test/test"; //512
+    char * target_file3 = "test/test1k"; //1k
+    char * target_file4 = "test/test1M";
+    if(strcmp(buf, target_file1) == 0
+       || strcmp(buf, target_file2) == 0 
+       || strcmp(buf, target_file3) == 0
+       || strcmp(buf, target_file4) == 0
+        ){
+        file_flag = 1;
+        set_sys_need_red(1);
+    }else{
+        file_flag = 0;
+        set_sys_need_red(0);
+
+    }
+
+/*
+//if files are in memory, don't redirect
+if(str_start_with(buf, "/proc") == 0
+|| str_start_with(buf, "/sys") == 0
+|| str_start_with(buf, "/dev") == 0
+){
+file_flag = 0;
+set_sys_need_red(0);
+}else{
+file_flag = 1;
+set_sys_need_red(1);
+}
+*/
 }
 
 target_ulong gs_base = 0;
@@ -409,9 +460,7 @@ void syscall_hook(uint32_t syscall_op)
 #endif
             vmmi_process_cr3 = cpu_single_env->cr[3];
             vmmi_main_start = 1;
-#ifdef KERNEL_OLD
             vmmi_start = 1;
-#endif
 
 #ifdef DEBUG_VMMI
             if(qemu_log_enabled())
@@ -442,32 +491,11 @@ void syscall_hook(uint32_t syscall_op)
     case 17 : // sys_ni_syscall
         break;
     case 18 : // sys_stat
-    {
-        char buf[6];
-        memset(buf,0,6);
-        file_flag=0;
-        set_sys_need_red(0);
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 1024, 0)!=0)
-            break;
-        buf[5]='\0';
-
-        if(strcmp(buf, "/proc") != 0)
-        {
-            file_flag = 0;
-            set_sys_need_red(0);
-        }
-        else
-        {
-            file_flag = 1;
-            set_sys_need_red(1);
-        }
-    }
-
-    break;
+        handle_file_stat_syscall("stat");
+        break;
     case 19 : // sys_lseek
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
-        
         set_sys_need_red_by_fd();//yufei
         break;
     case 20 : // sys_getpid
@@ -500,27 +528,8 @@ void syscall_hook(uint32_t syscall_op)
     case 32 : // sys_ni_syscall
         break;
     case 33 : // sys_access
-    {
-        char buf[1024];
-        memset(buf,0,1024);
-        file_flag=0;
-        set_sys_need_red(0);
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 1024, 0)!=0)
-            break;
-        buf[5]='\0';
-
-        if(strcmp(buf, "/proc") != 0||strcmp(buf, "/"))
-        {
-            file_flag = 0;
-            set_sys_need_red(0);
-        }
-        else
-        {
-            file_flag = 1;
-            set_sys_need_red(1);
-        }
-    }
-    break;
+        handle_file_stat_syscall("access");
+        break;
     case 34 : // sys_nice
         break;
     case 35 : // sys_ni_syscall
@@ -688,29 +697,8 @@ void syscall_hook(uint32_t syscall_op)
     case 98 : // sys_profil
         break;
     case 99 : // sys_statfs
-    {
-        char buf[6];
-        memset(buf,0,6);
-        file_flag=0;
-        set_sys_need_red(0);
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 1024, 0)!=0)
-            break;
-
-        buf[5]='\0';
-
-        if(strcmp(buf, "/proc") != 0||strcmp(buf, "/"))
-        {
-            file_flag = 0;
-            set_sys_need_red(0);
-        }
-        else
-        {
-            file_flag = 1;
-            set_sys_need_red(1);
-        }
-    }
-
-    break;
+        handle_file_stat_syscall("statfs");
+        break;
     case 100 : // sys_fstatfs
         break;
     case 101 : // sys_ioperm
@@ -719,65 +707,21 @@ void syscall_hook(uint32_t syscall_op)
         set_sys_need_red(1);
         file_flag = 1;
         break;
-
-        break;
     case 103 : // sys_syslog
         break;
     case 104 : // sys_setitimer
         break;
     case 105 : // sys_getitimer
         break;
-    case 106 : // sys_stat
-    {
-        char buf[6];
-        memset(buf,0,6);
-        file_flag=0;
-        set_sys_need_red(0);
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 1024, 0)!=0)
-            break;
-
-        buf[5]='\0';
-
-        if(strcmp(buf, "/proc") != 0||strcmp(buf, "/"))
-        {
-            file_flag = 0;
-            set_sys_need_red(0);
-        }
-        else
-        {
-            file_flag = 1;
-            set_sys_need_red(1);
-        }
-    }
-
-    break;
-    case 107 : // sys_lstat
-    {
-        char buf[6];
-        memset(buf,0,6);
-        file_flag=0;
-        set_sys_need_red(0);
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 1024, 0)!=0)
-            break;
-
-        buf[5]='\0';
-
-        if(strcmp(buf, "/proc") != 0)
-        {
-            file_flag = 0;
-            set_sys_need_red(0);
-        }
-        else
-        {
-            file_flag = 1;
-            set_sys_need_red(1);
-        }
-    }
-    break;
+    case 106 : // sys_newstat
+        handle_file_stat_syscall("newstat");
+        break;
+    case 107 : // sys_newlstat
+        handle_file_stat_syscall("newlstat");
+        break;
     case 108 : // sys_fstat
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
-
         set_sys_need_red_by_fd(); //yufei
         break;
     case 109 : // sys_olduname
@@ -1009,57 +953,17 @@ void syscall_hook(uint32_t syscall_op)
     case 194 : // sys_ftruncate64
         break;
     case 195 : // sys_stat64
-        //fprintf(logfile,"PID %3d (%16s)[sys_stat64  195]\n", pid, command);
-    {
-        char buf[256];
-        memset(buf,0,256);
-        file_flag=0;
-        set_sys_need_red(0);
-        if(qemu_log_enabled())
-            qemu_log("statfs64\n");
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 256, 0)!=0)
-            break;
-
-        if(qemu_log_enabled())
-            qemu_log("stat64 file %s\n", buf);
-
-        buf[5]='\0';
-
-        if(strcmp(buf, "/proc") !=0 )
-        {
-            buf[4]='\0';
-            if(strcmp(buf, "/")==0 || strcmp(buf, "/sys")==0 || strcmp(buf, "/dev")==0)
-            {
-                file_flag = 1;
-                set_sys_need_red(1);
-
-            }
-            else
-            {
-                file_flag = 0;
-                set_sys_need_red(0);
-            }
-        }
-        else
-        {
-            file_flag = 1;
-            set_sys_need_red(1);
-        }
-    }
-    break;
+        handle_file_stat_syscall("stat64");
+        break;
     case 196 : // sys_lstat64
         break;
     case 197 : // sys_fstat64
-        //fprintf(logfile,"PID %3d (%16s)[sys_fstat64 197]\n", pid, command);
 #ifdef DEBUG_VMMI
         show_time(7);
 #endif
-
         set_sys_need_red(get_file_flag(cpu_single_env->regs[R_EBX]));
         set_sys_need_red(get_file_taint());
-
         set_sys_need_red_by_fd();//yufei
-
         break;
     case 198 : // sys_lchown32
         break;
@@ -1068,7 +972,6 @@ void syscall_hook(uint32_t syscall_op)
     case 200 : // sys_getgid32
         break;
     case 201 : // sys_geteuid32
-
         break;
     case 202 : // sys_getegid32
         break;
@@ -1190,12 +1093,6 @@ void syscall_hook(uint32_t syscall_op)
         }
 #endif
 
-
-        //	 cpu_memory_rw_debug(cpu_single_env, vmmi_mon_start, inst_buff, 5, 1);
-        /*delete module
-          cpu_memory_rw_debug(cpu_single_env, 0xc1055efc, inst_buff2, 5, 1);
-          cpu_memory_rw_debug(cpu_single_env, 0xc1055cca, inst_buff3, 5, 1);
-        */
         vmmi_start = 0;
         vmmi_main_start = 0;
         set_sys_need_red(0);
@@ -1236,47 +1133,10 @@ void syscall_hook(uint32_t syscall_op)
         set_sys_need_red(0);
         break;
     case 268:  //statfs64
-    {
-        char buf[256];
-        memset(buf,0,256);
-        file_flag=0;
-        set_sys_need_red(0);
-        if(qemu_log_enabled())
-            qemu_log("statfs64\n");
-        if(cpu_memory_rw_debug(cpu_single_env, cpu_single_env->regs[R_EBX] , buf, 256, 0)!=0)
-            break;
-
-        if(qemu_log_enabled())
-            qemu_log("statfs64 file %s\n", buf);
-
-        buf[5]='\0';
-
-        if(strcmp(buf, "/proc") !=0 )
-        {
-            buf[4]='\0';
-            if(strcmp(buf, "/")==0 || strcmp(buf, "/sys")==0 || strcmp(buf, "/dev")==0)
-            {
-                file_flag = 1;
-                set_sys_need_red(1);
-
-            }
-            else
-            {
-                file_flag = 0;
-                set_sys_need_red(0);
-            }
-        }
-        else
-        {
-            file_flag = 1;
-            set_sys_need_red(1);
-        }
-    }
-
-    break;
+        handle_file_stat_syscall("statfs64");
+        break;
     case 269:  //fstatfs64
         set_sys_need_red(get_file_taint());
-
         set_sys_need_red_by_fd();//yufei
         break;
     case 311: //set_robust_list
@@ -1285,19 +1145,18 @@ void syscall_hook(uint32_t syscall_op)
     case 312: //set_robust_list
         set_sys_need_red(0);
         break;
-
     default:
         break;
-    }  //switch
+    }  
 
     /*
     //yufei.begin
     if(vmmi_start && sys_need_red){
-        tb_flush(cpu_single_env);
-        //set the gs selector value, which comes from Guest OS'
-        //segment register GS' selector. 0xe0 is recorded when taking snapshot.
-        cpu_single_env->segs[R_GS].selector = 0xe0; 
-        qemu_log(" tb_flush gs setting to 0x%x ", cpu_single_env->segs[R_GS].selector);
+    tb_flush(cpu_single_env);
+    //set the gs selector value, which comes from Guest OS'
+    //segment register GS' selector. 0xe0 is recorded when taking snapshot.
+    cpu_single_env->segs[R_GS].selector = 0xe0; 
+    qemu_log(" tb_flush gs setting to 0x%x ", cpu_single_env->segs[R_GS].selector);
     }
     //yufei.end
     */
