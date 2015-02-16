@@ -225,10 +225,12 @@ void handle_file_stat_syscall(char * syscall_name){
     char * target_file2 = "test/test"; //512
     char * target_file3 = "test/test1k"; //1k
     char * target_file4 = "test/test1M";
+    char * target_file5 = "test/test2w"; // file to test to write
     if(strcmp(buf, target_file1) == 0
        || strcmp(buf, target_file2) == 0 
        || strcmp(buf, target_file3) == 0
        || strcmp(buf, target_file4) == 0
+       || strcmp(buf, target_file5) == 0
         ){
         file_flag = 1;
         set_sys_need_red(1);
@@ -350,10 +352,12 @@ void syscall_hook(uint32_t syscall_op)
         char * target_file2 = "test/test"; //512
         char * target_file3 = "test/test1k"; //1k
         char * target_file4 = "test/test1M";
+        char * target_file5 = "test/test2w";
         if(strcmp(buf, target_file1) == 0
            || strcmp(buf, target_file2) == 0 
            || strcmp(buf, target_file3) == 0
            || strcmp(buf, target_file4) == 0
+           || strcmp(buf, target_file5) == 0
             ){
             file_flag = 1;
             set_sys_need_red(1);

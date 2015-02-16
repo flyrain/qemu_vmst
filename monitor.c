@@ -2149,17 +2149,20 @@ static void do_vmmi_start(Monitor *mon, const QDict *qdict)
 void run_timer();
 static void do_vmmi_stop(Monitor *mon, const QDict *qdict)
 {
-	vmmi_mode = 0;
-	vmmi_start = 0;
-	vmmi_main_start =0;
-	fclose(vmmi_log);
-//	FILE *fp=fopen(sname, "w");
-//	fwrite(vmmi_mem_shadow, snapshot_size, 1, fp);
-//	fclose(fp);	
-//	fclose(inst_dis_log);
-	free(vmmi_mem);
-	free(vmmi_mem_shadow);
-	run_timer();
+    if(vmmi_mode == 0) return;
+    vmmi_mode = 0;
+    vmmi_start = 0;
+    vmmi_main_start =0;
+    fclose(vmmi_log);
+    if(vmmi_mem != NULL){
+        free(vmmi_mem);
+        vmmi_mem = NULL;
+    }
+    if(vmmi_mem_shadow != NULL){
+        free(vmmi_mem_shadow);
+        vmmi_mem_shadow = NULL;
+    }
+    run_timer();
 }
 
 static void do_vmmi_moncmd(Monitor *mon, const QDict *qdict)
