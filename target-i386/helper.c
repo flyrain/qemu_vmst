@@ -705,6 +705,25 @@ uint32_t sys_con_w;
 uint32_t other;
 extern uint32_t	is_syscall;
 
+#define  LINUX2_6_32_8
+//#define LINUX3_2_52 
+
+//2.6.32.8 task_struct offsets and memo
+#ifdef LINUX2_6_32_8  
+#define TASK_STRUCT_COMM 536 //0x128
+#define TASK_STRUCT_MM 256   //0x100
+#define TASK_STRUCT_TASKS 228 //0xe4
+#define MM_STRUCT_PGD  36 //0x24
+#endif
+
+#ifdef LINUX3_2_52  
+//3.2.52 in ~/vmware/Debian\ 6-dm/Debian\ 6-dm.vmdk
+#define TASK_STRUCT_COMM 500
+#define TASK_STRUCT_MM 224
+#define TASK_STRUCT_TASKS 196
+#define MM_STRUCT_PGD  40
+#endif
+
 
 void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 {
@@ -731,7 +750,6 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
     //yufei.end
 
     if( 
-        //	vmmi_main_start
         vmmi_mode
         &&!vmmi_start
         //   &&vmmi_process_cr3 == cpu_single_env->cr[3]
@@ -752,16 +770,15 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
         next=task;
 
         do{
-            cpu_memory_rw_debug(env, next+0x218, comm, 16,0);
+            cpu_memory_rw_debug(env, next + TASK_STRUCT_COMM, comm, 16,0);
             comm[15]='\0';
 
-            //	cpu_memory_rw_debug(env, next+0x120, &pid, 4,0);
             if(strcmp(comm, vmmi_process_name)==0)
             {
-                cpu_memory_rw_debug(env, next+0x100, &mm, 4,0);
+                cpu_memory_rw_debug(env, next+TASK_STRUCT_MM, &mm, 4,0);
                 //print the task
                 if(mm!=0){
-                    cpu_memory_rw_debug(env, mm+0x24, &pgd, 4,0);
+                    cpu_memory_rw_debug(env, mm+MM_STRUCT_PGD, &pgd, 4,0);
                     vmmi_process_cr3 = pgd +0x40000000;
                     vmmi_start = 1;
                     vmmi_main_start = 1; //yufei
@@ -783,7 +800,7 @@ void cpu_x86_update_cr3(CPUX86State *env, target_ulong new_cr3)
 #endif
                 }
             }
-            cpu_memory_rw_debug(env, next+0xe4, &list, 4, 0);
+            cpu_memory_rw_debug(env, next+TASK_STRUCT_TASKS, &list, 4, 0);
             next=list-0xe4;
             i++;
             if(i>100)
