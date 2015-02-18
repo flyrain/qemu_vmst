@@ -697,7 +697,6 @@ uint32_t do_copy_page_if_necessary(target_ulong addr)
 /* XXX: in legacy PAE mode, generate a GPF if reserved bits are set in
    the PDPT */
 //
-void run_timer();
 uint32_t int_con;
 uint32_t excep_con;
 uint32_t sys_con;

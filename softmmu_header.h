@@ -82,8 +82,6 @@ extern target_ulong vmmi_process_cr3;
 extern char* vmmi_mem_shadow;
 uint32_t vmmi_vtop(uint32_t);
 
-extern target_ulong module_revise(target_ulong snapshot_addr);//yufei
-
 static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
 {
     int page_index;
@@ -108,7 +106,6 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
         } else {
             physaddr = addr + env->vmmi_tlb_table[mmu_idx][page_index].addend;
             res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)physaddr);
-            res = module_revise(res);//yufei
 #ifdef DEBUG_VMMI
             //         fprintf(vmmi_log,"in LD_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
 #endif
@@ -129,11 +126,6 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
             qemu_log("old:%x\nnew:%x\n", *(uint8_t*)physaddr, *(uint8_t *)newphyaddr);
         }
         res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)physaddr);
-        //yufei.begin
-        extern uint32_t sys_need_red;
-        if(sys_need_red)
-            res = module_revise(res);
-        //yufei.end
     }
     return res;
 }
@@ -162,7 +154,6 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
         } else {
             physaddr = addr + env->vmmi_tlb_table[mmu_idx][page_index].addend;
             res = glue(glue(lds, SUFFIX), _raw)((uint8_t *)physaddr);
-            // res = module_revise(res);//yufei
 #ifdef DEBUG_VMMI
             //           fprintf(vmmi_log,"in LDs_begin vmmi paddr %x, old paddr %x, esp %x\n",physaddr-(uint64_t)vmmi_mem_shadow, vmmi_vtop(addr), env->regs[4]);
 #endif
@@ -177,11 +168,6 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
     } else {
         physaddr = addr + env->tlb_table[mmu_idx][page_index].addend;
         res = glue(glue(lds, SUFFIX), _raw)((uint8_t *)physaddr);
-        //yufei.begin
-        /* extern uint32_t sys_need_red; */
-        /* if(sys_need_red) */
-        /*     res = module_revise(res); */
-        //yufei.end
     }
     return res;
 }

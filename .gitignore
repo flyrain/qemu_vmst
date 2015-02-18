@@ -16,3 +16,5 @@
 /trace.h-timestamp
 /bin/cr3
 /bin/de-target
+/bin/qemu
+/log
