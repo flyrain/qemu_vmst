@@ -568,7 +568,7 @@ inline void set_io_need_red(){
   io_need_red =1;
 }
 //yufei.end
-
+extern target_ulong sleep_timespec;
 target_ulong red_cr3 = 0;
 uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr)
 {
@@ -576,7 +576,7 @@ uint32_t is_monitored_vmmi_kernel_data_read(target_ulong addr)
        && (cpu_single_env->cr[3] == vmmi_process_cr3 || (red_cr3 != 0 && cpu_single_env->cr[3] == red_cr3  ))     \
        && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
        && (is_interrupt !=1 || need_interrupt == 1)  \     
-       && addr >=0xc0000000
+       && (addr >=0xc0000000 || (sleep_timespec != 0 && addr >= sleep_timespec && addr <= sleep_timespec + 4))
        && sys_need_red
         )return vmmi_profile;
 
@@ -589,7 +589,7 @@ uint32_t is_monitored_vmmi_kernel_data_write(target_ulong addr)
        && (cpu_single_env->cr[3] == vmmi_process_cr3 || (red_cr3 != 0 && cpu_single_env->cr[3] == red_cr3  ))     \
        && ((cpu_single_env->hflags & HF_CPL_MASK) != 3)\
        && (is_interrupt !=1 || need_interrupt == 1) \  
-       && addr >=0xc0000000
+       && (addr >=0xc0000000 || (sleep_timespec != 0 && addr >= sleep_timespec && addr <= sleep_timespec + 4))
        && sys_need_red
       ) return vmmi_profile;
 

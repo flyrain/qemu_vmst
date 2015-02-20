@@ -683,31 +683,32 @@ static void apic_timer(void *opaque)
 {
     APICState *s = opaque;
 
-	//yang.begin
-	//disable apic timer
-	if(vmmi_main_start){
-		if(qemu_log_enabled())
-			qemu_log("save timer");
+    //yang.begin
+    //disable apic timer
+    if(vmmi_main_start){
+        if(qemu_log_enabled())
+            qemu_log("save timer");
         
-		save_timer = opaque;
-		return ;
-	}
+        save_timer = opaque;
+        return ;
+    }
     
-	//yang.end
-	apic_local_deliver(s, APIC_LVT_TIMER);
+    //yang.end
+    apic_local_deliver(s, APIC_LVT_TIMER);
     apic_timer_update(s, s->next_time);
 }
 
 void run_timer()
 {
-	if(save_timer!=NULL){
-		if(qemu_log_enabled())
-		qemu_log("redeliver timer");
-		apic_timer(save_timer);
-	}
+    if(save_timer!=NULL){
+        if(qemu_log_enabled())
+            qemu_log("redeliver timer");
+        apic_timer(save_timer);
+    }
 
-	save_timer=NULL;
+    save_timer=NULL;
 }
+
 static uint32_t apic_mem_readb(void *opaque, target_phys_addr_t addr)
 {
     return 0;

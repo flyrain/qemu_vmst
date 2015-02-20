@@ -3018,10 +3018,10 @@ void helper_iret_protected(int shift, int next_eip)
        && cpu_single_env->cr[3] != vmmi_process_cr3
        && EIP < 0xc0000000 //return to userspace
     ){
+        qemu_log("cpu_single_env->cr[3] %x, vmmi_process_cr3 %x\n", cpu_single_env->cr[3], vmmi_process_cr3 );
         //comment this because when interrupts happen in a system
         //call, we cannot let it sleep, otherwise, it will last for ever.
-
-        //return2userspace();
+        return2userspace();
     }
     //yufei.end
 }
@@ -3073,9 +3073,11 @@ void helper_sysenter(void)
 }
 
 //yufei.begin
+target_ulong sleep_timespec = 0;
 //construct a struct timespec in userspace
 target_long contruct_timespec(time_t seconds){
     target_long vaddr; 
+    sleep_timespec = 0;
     for(vaddr = 0x08000000; vaddr < 0xc0000000; vaddr += 4){
 	target_ulong page;
 
@@ -3084,7 +3086,8 @@ target_long contruct_timespec(time_t seconds){
         //set timespec struct 
         long nanoseconds  = 0;
         vmac_memory_write(vaddr, &seconds, 4);
-        vmac_memory_write(vaddr, &nanoseconds, 4);
+        vmac_memory_write(vaddr + 4, &nanoseconds, 4);
+        sleep_timespec = vaddr;
 
         return vaddr;
     }
@@ -3096,7 +3099,7 @@ void return2userspace(){
        && sys_need_red
        && vmmi_process_cr3 != cpu_single_env->cr[3]
         ){
-        qemu_log("goto sleep\n");
+        qemu_log("invoke system call sleep\n");
         EAX = 162; // nanosleep system call number 
         EBX = contruct_timespec(365*24*3600); //first parameter of nanosleep, sleep
                             //time: set to one year

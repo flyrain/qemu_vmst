@@ -1720,14 +1720,12 @@ exit:
 uint32_t vmmi_mode =0;
 char *vmmi_mem;
 uint32_t vmmi_cr3;
-//uint32_t snapshot_size;
 FILE *vmmi_log;
 FILE *trace_log;
 FILE *pc_log;
 target_ulong vmmi_esp;
 
 //yang.begin
-
 char *vmmi_mem_shadow;
 uint64_t vmmi_mem_shadow_index;
 extern uint32_t vmmi_main_start;
@@ -1735,16 +1733,11 @@ uint32_t vmmi_profile;
 //yang.end
 extern int vmmi_init();
 void	globalTaintInit(target_ulong start, target_ulong end);
-char sname[128];
-
-
-extern void show_time(int syscall);
 
 
 static void do_vmmi_start(Monitor *mon, const QDict *qdict)
 {
     const char *snapshot_fname = qdict_get_str(qdict, "snapshot_fname");
-    sprintf(sname, "%s_update", snapshot_fname);
     const char *cr3_fname = qdict_get_str(qdict, "cr3_fname");
     vmmi_profile = qdict_get_int(qdict, "profile");
 
@@ -1861,25 +1854,24 @@ static void do_vmmi_moncmd(Monitor *mon, const QDict *qdict)
 
 static void do_vmmi_kill(Monitor *mon, const QDict *qdict)
 {
-	const char *replace = qdict_get_str(qdict, "filename");
-	FILE *fp=fopen(replace, "r");	
+    const char *replace = qdict_get_str(qdict, "filename");
+    FILE *fp=fopen(replace, "r");	
     struct stat fstat;
     unsigned long size;
 
     if (stat(replace, &fstat) != 0)
     {
         monitor_printf(mon, "No such snapshot : %s\n", replace);
-		return ;
+        return ;
     }
 
     size = fstat.st_size;
-	char *buf=valloc(size);
-	fread(buf,1, size, fp);
-	fclose(fp);
-	cpu_physical_memory_write(0, buf, size);
+    char *buf=valloc(size);
+    fread(buf,1, size, fp);
+    fclose(fp);
+    cpu_physical_memory_write(0, buf, size);
 
-	free(buf);
-	
+    free(buf);
 }
 
 //yang
@@ -1889,8 +1881,7 @@ extern uint32_t take_snapshot;
 
 static void do_snapshot_save(Monitor *mon, const QDict *qdict)
 {
-
-	FILE *f;
+    FILE *f;
     uint32_t l;
     uint8_t buf[1024];
     uint32_t size = qdict_get_int(qdict, "size");
@@ -1900,14 +1891,8 @@ static void do_snapshot_save(Monitor *mon, const QDict *qdict)
     const char *cr3name = qdict_get_str(qdict, "cr3");
     strcpy(cr3_name, cr3name);
     int ret = -1;
-
-    
-		
-	take_snapshot=1;
-
-
-	return 0;
-
+    take_snapshot=1;
+    return 0;
 }
 
 uint32_t start_trace=0;
